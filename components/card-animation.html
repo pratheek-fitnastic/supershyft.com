@@ -169,6 +169,35 @@
             --delay: 0.6s;
         }
 
+        .bio-ai-label,
+        .regular-ai-label {
+            display: none;
+            position: absolute;
+            font-size: 27px;
+            font-weight: bold;
+            color: #fff;
+            top: 2%;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .layout-active .bio-ai-label,
+        .layout-active .regular-ai-label {
+            display: block;
+            opacity: 1;
+        }
+
+        .layout-active .bio-ai-label {
+            left: 18%;
+            transform: translateX(-50%);
+        }
+
+        .layout-active .regular-ai-label {
+            left: 81.5%;
+            transform: translateX(-50%);
+        }
+
         @media (max-width: 768px) {
             .deck {
                 height: 900px;
@@ -233,42 +262,46 @@
 <body>
     
     <div class="deck" id="deck">
-        <div class="typ-click-heading"><h5 class="clickBtn" id="">Click Here</h5></div>
+        <div class="typ-click-heading">
+            <div class="bio-ai-label">SuperShyft</div>
+            <div class="regular-ai-label">Regular AI</div>
+            <h5 class="clickBtn" id="">Click Here</h5>
+        </div>
         <div class="card left-1" style="--i: 1">
-            <img src="assets/images/technology/cards/webp/red-2.png" alt="card-img" class="img-fluid">
-        </div>
-        <div class="card left-2" style="--i: 2">
-            <img src="assets/images/technology/cards/webp/red-4.png" alt="card-img" class="img-fluid">
-        </div>
-        <div class="card left-3" style="--i: 3">
-            <img src="assets/images/technology/cards/webp/red-6.png" alt="card-img" class="img-fluid">
-        </div>
-        <div class="card right-1" style="--i: 1">
             <img src="assets/images/technology/cards/webp/green-1.png" alt="card-img" class="img-fluid">
         </div>
-        <div class="card right-2" style="--i: 2">
+        <div class="card left-2" style="--i: 2">
             <img src="assets/images/technology/cards/webp/green-3.png" alt="card-img" class="img-fluid">
         </div>
-        <div class="card right-3" style="--i: 3">
+        <div class="card left-3" style="--i: 3">
             <img src="assets/images/technology/cards/webp/green-5.png" alt="card-img" class="img-fluid">
         </div>
+        <div class="card right-1" style="--i: 1">
+            <img src="assets/images/technology/cards/webp/red-2.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-2" style="--i: 2">
+            <img src="assets/images/technology/cards/webp/red-4.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-3" style="--i: 3">
+            <img src="assets/images/technology/cards/webp/red-6.png" alt="card-img" class="img-fluid">
+        </div>
         <div class="card left-4" style="--i: 4">
-            <img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid">
-        </div>
-        <div class="card left-5" style="--i: 5">
-            <img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid">
-        </div>
-        <div class="card left-6" style="--i: 6">
-            <img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid">
-        </div>
-        <div class="card right-4" style="--i: 4">
             <img src="assets/images/technology/cards/webp/green-2.png" alt="card-img" class="img-fluid">
         </div>
-        <div class="card right-5" style="--i: 5">
+        <div class="card left-5" style="--i: 5">
             <img src="assets/images/technology/cards/webp/green-4.png" alt="card-img" class="img-fluid">
         </div>
-        <div class="card right-6" style="--i: 6">
+        <div class="card left-6" style="--i: 6">
             <img src="assets/images/technology/cards/webp/green-6.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-4" style="--i: 4">
+            <img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-5" style="--i: 5">
+            <img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-6" style="--i: 6">
+            <img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid">
         </div>
         <div class="card center pulse" id="centerCard">
             <!-- <img src="assets/images/technology/cards/middle-card.svg" alt="card-img" class="img-fluid"> -->

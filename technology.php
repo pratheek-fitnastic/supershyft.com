@@ -43,6 +43,34 @@
             }
         });
     </script>
+
+    <style>
+        .swiper-button-prev.driven-approach-prev,
+        .swiper-button-next.driven-approach-next {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #cc203b;
+        }
+
+        .arrow-icon {
+            width: 70px !important;
+            height: 70px !important;
+            color: #cc203b;
+            transition: all 0.3s ease;
+        }
+
+        .swiper-button-prev.driven-approach-prev:hover .arrow-icon,
+        .swiper-button-next.driven-approach-next:hover .arrow-icon {
+            color: #ff2d4a;
+            transform: scale(1.2);
+        }
+
+        .swiper-button-prev.driven-approach-prev .arrow-icon,
+        .swiper-button-next.driven-approach-next .arrow-icon {
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
 </head>
 
 <body>
@@ -357,9 +385,8 @@
                     </div>
                 </div>
                 <div class="bs-grid typ-cards typ-cards-1">
+                    <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">Bio AI</button>
                     <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5">Regular AI</button>
-                    <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">Supershyft Biology
-                        AI</button>
                 </div>
                 <?php include_once 'components/card-animation.html' ?>
             </div>
@@ -498,10 +525,14 @@
                         <!-- <div class="swiper-pagination"></div> -->
                         <div class="button-wrapper">
                             <div class="swiper-button-prev driven-approach-prev">
-                                <button class="bs-btn">PREV</button>
+                                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
                             </div>
                             <div class="swiper-button-next driven-approach-next">
-                                <button class="bs-btn">NEXT</button>
+                                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
                             </div>
                         </div>
                     </div>
