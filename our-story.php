@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+    <title>Supershyft Story | From Diagnosis to Healing</title>
+    <meta name="description" content="Read the inspiring journey behind Supershyft—how a Non‑Alcoholic Fatty Liver Disease diagnosis in school sparked a mission for healing and transforming lives.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Supershyft Story | Turning Diagnosis into Hope">
+    <meta property="og:description" content="Learn how a NAFLD diagnosis in school inspired the creation of Supershyft—a mission grounded in healing, discipline, and transformative health.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.supershyft.com/our-story.php">
+    <meta property="og:image" content="https://www.supershyft.com/assets/images/our-story/super-shyft.png">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="canonical" href="https://www.supershyft.com/our-story.php">
+    <!-- css group start -->
+    <?php include_once 'view/include_css.html'; ?>
+    <link rel="stylesheet" href="./assets/css/contact.css" />
+    <!-- css group end -->
+
+
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your experience.
+      </p>
+    <![endif]-->
+    <!-- header start -->
+    <?php include_once 'view/header.html'; ?>
+    <!-- header end -->
+
+    <main>
+        <section class="contact-section typ-custom-height space-top">
+            <div id="lottie-container"></div>
+        </section>
+        <section class="lyt-section typ-lines">
+            <div class="owner-details">
+                <div class="wrapper">
+                    <h1 class="founderName"><span class="pink">Meet RISHI!</span></h2>
+                        <p class="fonderText">The founder of <span>FITNASTIC</span></p>
+                        <p class="greenText">And this is his inspiring story... </p>
+                </div>
+            </div>
+            <div class="zic-line">
+                <!-- <img src="assets/images/our-story/zigzag.svg" alt="zic-line"> -->
+                <picture>
+                    <source media="(max-width:1024px)" srcset="assets/images/our-story/line-path.svg">
+                    <img class="zig-line-sm" src="assets/images/our-story/zigzag.svg" alt="zic-line">
+                </picture>                
+            </div>
+            <div class="super-shyft">
+                <img src="assets/images/our-story/super-shyft.png" class="img-fluid" alt="super-shyft">
+            </div>
+            <div class="bs-story-card card-1">
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/1.jpg" class="img-fluid" alt="story-img"> -->
+                             <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-1.jpg">
+                                <img src="assets/images/our-story/story/1.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2008</div>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag">
+                    <img src="assets/images/our-story/flip-logo.gif" class="img-fluid" alt="green super-shyft">
+                </div>
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">A Shaken Childhood</h2>
+                        <p class="discription">
+                            Rishi was born in Jaipur on 6th September, 1995. <span class="text-block">He <span
+                                    class="pink">lost his father to
+                                    oral cancer</span> in 8th standard.</span> The pain was deep. It taught him young -
+                            <span class="linear-color">HEALTH is everything.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-2 reverse">
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Diagnosed, Not Defeated</h2>
+                        <p class="discription">
+                            In 10th standard, he was <span class="pink">diagnosed with Non Alcoholic Fatty Liver
+                                Disease</span> <span class="text-block">While others chased marks, he chased
+                                healing.</span> He chose discipline over despair - <span class="linear-color">HEALTH
+                                became his goal</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule d-block d-md-none"
+                            alt="vector-img">
+                        <img src="assets/images/our-story/right-molecule-img.svg"
+                            class="img-fluid molucule d-none d-md-block" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/2.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-2.jpg">
+                                <img src="assets/images/our-story/story/2.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2010</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-3">
+                <div class="leftBox">
+                    <div class="vector-box">
+
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/3.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-3.jpg">
+                                <img src="assets/images/our-story/story/3.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2011</div>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Loss All Around</h2>
+                        <p class="discription">
+                            He saw <span class="pink">more family members fade</span> - an uncle, an aunt. <span
+                                class="text-block">Each loss felt personal, like a warning.</span> He began to wonder -
+                            <span class="linear-color">Why WAIT till it’s too late? </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-4 reverse">
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Another Setback</h2>
+                        <p class="discription">
+                            In 2013, <span class="pink"> an accident fractured his left hand.</span> <span
+                                class="text-block">A rod was inserted.</span> He couldn’t work out freely - <span
+                                class="linear-color">His STRENGTH was tested again.</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule d-block d-md-none"
+                            alt="vector-img">
+                        <img src="assets/images/our-story/right-molecule-img.svg"
+                            class="img-fluid molucule d-none d-md-block" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/4.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-4.jpg">
+                                <img src="assets/images/our-story/story/4.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2013</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-5">
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/5.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-5.jpg">
+                                <img src="assets/images/our-story/story/5.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2018</div>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">The Comeback Begins</h2>
+                        <p class="discription">
+                            He rose again, quietly and steadily. <span class="text-block">Graduated with <span
+                                    class="pink">B.Pharma + MBA from NMIMS.</span></span> A silent promise burned inside
+                            - <span class="linear-color">To create IMPACT.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-6 reverse">
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">The Corporate Life</h2>
+                        <p class="discription">
+                            He joined <span class="pink">Cipla</span> - handling cancer marketing and strategy.
+                            <span class="text-block">Life had come full circle - back to a world of pain and loss.
+                            </span>
+                            <span class="text-block">Rich or poor, <span class="pink">cancer didn’t spare
+                                    anyone.</span></span> Everyone fought disease, <span class="linear-color">But few
+                                worked to PREVENT it. </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule d-block d-md-none"
+                            alt="vector-img">
+                        <img src="assets/images/our-story/right-molecule-img.svg"
+                            class="img-fluid molucule d-none d-md-block" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/6.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-6.jpg">
+                                <img src="assets/images/our-story/story/6.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2018</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-7">
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/7.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-7.jpg">
+                                <img src="assets/images/our-story/story/7.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2019</div>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">A Hard Truth</h2>
+                        <p class="discription">
+                            People spent <span class="pink"> lakhs on cure, but ignored prevention.</span> <span
+                                class="text-block">He realized fitness wasn’t enough - it had to start with
+                                health.</span> <span class="linear-color">That sparked the idea of FITNASTIC.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-8 reverse">
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Health Over Comfort</h2>
+                        <p class="discription">
+                            He quit his job. No safety net. <span class="text-block">But he chose <span
+                                    class="pink">purpose over paycheck</span></span> <span class="linear-color">HEALTH
+                                over Fitness </span> became his mission
+                        </p>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule d-block d-md-none"
+                            alt="vector-img">
+                        <img src="assets/images/our-story/right-molecule-img.svg"
+                            class="img-fluid molucule d-none d-md-block" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/8.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-8.jpg">
+                                <img src="assets/images/our-story/story/8.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2019</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-9">
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/9.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-9.jpg">
+                                <img src="assets/images/our-story/story/9.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year double">2019-<br />2021</div>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Starting From Zero</h2>
+                        <p class="discription">
+                            With no family business, he <span class="pink">taught piano to kids.</span> <span
+                                class="text-block">Each class funded his dream.</span> <span class="linear-color">The
+                                VISION never left his heart.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-10 reverse">
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Fitnastic Is Born</h2>
+                        <p class="discription">
+                            In 2022, he launched Fitnastic. <span class="text-block">Not just a fitness app - <span
+                                    class="pink">a preventive health movement.</span> </span> <span
+                                class="linear-color">Backed by BELIEF. Backed by IIT BOMBAY RESEARCH.</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule d-block d-md-none"
+                            alt="vector-img">
+                        <img src="assets/images/our-story/right-molecule-img.svg"
+                            class="img-fluid molucule d-none d-md-block" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/10.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-10.jpg">
+                                <img src="assets/images/our-story/story/10.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year">2022</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bs-story-card card-11">
+                <div class="leftBox">
+                    <div class="vector-box">
+                        <img src="assets/images/our-story/molecul-img.svg" class="img-fluid molucule" alt="vector-img">
+                        <div class="main-img">
+                            <!-- <img src="assets/images/our-story/story/11.jpg" class="img-fluid" alt="story-img"> -->
+                                <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/our-story/story/mob-11.jpg">
+                                <img src="assets/images/our-story/story/11.jpg" class="img-fluid" alt="story-img">
+                            </picture>
+                        </div>
+                        <div class="year double">Since<br />2022</div>
+                    </div>
+                </div>
+                <div class="green-box-super-shyft flag"><img src="assets/images/our-story/flip-logo.gif"
+                        class="img-fluid" alt="green super-shyft"></div>
+                <div class="rightBox">
+                    <div class="content-wrapper">
+                        <h2 class="title">Just The Beginning</h2>
+                        <p class="discription">
+                            What started with one story became a community <span class="text-block">Fitnastic now <span
+                                    class="pink"> inspires thousands.</span></span> Because <span
+                                class="linear-color">REAL WEALTH begins with GOOD HEALTH.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- footer start -->
+    <?php include_once 'view/footer.html' ?>
+    <!-- footer end -->
+
+    <!-- js group start -->
+    <?php include_once 'view/include_js.html' ?>
+    <!-- js group end -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+
+
+    <script>
+        // Detect mobile
+        const isMobile = window.innerWidth <= 768;
+
+        // Load animation
+        const animation = lottie.loadAnimation({
+            container: document.getElementById("lottie-container"),
+            renderer: "svg",
+            loop: false,
+            autoplay: false,
+            path: isMobile
+                ? "assets/json/our-story-new.json"
+                : "assets/json/our-story-new-mob.json" 
+        });
+
+        window.addEventListener("scroll", () => {
+            const section = document.querySelector(".contact-section");
+            const rect = section.getBoundingClientRect();
+
+            const sectionHeight = section.offsetHeight;
+            const windowHeight = window.innerHeight;
+
+            // Define scroll start/end points
+            const scrollStart = windowHeight;
+            const scrollEnd = -sectionHeight + windowHeight;
+
+            const totalScroll = scrollStart - scrollEnd;
+            const scrollPos = scrollStart - rect.top;
+
+            // Clamp progress between 0 and 1
+            let scrollProgress = scrollPos / totalScroll;
+            scrollProgress = Math.min(Math.max(scrollProgress, 0), 1);
+
+            // Go to animation frame
+            const frame = scrollProgress * animation.totalFrames;
+            animation.goToAndStop(frame, true);
+
+            // Optional: Reset to first frame when scroll is at top
+            if (window.scrollY === 0) {
+                animation.goToAndStop(0, true);
+            }
+        });
+    </script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".lyt-section.typ-lines", // main scrollable section
+                start: "top top",
+                end: "bottom bottom",
+                scrub: true,
+                // markers: true, // remove in production
+            }
+        });
+
+        tl.to(".super-shyft", { x: 0, y: 400, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 800, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 1200, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 1600, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 2000, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 2400, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 2800, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 3200, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 3600, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 4000, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 4400, duration: 1 })
+            .to(".super-shyft", { x: 0, y: 4800, duration: 1 })
+    </script>
+
+    <script>
+
+
+        if (window.innerWidth >= 320) {
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            // ✨ Entry animation for .zic-line
+            gsap.from(".zic-line", {
+                scrollTrigger: {
+                    trigger: ".lyt-section.typ-lines",
+                    start: "top center",
+                    end: "bottom center",
+                    scrub: true,
+                },
+                opacity: 1,
+                y: 20,
+            });
+
+            // ✨ Animate story cards (existing code — kept as-is)
+
+            document.querySelectorAll(".bs-story-card").forEach((card, index) => {
+                const leftBox = card.querySelector(".leftBox");
+                const rightBox = card.querySelector(".rightBox");
+                const title = card.querySelector(".title");
+                const description = card.querySelector(".discription");
+
+                const timeline = gsap.timeline({
+
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse",
+                    },
+                });
+
+                if (card.classList.contains("reverse")) {
+                    timeline
+                        .fromTo(leftBox, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" })
+                        .fromTo(rightBox, { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }, "-=0.5")
+                        .fromTo([title, description], { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.2 }, "-=0.3");
+                } else {
+                    timeline
+                        .fromTo(leftBox, { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" })
+                        .fromTo(rightBox, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }, "-=0.5")
+                        .fromTo([title, description], { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.2 }, "-=0.3");
+                }
+            });
+        }
+
+    </script>
+    <script>
+        const flagObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('flag-up');
+                } else {
+                    entry.target.classList.remove('flag-up');
+                }
+            });
+        }, {
+            rootMargin: "0px 0px -50% 0px"
+        });
+
+        const squares = document.querySelectorAll('.flag');
+        squares.forEach((element) => flagObserver.observe(element));
+    </script>
+
+    <script>
+        if (window.innerWidth >= 767) {
+            const lineObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('lineAdd');
+                    } else {
+                        entry.target.classList.remove('lineAdd');
+                    }
+                });
+            }, {
+                rootMargin: "0px 0px -50% 0px"
+            });
+
+            const cards = document.querySelectorAll('.bs-story-card .leftBox');
+            cards.forEach((element) => lineObserver.observe(element));
+        }
+
+    </script>
+
+
+</body>
+
+</html>

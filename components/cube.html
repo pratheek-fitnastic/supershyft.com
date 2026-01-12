@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supershyft AI Cube – Polished Bright Red Glow</title>
+    <style>
+        /* * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: radial-gradient(circle at center, #0a0a2a 0%, #000010 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1500px;
+      overflow: hidden;
+      position: relative;
+    } */
+
+        /* OUTER BEAM */
+        .beam-outer {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 500px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(0, 180, 255, 0.3) 0%, rgba(0, 180, 255, 0.05) 60%, transparent 100%);
+            filter: blur(50px);
+            animation: beamPulse 5s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        /* INNER BEAM */
+        .beam-inner {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 380px;
+            height: 400px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(0, 255, 255, 0.7) 0%, rgba(0, 255, 255, 0.1) 50%, transparent 100%);
+            filter: blur(30px);
+            animation: beamPulse 5s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes beamPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* BASE GLOW RING */
+        .beam-ring {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 540px;
+            height: 25px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.7) 0%, rgba(0, 255, 255, 0) 80%);
+            filter: blur(12px);
+            z-index: 2;
+        }
+
+        /* Cube */
+        .cube-container {
+            width: 320px;
+            height: 320px;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            animation: spin3D 22s linear infinite;
+            position: relative;
+            z-index: 3;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: rgba(0, 255, 255, 0.08);
+            box-shadow:
+                inset 0 0 100px rgba(0, 255, 255, 0.15),
+                /* subtle inner glow */
+                0 0 70px rgba(0, 255, 255, 0.3);
+            /* better outer edge glow */
+            border-radius: 12px;
+            /* Rounded */
+            border: 3px solid #00ffff;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+        }
+
+        /* ICON CIRCLE → pure neon glow ring */
+        .icon-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: none;
+            box-shadow:
+                0 0 50px rgba(0, 255, 255, 0.9),
+                0 0 100px rgba(0, 255, 255, 0.5),
+                inset 0 0 15px rgba(0, 255, 255, 0.3);
+            /* slight inner glow */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* BIG ICON → Polished BRIGHT RED GLOW */
+        .icon-circle img {
+            width: 250px;
+            height: 180px;
+            filter:
+                drop-shadow(0 0 40px rgba(255, 0, 0, 1)) drop-shadow(0 0 80px rgba(255, 0, 0, 0.7));
+            transition: filter 0.3s ease;
+            /* optional: for smooth on hover */
+        }
+
+        /* Face Positions */
+        .front {
+            transform: rotateY(0deg) translateZ(160px);
+        }
+
+        .back {
+            transform: rotateY(180deg) translateZ(160px);
+        }
+
+        .right {
+            transform: rotateY(90deg) translateZ(160px);
+        }
+
+        .left {
+            transform: rotateY(-90deg) translateZ(160px);
+        }
+
+        .top {
+            transform: rotateX(90deg) translateZ(160px);
+        }
+
+        .bottom {
+            transform: rotateX(-90deg) translateZ(160px);
+        }
+
+        @keyframes spin3D {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+
+            100% {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        @media (max-width:767px) {
+            .cube-face {
+                box-shadow: none;
+                backdrop-filter: none;
+
+                .icon-circle {
+                    /* box-shadow: none; */
+
+                    img {
+                        filter: none;
+                    }
+                }
+            }
+
+            .beam-outer,
+            .beam-inner,
+            .beam-ring {
+                bottom: -120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+   <div class="parent-container">
+     <!-- OUTER BEAM -->
+    <div class="beam-outer"></div>
+    <!-- INNER BEAM -->
+    <div class="beam-inner"></div>
+    <!-- BASE GLOW RING -->
+    <div class="beam-ring"></div>
+
+    <!-- Cube -->
+    <div class="cube-container">
+        <div class="cube-face front">
+            <div class="icon-circle">
+                <img src="./assets/images/technology/cube/1.svg" alt="Icon 1" />
+            </div>
+        </div>
+        <div class="cube-face back">
+            <div class="icon-circle">
+                <img src="./assets/images/technology/cube/2.svg" alt="Icon 2" />
+            </div>
+        </div>
+        <div class="cube-face right">
+            <div class="icon-circle">
+                <img src="./assets/images/technology/cube/3.svg" alt="Icon 3" />
+            </div>
+        </div>
+        <div class="cube-face left">
+            <div class="icon-circle">
+                <img src="./assets/images/technology/cube/4.svg" alt="Icon 4" />
+            </div>
+        </div>
+        <div class="cube-face top">
+            <div class="icon-circle">
+                <img src="./assets/images/technology/cube/5.svg" alt="Icon 5" />
+            </div>
+        </div>
+        <div class="cube-face bottom">
+            <div class="icon-circle">
+                <img src="./assets/images/technology/cube/6.svg" alt="Icon 6" />
+            </div>
+        </div>
+    </div>
+   </div>
+
+</body>
+
+</html>

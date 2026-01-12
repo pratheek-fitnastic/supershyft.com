@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animated Card Deck</title>
+    <style>
+        .deck {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            gap: 12px;
+            height: 90vh;
+            /* overflow: hidden; */
+
+        }
+
+        .card {
+            width: 150px;
+            height: 225px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            cursor: pointer;
+            transition: all 0.6s ease var(--delay, 0s);
+            background: none;
+            box-shadow: none;
+            border: none;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .card.center {
+            z-index: 999;
+        }
+
+        .card.center.pulse {
+            z-index: 999;
+            cursor: pointer;
+            box-shadow: 0 0 0 rgba(255, 0, 0, 0.7);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(255, 0, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+            }
+        }
+
+
+
+        .layout-active .card:not(.center) {
+            position: absolute;
+        }
+
+        .layout-active .card.left-1 {
+            transform: translate(-250%, -150%);
+        }
+
+        .layout-active .card.left-2 {
+            transform: translate(-250%, -50%);
+        }
+
+        .layout-active .card.left-3 {
+            transform: translate(-250%, 50%);
+        }
+
+        .layout-active .card.right-1 {
+            transform: translate(150%, -150%);
+        }
+
+        .layout-active .card.right-2 {
+            transform: translate(150%, -50%);
+        }
+
+        .layout-active .card.right-3 {
+            transform: translate(150%, 50%);
+        }
+
+        .layout-active .card.left-4 {
+            transform: translate(-380%, -150%);
+        }
+
+        .layout-active .card.left-5 {
+            transform: translate(-380%, -50%);
+        }
+
+        .layout-active .card.left-6 {
+            transform: translate(-380%, 50%);
+        }
+
+        .layout-active .card.right-4 {
+            transform: translate(280%, -150%);
+        }
+
+        .layout-active .card.right-5 {
+            transform: translate(280%, -50%);
+        }
+
+        .layout-active .card.right-6 {
+            transform: translate(280%, 50%);
+        }
+
+        .card.left-1 {
+            --delay: 0.1s;
+        }
+
+        .card.left-2 {
+            --delay: 0.2s;
+        }
+
+        .card.left-3 {
+            --delay: 0.3s;
+        }
+
+        .card.left-4 {
+            --delay: 0.4s;
+        }
+
+        .card.left-5 {
+            --delay: 0.5s;
+        }
+
+        .card.left-6 {
+            --delay: 0.6s;
+        }
+
+        .card.right-1 {
+            --delay: 0.1s;
+        }
+
+        .card.right-2 {
+            --delay: 0.2s;
+        }
+
+        .card.right-3 {
+            --delay: 0.3s;
+        }
+
+        .card.right-4 {
+            --delay: 0.4s;
+        }
+
+        .card.right-5 {
+            --delay: 0.5s;
+        }
+
+        .card.right-6 {
+            --delay: 0.6s;
+        }
+
+        @media (max-width: 768px) {
+            .deck {
+                height: 900px;
+            }
+
+            .card {
+                width: 100px;
+                height: 152px;
+            }
+
+            .layout-active .card.left-1 {
+                transform: translate(-170%, -300%);
+            }
+
+            .layout-active .card.left-2 {
+                transform: translate(-170%, -200%);
+            }
+
+            .layout-active .card.left-3 {
+                transform: translate(-170%, -100%);
+            }
+
+            .layout-active .card.right-1 {
+                transform: translate(70%, -300%);
+            }
+
+            .layout-active .card.right-2 {
+                transform: translate(70%, -200%);
+            }
+
+            .layout-active .card.right-3 {
+                transform: translate(70%, -100%);
+            }
+
+            .layout-active .card.left-4 {
+                transform: translate(-170%, 0%);
+            }
+
+            .layout-active .card.left-5 {
+                transform: translate(-170%, 100%);
+            }
+
+            .layout-active .card.left-6 {
+                transform: translate(-170%, 200%);
+            }
+
+            .layout-active .card.right-4 {
+                transform: translate(70%, 0%);
+            }
+
+            .layout-active .card.right-5 {
+                transform: translate(70%, 100%);
+            }
+
+            .layout-active .card.right-6 {
+                transform: translate(70%, 200%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="deck" id="deck">
+        <div class="typ-click-heading"><h5 class="clickBtn" id="">Click Here</h5></div>
+        <div class="card left-1" style="--i: 1">
+            <img src="assets/images/technology/cards/webp/red-2.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card left-2" style="--i: 2">
+            <img src="assets/images/technology/cards/webp/red-4.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card left-3" style="--i: 3">
+            <img src="assets/images/technology/cards/webp/red-6.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-1" style="--i: 1">
+            <img src="assets/images/technology/cards/webp/green-1.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-2" style="--i: 2">
+            <img src="assets/images/technology/cards/webp/green-3.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-3" style="--i: 3">
+            <img src="assets/images/technology/cards/webp/green-5.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card left-4" style="--i: 4">
+            <img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card left-5" style="--i: 5">
+            <img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card left-6" style="--i: 6">
+            <img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-4" style="--i: 4">
+            <img src="assets/images/technology/cards/webp/green-2.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-5" style="--i: 5">
+            <img src="assets/images/technology/cards/webp/green-4.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card right-6" style="--i: 6">
+            <img src="assets/images/technology/cards/webp/green-6.png" alt="card-img" class="img-fluid">
+        </div>
+        <div class="card center pulse" id="centerCard">
+            <!-- <img src="assets/images/technology/cards/middle-card.svg" alt="card-img" class="img-fluid"> -->
+            <img src="assets/images/technology/cards/webp/middle-card.png" alt="card-img" class="img-fluid">
+
+            <!-- <a href="javascript::" class="bs-btn">Click Here</a> -->
+        </div>
+    </div>
+
+    <script>
+        const centerCard = document.getElementById("centerCard");
+        const deck = document.getElementById("deck");
+        let activated = false;
+
+        centerCard.addEventListener("click", () => {
+            activated = !activated;
+            deck.classList.toggle("layout-active", activated);
+        });
+    </script>
+</body>
+
+</html>
