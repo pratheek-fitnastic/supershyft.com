@@ -52,6 +52,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-W8GMX6J7');</script>
     <!-- End Google Tag Manager -->
+
+    <style>
+        @media (max-width: 768px) {
+            /* Hide logos 13 and 16 only on mobile */
+            .typ-logo-sec .bs-grid-box.typ-logo .bs-logo-box:nth-child(13),
+            .typ-logo-sec .bs-grid-box.typ-logo .bs-logo-box:nth-child(16) {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -765,6 +775,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
                             <div class="logo-wrapper">
                                 <img src="assets/images/logos/12.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/13.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/14.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/15.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/16.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/17.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/18.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/19.png" class="img-fluid" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="bs-logo-box" data-aos="fade" data-aos-delay="300">
+                            <div class="logo-wrapper">
+                                <img src="assets/images/logos/20.png" class="img-fluid" alt="logo">
                             </div>
                         </div>
                     </div>

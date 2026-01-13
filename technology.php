@@ -49,20 +49,34 @@
         .swiper-button-next.driven-approach-next {
             cursor: pointer;
             transition: all 0.3s ease;
-            color: #cc203b;
+            color: white;
+            background-color: #cc203b;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
         }
 
         .arrow-icon {
-            width: 70px !important;
-            height: 70px !important;
-            color: #cc203b;
+            width: 50px !important;
+            height: 50px !important;
+            color: white;
             transition: all 0.3s ease;
+        }
+
+        .swiper-button-prev.driven-approach-prev:hover,
+        .swiper-button-next.driven-approach-next:hover {
+            background-color: #ff2d4a;
+            transform: scale(1.1);
         }
 
         .swiper-button-prev.driven-approach-prev:hover .arrow-icon,
         .swiper-button-next.driven-approach-next:hover .arrow-icon {
-            color: #ff2d4a;
-            transform: scale(1.2);
+            color: white;
+            transform: scale(1.15);
         }
 
         .swiper-button-prev.driven-approach-prev .arrow-icon,
@@ -385,8 +399,8 @@
                     </div>
                 </div>
                 <div class="bs-grid typ-cards typ-cards-1">
-                    <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">Bio AI</button>
-                    <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5">Regular AI</button>
+                    <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">SuperShyft Bio AI</button>
+                    <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5">Other AI</button>
                 </div>
                 <?php include_once 'components/card-animation.html' ?>
             </div>
