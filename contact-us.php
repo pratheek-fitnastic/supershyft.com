@@ -41,6 +41,7 @@
   <?php include_once 'view/header.html'; ?>
   <!-- header end -->
 
+  <div class="contact-page-wrapper">
   <main>
     <section class="contact-section-page space-top">
 
@@ -148,10 +149,43 @@
     </section>
   </main>
 
-
   <!-- footer start -->
-  <?php include_once 'view/footer.html' ?>
+  <footer class="bs-footer-contact">
+    <div class="container">
+        <div class="top-footer">
+            <div class="logo">
+                <a href="index.php">
+                    <img src="assets/images/footer-logo.png" class="img-fluid" alt="footer-logo">
+                </a>
+            </div>
+            <ul class="list">
+                <li><a href="index.php">Home</a></li>
+                <li><a href="technology.php">Our Tech</a></li>
+                <li><a href="our-story.php">Our Story</a></li>
+                <li><a href="contact-us.php">Contact us</a></li>
+            </ul>
+            <div class="social-media">
+                <p>Follow us</p>
+                <a href="https://www.instagram.com/supershyft?igsh=bjFlZzZsbDdhaTdy" target="_blank"><span
+                        class="icon icon-insta"></span></a>
+                <a href="https://www.linkedin.com/company/fitnasticindia/" target="_blank"><span
+                        class="icon icon-linkdin"></span></a>
+            </div>
+        </div>
+        <div class="d-lg-flex d-md-flex justify-content-between">
+            <div class="copywrite">
+                © 2025 Supershyft. All rights reserved.
+            </div>
+            <div class="copywrite copywrite-new">
+              Developed By
+            <a href="https://creativewebo.com/" target="_blank">CreativeWebo Pvt. Ltd.</a>
+            </div>
+        </div>
+
+    </div>
+</footer>
   <!-- footer end -->
+  </div>
 
   <!-- js group start -->
   <?php include_once 'view/include_js.html' ?>

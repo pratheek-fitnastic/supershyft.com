@@ -12,8 +12,20 @@ html, body {
   font-family: 'DM Sans', sans-serif;
 }
 
+/* Wrapper for entire contact page with single background */
+.contact-page-wrapper {
+  background: url('../images/bg-contact.jpg') center top / cover no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.contact-section-page {
+  background: none;
+  min-height: auto;
+}
+
 .contact-section {
-  background: url('../images/bg-contact.jpg') center center / cover no-repeat;
+  background: none;
   background-position: center left;
   padding: 30px 0px;
   display: flex;
@@ -252,9 +264,18 @@ z-index: 1;                  /* keep behind badge */
   .mobile-image {
     display: block; /* Show the mobile image on mobile */
   }
+  .contact-page-wrapper {
+    background: url('../images/bg\ mobile.png') center top / cover no-repeat;
+    background-attachment: scroll;
+  }
+  
+  .contact-section-page {
+    background: none;
+  }
+  
   .contact-section {
-  padding: 30px 10px;
-    background: url('../images/bg\ mobile.png');
+    padding: 30px 10px;
+    background: none;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -510,4 +531,163 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* Contact Page Footer with integrated background */
+.bs-footer-contact {
+  background: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.bs-footer-contact .container {
+  background: none;
+}
+
+.bs-footer-contact .top-footer {
+  padding: 43px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
+}
+
+.bs-footer-contact .top-footer .logo {
+  max-width: 176px;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .logo {
+    max-width: 115px;
+  }
+}
+
+.bs-footer-contact .top-footer .list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-gap: 56px;
+  gap: 56px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media screen and (max-width: 991px) {
+  .bs-footer-contact .top-footer .list {
+    grid-gap: 25px;
+    gap: 25px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .list {
+    display: none;
+  }
+}
+
+.bs-footer-contact .top-footer .list li a {
+  color: #fff;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.bs-footer-contact .top-footer .list li a:hover {
+  color: #FA3A58;
+}
+
+.bs-footer-contact .top-footer .social-media {
+  display: flex;
+  align-items: center;
+  grid-gap: 25px;
+  gap: 25px;
+}
+
+.bs-footer-contact .top-footer .social-media p {
+  color: #fff;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .social-media p {
+    font-size: 14px;
+  }
+}
+
+.bs-footer-contact .top-footer .social-media a {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .social-media a {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.bs-footer-contact .top-footer .social-media a:hover {
+  background: rgba(250, 58, 88, 0.2);
+  border-color: #FA3A58;
+}
+
+.bs-footer-contact .copywrite {
+  color: hsla(0, 0%, 100%, 0.5);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  padding: 36px 0;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .copywrite {
+    font-size: 14px;
+    padding: 20px 0;
+    text-align: center;
+  }
+}
+
+.bs-footer-contact .copywrite a {
+  color: hsla(0, 0%, 100%, 0.5);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.bs-footer-contact .copywrite a:hover {
+  color: #FA3A58;
+}
+
+.bs-footer-contact .copywrite-new {
+  padding-left: 20px;
+}
+
+@media screen and (max-width: 991px) {
+  .bs-footer-contact .copywrite-new {
+    padding-left: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer {
+    flex-direction: column;
+    grid-gap: 30px;
+    gap: 30px;
+    padding: 30px 0;
+  }
 }
