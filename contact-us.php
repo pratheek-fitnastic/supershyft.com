@@ -42,149 +42,181 @@
   <!-- header end -->
 
   <div class="contact-page-wrapper">
-  <main>
-    <section class="contact-section-page space-top">
+    <main>
+      <section class="contact-section-page space-top">
 
-      <!-- Header -->
-      <div class="contact-header">
-        <h1>Prevention starts with a <span>Conversation</span></h1>
-        <p>Every preventive journey needs a trusted companion - let us be yours.</p>
-      </div>
+        <!-- Header -->
+        <div class="contact-header">
+          <h1>Prevention starts with a <span>Conversation</span></h1>
+          <p>Every preventive journey needs a trusted companion - let us be yours.</p>
+        </div>
 
-      <!-- Main Content -->
-      <div class="contact-content">
-        <!-- Left Info Panel -->
-        <div class="contact-info">
-          <div>
-            <h2>Contact Information</h2>
-            <ul>
-              <li>
-                <i class="fas fa-globe"></i>
-                <a href="https://www.supershyft.com" target="_blank" class="contact-link">www.supershyft.com</a>
-              </li>
-
-              <li>
-                <i class="fas fa-phone"></i>
-                <a href="tel:+918209512559" class="contact-link">+91 8209512559</a>
-              </li>
-
-              <li>
-                <i class="fas fa-envelope"></i>
-                <a href="mailto:support@supershyft.com" class="contact-link">support@supershyft.com</a>
-              </li>
-
-              <li>
-                <i class="fas fa-map-marker-alt"></i>
-                <a href="https://www.google.com/maps?q=NMIMS+Mumbai,+2nd+Floor,+V.+L.+Pherozshah+Mehta+Rd,+Vile+Parle+West,+Mumbai,+Maharashtra+400056"
-                  target="_blank" class="contact-link">
-                  NMIMS Mumbai, 2nd Floor, V. L.<br>
-                  Pherozshah Mehta Rd, Vile Parle West,<br>
-                  Mumbai, Maharashtra 400056
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Social Icons -->
-          <div class="social-icons">
-            <p>Connect with us:</p>
+        <!-- Main Content -->
+        <div class="contact-content">
+          <!-- Left Info Panel -->
+          <div class="contact-info">
             <div>
-              <a href="https://www.linkedin.com/company/fitnasticindia/posts/?feedView=all">
-                <img src="./assets/images/icons/LinkedIn.png" alt="Linkedin logo"
-                  onmouseover="this.src='./assets/images/icons/LinkedIn-hover.png'"
-                  onmouseout="this.src='./assets/images/icons/LinkedIn.png'">
-              </a>
-              <a href="https://www.instagram.com/supershyft?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
-                <img src="./assets/images/icons/insta.png" alt="instagram logo"
-                  onmouseover="this.src='./assets/images/icons/insta-hover.png'"
-                  onmouseout="this.src='./assets/images/icons/insta.png'">
-              </a>
+              <h2>Contact Information</h2>
+              <ul>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <g clip-path="url(#clip0_1_55102)">
+                      <path
+                        d="M12 24C8.8174 24 5.76516 22.7357 3.51472 20.4853C1.26428 18.2348 0 15.1826 0 12C0 8.8174 1.26428 5.76516 3.51472 3.51472C5.76516 1.26428 8.8174 0 12 0C15.1826 0 18.2348 1.26428 20.4853 3.51472C22.7357 5.76516 24 8.8174 24 12C24 15.1826 22.7357 18.2348 20.4853 20.4853C18.2348 22.7357 15.1826 24 12 24ZM21.3 14.4C21.7065 12.8258 21.7065 11.1742 21.3 9.6H16.716C16.8265 11.1981 16.8265 12.8019 16.716 14.4H21.3ZM20.316 16.8H16.452C16.2515 18.2465 15.8685 19.6618 15.312 21.012C17.4201 20.2344 19.1901 18.7445 20.316 16.8ZM9.696 14.4H14.304C14.4343 12.8027 14.4343 11.1973 14.304 9.6H9.696C9.5657 11.1973 9.5657 12.8027 9.696 14.4ZM9.996 16.8C10.488 19.68 11.352 21.6 12 21.6C12.648 21.6 13.512 19.68 14.004 16.8H9.996ZM2.7 14.4H7.284C7.17352 12.8019 7.17352 11.1981 7.284 9.6H2.7C2.29355 11.1742 2.29355 12.8258 2.7 14.4ZM3.684 16.8C4.80991 18.7445 6.57994 20.2344 8.688 21.012C8.184 19.86 7.8 18.42 7.548 16.8H3.684ZM20.316 7.2C19.1901 5.25553 17.4201 3.76564 15.312 2.988C15.816 4.14 16.2 5.58 16.452 7.2H20.316ZM9.996 7.2H14.004C13.512 4.32 12.648 2.4 12 2.4C11.352 2.4 10.488 4.32 9.996 7.2ZM3.684 7.2H7.548C7.788 5.58 8.184 4.14 8.688 2.988C6.57994 3.76564 4.80991 5.25553 3.684 7.2Z"
+                        fill="white" />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_1_55102">
+                        <rect width="24" height="24" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <a href="https://www.supershyft.com" target="_blank" class="contact-link">www.supershyft.com</a>
+                </li>
+
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M20.0002 10.999H22.0002C22.0002 5.869 18.1272 2 12.9902 2V4C17.0522 4 20.0002 6.943 20.0002 10.999Z"
+                      fill="white" />
+                    <path
+                      d="M13.0003 8.00024C15.1033 8.00024 16.0003 8.89724 16.0003 11.0002H18.0003C18.0003 7.77524 16.2253 6.00024 13.0003 6.00024V8.00024ZM16.4223 13.4432C16.2301 13.2686 15.9776 13.1754 15.7181 13.1835C15.4585 13.1915 15.2123 13.3001 15.0313 13.4862L12.6383 15.9472C12.0623 15.8372 10.9043 15.4762 9.71228 14.2872C8.52028 13.0942 8.15928 11.9332 8.05228 11.3612L10.5113 8.96724C10.6977 8.78637 10.8064 8.54006 10.8144 8.28045C10.8225 8.02083 10.7292 7.76828 10.5543 7.57624L6.85928 3.51324C6.68432 3.3206 6.44116 3.20374 6.18143 3.1875C5.92171 3.17125 5.66588 3.2569 5.46828 3.42624L3.29828 5.28724C3.12539 5.46075 3.0222 5.69169 3.00828 5.93624C2.99328 6.18624 2.70728 12.1082 7.29928 16.7022C11.3053 20.7072 16.3233 21.0002 17.7053 21.0002C17.9073 21.0002 18.0313 20.9942 18.0643 20.9922C18.3088 20.9786 18.5396 20.8749 18.7123 20.7012L20.5723 18.5302C20.7417 18.3328 20.8276 18.077 20.8115 17.8173C20.7954 17.5576 20.6788 17.3143 20.4863 17.1392L16.4223 13.4432Z"
+                      fill="white" />
+                  </svg>
+                  <a href="tel:+918209512559" class="contact-link">+91 8209512559</a>
+                </li>
+
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 4H2V20H22V4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="white" />
+                  </svg>
+                  <a href="mailto:support@supershyft.com" class="contact-link">support@supershyft.com</a>
+                </li>
+
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 1.5C9.81276 1.50258 7.71584 2.3726 6.16923 3.91922C4.62261 5.46584 3.75259 7.56276 3.75001 9.75C3.74739 11.5374 4.33124 13.2763 5.41201 14.7C5.41201 14.7 5.63701 14.9963 5.67376 15.039L12 22.5L18.3293 15.0353C18.3623 14.9955 18.588 14.7 18.588 14.7L18.5888 14.6978C19.669 13.2747 20.2526 11.5366 20.25 9.75C20.2474 7.56276 19.3774 5.46584 17.8308 3.91922C16.2842 2.3726 14.1873 1.50258 12 1.5ZM12 12.75C11.4067 12.75 10.8266 12.5741 10.3333 12.2444C9.83995 11.9148 9.45543 11.4462 9.22837 10.8981C9.00131 10.3499 8.9419 9.74667 9.05765 9.16473C9.17341 8.58279 9.45913 8.04824 9.87869 7.62868C10.2982 7.20912 10.8328 6.9234 11.4147 6.80764C11.9967 6.69189 12.5999 6.7513 13.1481 6.97836C13.6962 7.20542 14.1648 7.58994 14.4944 8.08329C14.8241 8.57664 15 9.15666 15 9.75C14.999 10.5453 14.6826 11.3078 14.1202 11.8702C13.5578 12.4326 12.7954 12.749 12 12.75Z"
+                      fill="white" />
+                  </svg>
+                  <a href="https://www.google.com/maps?q=NMIMS+Mumbai,+2nd+Floor,+V.+L.+Pherozshah+Mehta+Rd,+Vile+Parle+West,+Mumbai,+Maharashtra+400056"
+                    target="_blank" class="contact-link">
+                    NMIMS Mumbai, 2nd Floor, V. L.<br>
+                    Pherozshah Mehta Rd, Vile Parle West,<br>
+                    Mumbai, Maharashtra 400056
+                  </a>
+                </li>
+              </ul>
             </div>
-          </div>
-        </div>
 
-        <!-- Bot Image (Between Panels) -->
-        <div class="bot-floating">
-          <img src="./assets/images/icons/bot-image.png" alt="Bot" class="desktop-image" />
-          <img src="./assets/images/icons/Group 1000001778.png" alt="Bot" class="mobile-image" />
-
-          <!-- WhatsApp floating badge -->
-          <a href="https://wa.me/917021004437" target="_blank" class="whatsapp-badge" id="whatsup">
-            <img src="./assets/images/icons/whatsapp-icon.png" alt="whatsapp-badge">
-          </a>
-        </div>
-
-        <!-- Right Contact Form -->
-        <form class="contact-form" id="contactForm"
-          action="https://script.google.com/macros/s/AKfycbwVM9Equhw-WWfpL8WZBfmcne1d04zt8KSZWAztKSxlsx_Gy2ANfJv6PGS0hhbqtpyuzQ/exec"
-          method="post" target="hidden_iframe" onsubmit="submitted=true;">
-
-          <input type="text" placeholder="First Name" name="firstName" id="firstName" pattern="[A-Za-z]{2,30}"
-            title="Only alphabets allowed (2–30 characters)" required />
-
-          <input type="text" placeholder="Last Name" name="lastName" id="lastName" pattern="[A-Za-z]{2,30}"
-            title="Only alphabets allowed (2–30 characters)" />
-
-          <input type="tel" placeholder="Phone Number" name="phone" id="phone" pattern="[0-9]{10}"
-            title="Enter a valid 10-digit phone number" required />
-
-          <input type="email" placeholder="Email" name="email" id="email" required />
-          <label for="message">Message
-            <textarea name="message" placeholder="Write your message..." rows="4" required></textarea></label>
-
-          <button type="submit">Send Message</button>
-        </form>
-
-        <iframe name="hidden_iframe" style="display:none;"></iframe>
-
-        <!-- Success Popup -->
-        <div id="successPopup" class="popup-overlay">
-          <div class="popup-box">
-            <h2>Success!</h2>
-            <p>Your form has been submitted successfully.</p>
-            <button id="closePopup">OK</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- footer start -->
-  <footer class="bs-footer-contact">
-    <div class="container">
-        <div class="top-footer">
-            <div class="logo">
-                <a href="index.php">
-                    <img src="assets/images/footer-logo.png" class="img-fluid" alt="footer-logo">
+            <!-- Social Icons -->
+            <div class="social-icons">
+              <p>Connect with us:</p>
+              <div>
+                <a href="https://www.linkedin.com/company/fitnasticindia/posts/?feedView=all">
+                  <img src="./assets/images/icons/LinkedIn.png" alt="Linkedin logo"
+                    onmouseover="this.src='./assets/images/icons/LinkedIn-hover.png'"
+                    onmouseout="this.src='./assets/images/icons/LinkedIn.png'">
                 </a>
+                <a
+                  href="https://www.instagram.com/supershyft?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
+                  <img src="./assets/images/icons/insta.png" alt="instagram logo"
+                    onmouseover="this.src='./assets/images/icons/insta-hover.png'"
+                    onmouseout="this.src='./assets/images/icons/insta.png'">
+                </a>
+              </div>
             </div>
-            <ul class="list">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="technology.php">Our Tech</a></li>
-                <li><a href="our-story.php">Our Story</a></li>
-                <li><a href="contact-us.php">Contact us</a></li>
-            </ul>
-            <div class="social-media">
-                <p>Follow us</p>
-                <a href="https://www.instagram.com/supershyft?igsh=bjFlZzZsbDdhaTdy" target="_blank"><span
-                        class="icon icon-insta"></span></a>
-                <a href="https://www.linkedin.com/company/fitnasticindia/" target="_blank"><span
-                        class="icon icon-linkdin"></span></a>
+          </div>
+
+          <!-- Bot Image (Between Panels) -->
+          <div class="bot-floating">
+            <img src="./assets/images/icons/bot-image.png" alt="Bot" class="desktop-image" />
+            <img src="./assets/images/icons/Group 1000001778.png" alt="Bot" class="mobile-image" />
+
+            <!-- WhatsApp floating badge -->
+            <a href="https://wa.me/917021004437" target="_blank" class="whatsapp-badge" id="whatsup">
+              <img src="./assets/images/icons/whatsapp-icon.png" alt="whatsapp-badge">
+            </a>
+          </div>
+
+          <!-- Right Contact Form -->
+          <form class="contact-form" id="contactForm"
+            action="https://script.google.com/macros/s/AKfycbwVM9Equhw-WWfpL8WZBfmcne1d04zt8KSZWAztKSxlsx_Gy2ANfJv6PGS0hhbqtpyuzQ/exec"
+            method="post" target="hidden_iframe" onsubmit="submitted=true;">
+
+            <label for="message">First Name
+              <input type="text" name="firstName" id="firstName" pattern="[A-Za-z]{2,30}"
+                title="Only alphabets allowed (2–30 characters)" required />
+            </label>
+            <label for="message">Last Name
+              <input type="text" name="lastName" id="lastName" pattern="[A-Za-z]{2,30}"
+                title="Only alphabets allowed (2–30 characters)" />
+            </label>
+            <label for="message">Phone Number
+              <input type="tel" name="phone" id="phone" pattern="[0-9]{10}" title="Enter a valid 10-digit phone number"
+                required />
+            </label>
+
+            <label for="message">Email
+              <input type="email" name="email" id="email" required />
+            </label>
+
+            <label for="message">Message
+              <textarea name="message" placeholder="Write your message..." rows="4" required></textarea></label>
+
+            <button type="submit">Send Message</button>
+          </form>
+
+          <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+          <!-- Success Popup -->
+          <div id="successPopup" class="popup-overlay">
+            <div class="popup-box">
+              <h2>Success!</h2>
+              <p>Your form has been submitted successfully.</p>
+              <button id="closePopup">OK</button>
             </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- footer start -->
+    <footer class="bs-footer-contact">
+      <div class="container">
+        <div class="top-footer">
+          <div class="logo">
+            <a href="index.php">
+              <img src="assets/images/footer-logo.png" class="img-fluid" alt="footer-logo">
+            </a>
+          </div>
+          <ul class="list">
+            <li><a href="index.php">Home</a></li>
+            <li><a href="technology.php">Our Tech</a></li>
+            <li><a href="our-story.php">Our Story</a></li>
+            <li><a href="contact-us.php">Contact us</a></li>
+          </ul>
+          <div class="social-media">
+            <p>Follow us</p>
+            <a href="https://www.instagram.com/supershyft?igsh=bjFlZzZsbDdhaTdy" target="_blank"><span
+                class="icon icon-insta"></span></a>
+            <a href="https://www.linkedin.com/company/fitnasticindia/" target="_blank"><span
+                class="icon icon-linkdin"></span></a>
+          </div>
         </div>
         <div class="d-lg-flex d-md-flex justify-content-between">
-            <div class="copywrite">
-                © 2025 Supershyft. All rights reserved.
-            </div>
-            <div class="copywrite copywrite-new">
-              Developed By
+          <div class="copywrite">
+            © 2025 Supershyft. All rights reserved.
+          </div>
+          <div class="copywrite copywrite-new">
+            Developed By
             <a href="https://creativewebo.com/" target="_blank">CreativeWebo Pvt. Ltd.</a>
-            </div>
+          </div>
         </div>
 
-    </div>
-</footer>
-  <!-- footer end -->
+      </div>
+    </footer>
+    <!-- footer end -->
   </div>
 
   <!-- js group start -->
@@ -198,45 +230,45 @@
 </body>
 
 <script>
-    const nameRegex = /^[A-Za-z]{2,30}$/;
-    const phoneRegex = /^[0-9]{10}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const nameRegex = /^[A-Za-z]{2,30}$/;
+  const phoneRegex = /^[0-9]{10}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    function liveValidate(input, regex, message, optional = false) {
-      input.addEventListener("input", function() {
-        const value = input.value.trim();
-        if (optional && value === "") {
-          input.setCustomValidity("");
-        } else if (!regex.test(value)) {
-          input.setCustomValidity(message);
-        } else {
-          input.setCustomValidity("");
-        }
-        input.reportValidity();
-      });
-    }
-
-    // Live validation
-    liveValidate(document.getElementById("firstName"), nameRegex, "Only alphabets allowed (2–30 characters).");
-    liveValidate(document.getElementById("lastName"), nameRegex, "Only alphabets allowed (2–30 characters).", true);
-    liveValidate(document.getElementById("phone"), phoneRegex, "Phone number must be exactly 10 digits.");
-    liveValidate(document.getElementById("email"), emailRegex, "Please enter a valid email address.");
-
-    // Popup handling
-    const form = document.getElementById("contactForm");
-    const popup = document.getElementById("successPopup");
-    const closeBtn = document.getElementById("closePopup");
-
-    form.addEventListener("submit", function() {
-      setTimeout(() => {
-        popup.style.display = "flex";
-        form.reset();
-      }, 500);
+  function liveValidate(input, regex, message, optional = false) {
+    input.addEventListener("input", function () {
+      const value = input.value.trim();
+      if (optional && value === "") {
+        input.setCustomValidity("");
+      } else if (!regex.test(value)) {
+        input.setCustomValidity(message);
+      } else {
+        input.setCustomValidity("");
+      }
+      input.reportValidity();
     });
+  }
 
-    closeBtn.addEventListener("click", function() {
-      popup.style.display = "none";
-    });
-  </script>
+  // Live validation
+  liveValidate(document.getElementById("firstName"), nameRegex, "Only alphabets allowed (2–30 characters).");
+  liveValidate(document.getElementById("lastName"), nameRegex, "Only alphabets allowed (2–30 characters).", true);
+  liveValidate(document.getElementById("phone"), phoneRegex, "Phone number must be exactly 10 digits.");
+  liveValidate(document.getElementById("email"), emailRegex, "Please enter a valid email address.");
+
+  // Popup handling
+  const form = document.getElementById("contactForm");
+  const popup = document.getElementById("successPopup");
+  const closeBtn = document.getElementById("closePopup");
+
+  form.addEventListener("submit", function () {
+    setTimeout(() => {
+      popup.style.display = "flex";
+      form.reset();
+    }, 500);
+  });
+
+  closeBtn.addEventListener("click", function () {
+    popup.style.display = "none";
+  });
+</script>
 
 </html>

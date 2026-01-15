@@ -7,7 +7,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-family: 'DM Sans', sans-serif;
 }
@@ -41,11 +42,6 @@ html, body {
   justify-content: space-between;
   align-content: center;
   align-items: center;
-}
-
-.logo {
-  width: 72px;
-  height: 72px;
 }
 
 .nav-links {
@@ -119,8 +115,15 @@ html, body {
 }
 
 .contact-header h1 {
-  font-size: 50px;
-  color: white;
+  color: #FFF;
+  text-align: center;
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  font-family: "DM Sans";
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-bottom: 16px;
 }
 
 .contact-header h1 span {
@@ -132,9 +135,13 @@ html, body {
 }
 
 .contact-header p {
-  color: #B3B3B3;
+  color: var(--Neutral-Black-300, #B3B3B3);
+  text-align: center;
   font-family: 'Sora', sans-serif;
   font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 /* Main Layout */
@@ -167,7 +174,7 @@ html, body {
   align-items: left;
   position: relative;
   margin: -10px;
-  
+
 }
 
 .contact-info h2 {
@@ -179,24 +186,21 @@ html, body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 40px;
   font-size: 14px;
 
 }
 
 .contact-info li {
-  display: flex;
-  gap: 10px;
+  display: inline-flex;
   align-items: flex-start;
-  line-height: 1.4;
-  margin-bottom: 20px;
-
+  gap: 25px;
 }
 
-.contact-info li img {
+.contact-info li svg {
   width: 18px;
   height: 18px;
-  margin-top: 3px;
+  aspect-ratio: 1/1;
 }
 
 .social-icons {
@@ -207,8 +211,21 @@ html, body {
   gap: 16px;
   color: wheat;
 }
+
 .social-icons p {
-color:white;
+  color: white;
+}
+
+.social-icons div {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.social-icons div img {
+  width: 40px;
+  height: 40px;
+  aspect-ratio: 1/1;
 }
 
 .social-icons img:hover {
@@ -218,17 +235,19 @@ color:white;
 
 /* Bot Image */
 .bot-floating {
-position: absolute;
-    left: 460px ;  /* Adjust horizontal position */
-top: 50%;
-transform: translateY(-50%);
-width: 271px;
-height: 229px;
-border: 24px solid white;
-border-radius: 16px;
-background-color: rgb(255, 255, 255);
-box-shadow: 0 8px 20px hwb(0 0% 100% / 0.149);
-z-index: 1;                  /* keep behind badge */
+  position: absolute;
+  left: 460px;
+  /* Adjust horizontal position */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 271px;
+  height: 229px;
+  border: 24px solid white;
+  border-radius: 16px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 8px 20px hwb(0 0% 100% / 0.149);
+  z-index: 1;
+  /* keep behind badge */
 }
 
 
@@ -237,69 +256,95 @@ z-index: 1;                  /* keep behind badge */
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
-  
+
 }
+
 @media (max-width: 1000px) {
   .bot-floating {
-    background: none !important;   /* remove any background */
-    padding: 0 !important;         /* remove padding */
-    border: none !important;       /* remove border */
-    box-shadow: none !important;   /* remove shadow if any */
+    background: none !important;
+    /* remove any background */
+    padding: 0 !important;
+    /* remove padding */
+    border: none !important;
+    /* remove border */
+    box-shadow: none !important;
+    /* remove shadow if any */
   }
 
   .bot-floating img {
-    border-radius: 0 !important;   /* remove rounded corners if needed */
+    border-radius: 0 !important;
+    /* remove rounded corners if needed */
   }
 }
+
 .mobile-image {
-  display: none; /* Initially hide the mobile image on larger screens */
+  display: none;
+  /* Initially hide the mobile image on larger screens */
 }
 
 /* Styles for screens up to 768px wide (common breakpoint for mobile devices) */
 @media screen and (max-width: 768px) {
   .desktop-image {
-    display: none; /* Hide the desktop image on mobile */
+    display: none;
+    /* Hide the desktop image on mobile */
   }
 
   .mobile-image {
-    display: block; /* Show the mobile image on mobile */
+    display: block;
+    /* Show the mobile image on mobile */
   }
+
+  .contact-info ul {
+    gap: 24px;
+  }
+
+  .social-icons{
+    margin-top: 44px;
+  }
+
+  .copywrite.copywrite-new{
+    display: none;
+  }
+
   .contact-page-wrapper {
     background: url('../images/bg\ mobile.png') center top / cover no-repeat;
     background-attachment: scroll;
   }
-  
+
   .contact-section-page {
     background: none;
   }
-  
+
   .contact-section {
     padding: 30px 10px;
     background: none;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-}
-.social-icons {
-  align-items: center;
-}
+  }
+
+  .social-icons {
+    align-items: center;
+  }
 }
 
 
 .whatsapp-badge {
-position: absolute;
-bottom: 0px;
-right: 0;
-transform: translate(50%, 50%); /* Straddle the corner over border */
-width: 60px;
-height: 60px;
-background: white;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-z-index: 9999; /* Ensure it's above all other layers */
+  position: absolute;
+  bottom: 0px;
+  right: 0;
+  transform: translate(50%, 50%);
+  /* Straddle the corner over border */
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  /* Ensure it's above all other layers */
 }
 
 
@@ -307,21 +352,23 @@ z-index: 9999; /* Ensure it's above all other layers */
   width: 40px;
   height: 40px;
 }
+
 .contact-content {
-display: flex;
-background: white;
-border-radius: 12px;
-padding: 40px;
-max-width: 1200px;
-width: 100%;
-position: relative;
-box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-gap: 300px; /* ⬅️ Increased from 40px to 100px to create more space between left and right panel */
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 1200px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  gap: 300px;
+  /* ⬅️ Increased from 40px to 100px to create more space between left and right panel */
 }
 
 /* Right Panel: Form */
 .contact-form {
-  flex:1.2;
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -329,7 +376,7 @@ gap: 300px; /* ⬅️ Increased from 40px to 100px to create more space between 
   width: 34px;
   font-family: 'DM Sans', sans-serif;
   background: linear-gradient(0deg, #FFFFFF, #FFFFFF),
-linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.13%, #CEC9C9 100%);
+    linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.13%, #CEC9C9 100%);
 
 
 }
@@ -337,7 +384,7 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
 .contact-form input,
 .contact-form textarea {
   width: 100%;
-  padding: 14px 1px;
+  padding: 6px 1px;
   border: none;
   border-bottom: 1px solid rgb(189, 179, 179);
   font-size: 14px;
@@ -347,14 +394,18 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
 .contact-form textarea {
   resize: vertical;
 }
-.contact-form label{
-  color: rgba(36, 36, 36,0.68);
+
+.contact-form label {
+  width: 100%;
+  color: rgba(36, 36, 36, 0.68);
 }
+
 .contact-form textarea::placeholder {
- font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .contact-form button {
+  align-self: center;
   padding: 12px 24px;
   font-size: 14px;
   background: linear-gradient(90deg, #CC203B 0%, #FA3A58 100%);
@@ -388,25 +439,16 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
   }
 
   .contact-form {
-    width: 100%;  
-  background: linear-gradient(0deg, #FFFFFF, #FFFFFF),
-linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.13%, #CEC9C9 100%);
-  padding: 20px;
-  border-radius: 10px;
+    width: 100%;
+    background: linear-gradient(0deg, #FFFFFF, #FFFFFF),
+      linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.13%, #CEC9C9 100%);
+    padding: 20px;
+    border-radius: 10px;
   }
 
   .navbar {
     top: 15px;
   }
-
-
-  .logo {
-    width: 36px;
-    height: 36px;
-  }
-
-
-
 
   .nav-links.show {
     display: flex;
@@ -439,45 +481,59 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
     overflow: visible;
     transition: all 0.3s ease-in-out;
   }
-  @media (max-width: 740px){
-  .bot-floating {
-    margin-bottom: -250px; /* Reduce bottom space below bot */
-    margin-top: -250px;    /* Optional: reduce top spacing if needed */
-  }
 
-  .contact-info {
-    width: 95%;
-    margin-top: 0px; /* Reduce top margin above contact info */
-    padding-top: 20px; /* Optional: adjust internal spacing */
-  }
+  @media (max-width: 740px) {
+    .bot-floating {
+      margin-bottom: -250px;
+      /* Reduce bottom space below bot */
+      margin-top: -250px;
+      /* Optional: reduce top spacing if needed */
+    }
 
-  .contact-header {
-    margin-bottom: 20px; /* Reduce gap below header if applicable */
+    .contact-info {
+      width: 95%;
+      margin-top: 0px;
+      /* Reduce top margin above contact info */
+      padding-top: 20px;
+      /* Optional: adjust internal spacing */
+    }
+
+    .contact-header {
+      margin-bottom: 20px;
+      /* Reduce gap below header if applicable */
+    }
+
+    .contact-header h1 {
+      font-size: 23px;
+    }
+
+    .contact-header p {
+      font-size: 11px;
+    }
+
+    .whatsapp-badge {
+      position: fixed;
+      right: 10%;
+      bottom: 100px;
+    }
+
   }
-  .contact-header h1{
-    font-size: 23px;
-  }
-  .contact-header p{
-    font-size: 11px;
-  }
-.whatsapp-badge{
-  position: fixed;
-  right: 10%;
-  bottom: 100px;
 }
 
-}
-}
-  .contact-link {
-  text-decoration: none;   /* remove underline */
-  color: inherit;          /* keep same text color */
-  cursor: pointer;         /* pointer cursor */
+.contact-link {
+  text-decoration: none;
+  /* remove underline */
+  color: inherit;
+  /* keep same text color */
+  cursor: pointer;
+  /* pointer cursor */
   transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
 .contact-link:hover {
 
-  color: #007bff;             /* blue highlight on hover */
+  color: #007bff;
+  /* blue highlight on hover */
 }
 
 /* Popup overlay */
@@ -487,7 +543,7 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: none;
   justify-content: center;
   align-items: center;
@@ -502,7 +558,7 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
   text-align: center;
   max-width: 350px;
   width: 90%;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -528,9 +584,17 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
 .popup-box button:hover {
   background: #CC203B;
 }
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Contact Page Footer with integrated background */
@@ -566,8 +630,8 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
   display: flex;
   align-items: center;
   justify-content: space-between;
-  grid-gap: 56px;
-  gap: 56px;
+  grid-gap: 50px;
+  gap: 50px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -588,89 +652,97 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
 
 .bs-footer-contact .top-footer .list li a {
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   text-decoration: none;
   transition: all 0.3s ease;
+  font-family: "Sora", sans-serif;
 }
 
 .bs-footer-contact .top-footer .list li a:hover {
-  color: #FA3A58;
+  color: #d33851;
 }
 
 .bs-footer-contact .top-footer .social-media {
   display: flex;
   align-items: center;
-  grid-gap: 25px;
-  gap: 25px;
+  grid-gap: 16px;
+  gap: 16px;
 }
 
 .bs-footer-contact .top-footer .social-media p {
   color: #fff;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin: 0;
-}
-
-@media screen and (max-width: 767px) {
-  .bs-footer-contact .top-footer .social-media p {
-    font-size: 14px;
-  }
-}
-
-.bs-footer-contact .top-footer .social-media a {
-  width: 48px;
-  height: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 1px solid hsla(0, 0%, 100%, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
-}
-
-@media screen and (max-width: 767px) {
-  .bs-footer-contact .top-footer .social-media a {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-.bs-footer-contact .top-footer .social-media a:hover {
-  background: rgba(250, 58, 88, 0.2);
-  border-color: #FA3A58;
-}
-
-.bs-footer-contact .copywrite {
-  color: hsla(0, 0%, 100%, 0.5);
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  padding: 36px 0;
+  margin: 0;
+  font-family: "Sora", sans-serif;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .social-media p {
+    color: #FFF;
+    font-family: Sora;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .bs-footer-contact .top-footer .social-media a {
+    width: 24px;
+    height: 24px;
+    aspect-ratio: 1/1;
+  }
+}
+
+.bs-footer-contact .top-footer .social-media a .icon::before {
+  font-size: 30px;
+  color: #fff;
+}
+
+.bs-footer-contact .top-footer .social-media a:hover .icon::before {
+  color: #d33851;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .social-media a .icon::before {
+    font-size: 20px;
+  }
+}
+
+.bs-footer-contact .copywrite {
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  padding: 20px 0;
+  text-align: center;
+  font-family: "Sora", sans-serif;
 }
 
 @media screen and (max-width: 767px) {
   .bs-footer-contact .copywrite {
-    font-size: 14px;
+    font-size: 12px;
     padding: 20px 0;
+    padding-top: 0;
     text-align: center;
   }
 }
 
 .bs-footer-contact .copywrite a {
-  color: hsla(0, 0%, 100%, 0.5);
+  color: #fff;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: ease 0.5s all;
+  font-size: 12px;
+  font-family: "Sora", sans-serif;
 }
 
 .bs-footer-contact .copywrite a:hover {
-  color: #FA3A58;
+  color: #d33851;
 }
 
 .bs-footer-contact .copywrite-new {
@@ -689,5 +761,6 @@ linear-gradient(276.37deg, #CEC9C9 0%, #FFFFFF 25.2%, #FFFFFF 48.5%, #FFFFFF 73.
     grid-gap: 30px;
     gap: 30px;
     padding: 30px 0;
+    padding-bottom: 21px;
   }
 }
