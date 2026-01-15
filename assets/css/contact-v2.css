@@ -646,7 +646,10 @@ body {
 
 @media screen and (max-width: 767px) {
   .bs-footer-contact .top-footer .list {
-    display: none;
+    display: flex;
+    align-items: flex-end;
+    grid-gap: 12px;
+    gap: 12px;
   }
 }
 
@@ -659,6 +662,17 @@ body {
   text-decoration: none;
   transition: all 0.3s ease;
   font-family: "Sora", sans-serif;
+}
+
+@media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .list li a {
+    color: #FFF;
+    font-family: Sora;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
 }
 
 .bs-footer-contact .top-footer .list li a:hover {
@@ -683,6 +697,11 @@ body {
 }
 
 @media screen and (max-width: 767px) {
+  .bs-footer-contact .top-footer .social-media {
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
+  }
   .bs-footer-contact .top-footer .social-media p {
     color: #FFF;
     font-family: Sora;
@@ -757,10 +776,12 @@ body {
 
 @media screen and (max-width: 767px) {
   .bs-footer-contact .top-footer {
-    flex-direction: column;
-    grid-gap: 30px;
-    gap: 30px;
+    flex-direction: row;
+    justify-content: space-between;
+    grid-gap: 20px;
+    gap: 20px;
     padding: 30px 0;
     padding-bottom: 21px;
+    flex-wrap: wrap;
   }
 }
