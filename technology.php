@@ -84,6 +84,35 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
+
+        /* Button margin customization */
+        .bs-grid.typ-cards-1 .bs-btn.typ-bio {
+            margin: 0 0 10px 0;
+            display: block;
+            border-radius: 26843500px !important;
+            border: 1px solid #C4C4C4 !important;
+            background: linear-gradient(90deg, #FFF 0%, #C4C4C4 100%) !important;
+            color: #000 !important;
+        }
+
+        /* Desktop: push green left, red right */
+        .bs-grid.typ-cards-1 .bs-btn.typ-bio:first-child {
+            margin-left: 95px;
+            margin-right: 10px;
+        }
+
+        .bs-grid.typ-cards-1 .bs-btn.typ-bio:last-child {
+            margin-left: 95px;
+            margin-right: 150px;
+        }
+
+        @media screen and (max-width: 767px) {
+            .bs-grid.typ-cards-1 .bs-btn.typ-bio,
+            .bs-grid.typ-cards-1 .bs-btn.typ-bio:first-child,
+            .bs-grid.typ-cards-1 .bs-btn.typ-bio:last-child {
+                margin: 0 auto 10px auto;
+            }
+        }
     </style>
 </head>
 
@@ -350,13 +379,13 @@
                     </div>
                 </div>
                 <div class="bs-grid typ-cards typ-cards-1">
-                    <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5">Regular AI</button>
+                    <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5"></button>
                     <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">Supershyft Biology
                         AI</button>
                 </div>
                 <div class="bs-grid typ-cards">
                     <div class="left-box">
-                        <button class="bs-btn typ-bio typ-red mx-auto d-md-block d-none mb-5">Regular AI</button>
+                        <button class="bs-btn typ-bio typ-red mx-auto d-md-block d-none mb-5"></button>
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="col-one" id="leftColumn">
@@ -398,9 +427,9 @@
 
                     </div>
                 </div>
-                <div class="bs-grid typ-cards typ-cards-1">
-                    <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">SuperShyft Bio AI</button>
-                    <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5">Other AI</button>
+                <div class="bs-grid typ-cards typ-cards-1 d-flex justify-content-between align-items-start gap-3">
+                    <button class="bs-btn typ-bio typ-green d-block mb-5">SuperShyft Bio AI</button>
+                    <button class="bs-btn typ-bio typ-red d-block mb-5">Other AI</button>
                 </div>
                 <?php include_once 'components/card-animation.html' ?>
             </div>
