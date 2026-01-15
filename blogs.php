@@ -108,8 +108,8 @@
             background: url('assets/images/blogs/Rectangle.png') center/cover no-repeat;
             color: #fff;
             text-align: left;
-            width: 100vw;
-            margin-left: calc(-50vw + 50%);
+            width: 100%;
+            margin-left: 0;
         }
 
         .blog-hero::after {
@@ -566,6 +566,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 24px;
             margin-bottom: 40px;
+            width: 80%;
         }
 
         .feature-item {
@@ -573,6 +574,7 @@
             padding: 32px;
             border-radius: 16px;
             text-align: left;
+            width: 100%;
         }
 
         .feature-item-icon {
@@ -661,71 +663,72 @@
             </div>
         </section>
 
-        <section class="blog-section" style="background: url('assets/images/blogs/bg2.png') center/cover no-repeat;"id="precision-insights">
-            <div class="container">
+        <section class="blog-section" style="background: url('assets/images/blogs/bg2.png') center/cover no-repeat; padding: 48px 5%; "id="precision-insights">
+            <div class="container-fluid" style="padding-left: 0; padding-right: 0;">
                 <div class="quote-block">
                     <img src="assets/images/blogs/quote-icon.png" alt="Quote mark" class="quote-icon-img">
                     <p>If you're exploring nutrition options through SuperShyft you may wonder: What's the difference between precision nutrition and personalized nutrition? While the terms are often used interchangeably, they actually represent different philosophies and methods – and understanding those can help you make smarter wellness decisions.</p>
                 </div>
 
-                <h2 style="color: #FFF; font-family: 'DM Sans'; font-size: 40px; font-weight: 600; line-height: 30.026px; margin: 40px 0 20px 0;">What Is Precision Nutrition?</h2>
-                <p style="color: #dbe7e4; font-size: 18px; line-height: 1.6; margin-bottom: 40px;">Precision nutrition is a cutting-edge approach that goes beyond traditional dietary guidelines. Rather than relying on broad, population-level recommendations, precision nutrition uses detailed biological data to tailor nutritional guidance to an individual's unique metabolic and health profile.</p>
+                <h2 style="color: #FFF; font-family: 'DM Sans'; font-size: 40px; font-weight: 600; line-height: 30.026px; margin: 40px 0 20px 0px;">What Is Precision Nutrition?</h2>
+                <p style="color: #dbe7e4; font-size: 18px; line-height: 1.6; margin: 0 0 40px 0;">Precision nutrition is a cutting-edge approach that goes beyond traditional dietary guidelines. Rather than relying on broad, population-level recommendations, precision nutrition uses detailed biological data to tailor nutritional guidance to an individual's unique metabolic and health profile.</p>
 
-                <div class="feature-grid-2x2">
-                    <div class="feature-item">
+                <div class="feature-grid-2x2" style="margin: 0; padding: 0 36px; gap: 36px;">
+                <div class="feature-item" style="display: flex; padding: 32px; flex-direction: column; align-items: flex-start; gap: 1px; flex-shrink: 0; border-radius: 24px; background: linear-gradient(276deg, #CEC9C9 0%, #FFF 25.2%, #FFF 48.5%, #FFF 73.13%, #CEC9C9 100%);">
                         
                         <h3>🔬Biomarker Analysis</h3>
                         <p>Measuring blood biomarkers, hormones, lipids, and other physiological indicators.</p>
                     </div>
-                    <div class="feature-item">
+                    <div class="feature-item" style="display: flex; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; background: linear-gradient(276deg, #CEC9C9 0%, #FFF 25.2%, #FFF 48.5%, #FFF 73.13%, #CEC9C9 100%);">
                         
                         <h3>📊Data-Driven Insights</h3>
                         <p>Using AI and predictive models to interpret your biomarker data.</p>
                     </div>
-                    <div class="feature-item">
+                    <div class="feature-item" style="display: flex; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; background: linear-gradient(276deg, #CEC9C9 0%, #FFF 25.2%, #FFF 48.5%, #FFF 73.13%, #CEC9C9 100%);">
                         
                         <h3>⚡Metabolic Risk Forecasting</h3>
                         <p>Identifying early signs of conditions before they become serious health issues.</p>
                     </div>
-                    <div class="feature-item">
+                    <div class="feature-item" style="display: flex; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; background: linear-gradient(276deg, #CEC9C9 0%, #FFF 25.2%, #FFF 48.5%, #FFF 73.13%, #CEC9C9 100%);">
                         
                         <h3>🎯Lifestyle Integration</h3>
                         <p>Translating biological insights into actionable dietary plans and behavior coaching.</p>
                     </div>
                 </div>
-
+                <br>
+                <br>
                 <div class="banner-quote">
                     "Precision Nutrition's strength lies in its science-first, predictive, and highly individualized approach. It's about knowing – based on your biology – what foods and habits might benefit you most."
                 </div>
             </div>
         </section>
 
-        <section class="blog-section" id="what-is-personalized-nutrition" style="padding: 48px 0;">
-            <div class="container">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: flex-start; margin-bottom: 48px;">
+        <section class="blog-section" id="what-is-personalized-nutrition" style="padding: 48px 5%;">
+            <div class="container-fluid" style="padding-left: 0; padding-right: 0;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: flex-start; margin-bottom: 48px; width: 100%;">
                     <div style="display: flex; flex-direction: column; gap: 32px;">
                         <h2 style="font-family: 'DM Sans'; font-size: 40px; font-weight: 600; line-height: 30.026px; color: #000; margin: 0;">What Is Personalized Nutrition?</h2>
-                        <p style="font-family: 'Sora'; font-size: 18px; font-weight: 400; line-height: 30.026px; color: #000; margin: 0;">Personalized nutrition emphasizes tailoring dietary recommendations around your preferences, goals, and lifestyle. While it often incorporates data such as dietary history or habits, it may not rely as heavily on in-depth biological measurements.</p>
+                        <p style="font-family: 'Sora'; font-size: 18px; font-weight: 400; line-height: 30.026px; color: #000; margin: 0px;">Personalized nutrition emphasizes tailoring dietary recommendations around your preferences, goals, and lifestyle. While it often incorporates data such as dietary history or habits, it may not rely as heavily on in-depth biological measurements.</p>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: center;">
-                        <img src="https://www.figma.com/api/mcp/asset/2400c5cb-7ed9-4a01-a933-49563bb72b3d" alt="Personalized Nutrition" style="width: 555px; height: 311px; border-radius: 10px; object-fit: cover; transform: rotate(180deg);">
+                        <img src="https://www.figma.com/api/mcp/asset/2400c5cb-7ed9-4a01-a933-49563bb72b3d" alt="Personalized Nutrition" style="width: 100%; max-width: 555px; height: auto; aspect-ratio: 555/311; border-radius: 10px; object-fit: cover; transform: rotate(180deg);">
                     </div>
                 </div>
 
-                <div style="display: flex; flex-wrap: wrap; gap: 36px; justify-content: center;">
-                    <div style="display: flex; width: 560px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
+                <div style="display: flex; flex-wrap: wrap; gap: 36px; justify-content: center; margin: 0; padding: 0 36px;">
+                    <div style="display: flex; flex: 1 1 calc(50% - 18px); min-width: 300px; max-width: 700px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-family: 'DM Sans'; font-size: 24px; font-weight: 500; line-height: 28.18px; margin: 0;">🎯  Goal-Oriented Planning</h3>
                         <p style="font-family: 'Sora'; font-size: 16px; font-weight: 400; line-height: 32px; letter-spacing: 0.32px; color: #505050; margin: 0;">Building nutrition plans around what you want to achieve - weight loss, muscle gain, or more energy.</p>
                     </div>
-                    <div style="display: flex; width: 560px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
+                    <div style="display: flex; flex: 1 1 calc(50% - 18px); min-width: 300px; max-width: 700px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-family: 'DM Sans'; font-size: 24px; font-weight: 500; line-height: 28.18px; margin: 0;">🧠  Behavioral Focus</h3>
                         <p style="font-family: 'Sora'; font-size: 16px; font-weight: 400; line-height: 32px; letter-spacing: 0.32px; color: #505050; margin: 0;">Encouraging habit-based changes, from portion control to mindful eating.</p>
                     </div>
-                    <div style="display: flex; width: 560px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
+                    <div style="display: flex; flex: 1 1 calc(50% - 18px); min-width: 300px; max-width: 700px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-family: 'DM Sans'; font-size: 24px; font-weight: 500; line-height: 28.18px; margin: 0;">🔄  Flexibility</h3>
                         <p style="font-family: 'Sora'; font-size: 16px; font-weight: 400; line-height: 32px; letter-spacing: 0.32px; color: #505050; margin: 0;">Your plan adjusts as your circumstances change - travel, stress, work, or family life.</p>
                     </div>
-                    <div style="display: flex; width: 560px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
+                    <div style="display: flex; flex: 1 1 calc(50% - 18px); min-width: 300px; max-width: 700px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-family: 'DM Sans'; font-size: 24px; font-weight: 500; line-height: 28.18px; margin: 0;">👥  Human Coaching</h3>
                         <p style="font-family: 'Sora'; font-size: 16px; font-weight: 400; line-height: 32px; letter-spacing: 0.32px; color: #505050; margin: 0;">Regular interaction with a coach who uses behavior change principles to help you stick to your plan.</p>
                     </div>
@@ -737,18 +740,18 @@
 
         
 
-        <section class="blog-section" id="key-differences" style="background: url('assets/images/blogs/bg2.png') center/cover no-repeat; padding: 48px 85px;">
-            <div style="display: flex; flex-direction: column; gap: 48px;">
+        <section class="blog-section" id="key-differences" style="background: url('assets/images/blogs/bg2.png') center/cover no-repeat; padding: 48px 5%;">
+            <div class="container-fluid" style="padding: 0;">
                 <div style="display: flex; flex-direction: column; gap: 48px;">
                     <h2 style="color: #FFF; font-family: 'DM Sans'; font-size: 40px; font-weight: 600; line-height: 30.026px; margin: 0;">Precision vs Personalized: Key Differences</h2>
                     
                     <div style="padding: 32px; border-radius: 24px; box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25); background: linear-gradient(276deg, #CEC9C9 0%, #FFF 25.2%, #FFF 48.5%, #FFF 73.13%, #CEC9C9 100%); overflow: hidden; display: flex; flex-direction: column; gap: 16px; position: relative;">
                         <!-- Continuous vertical lines -->
-                        <div style="position: absolute; left: 238px; top: 50px; bottom: 32px; width: 1px; background: rgba(0, 0, 0, 0.2);"></div>
-                        <div style="position: absolute; left: 712px; top: 50px; bottom: 32px; width: 1px; background: rgba(0, 0, 0, 0.2);"></div>
+                        <div style="position: absolute; left: 312px; top: 50px; bottom: 32px; width: 1px; background: rgba(0, 0, 0, 0.2);"></div>
+                        <div style="position: absolute; left: 812px; top: 50px; bottom: 32px; width: 1px; background: rgba(0, 0, 0, 0.2);"></div>
                         
                         <div style="border-radius: 12.511px ; display: flex; flex-direction: column; overflow: hidden;border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
-                            <div style="padding: 28px 25px; display: grid; grid-template-columns: 213px 474px 534px; background: transparent;">
+                            <div style="padding: 28px 25px; display: grid; grid-template-columns: 0.3fr 0.65fr 0.75fr; background: transparent;">
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 28px; font-style: SemiBold; font-weight: 600; line-height: 30.026px; margin: 0;"><strong >Aspect</strong></p>
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 28px; font-style: SemiBold; font-weight: 600; line-height: 30.026px; margin: 0;"><strong>Precision Nutrition</strong></p>
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 28px; font-style: SemiBold; font-weight: 600; line-height: 30.026px; margin: 0;"><strong>Personalized Nutrition</strong></p>
@@ -756,19 +759,19 @@
                         </div>
                         
                         <div style="display: flex; flex-direction: column;">
-                            <div style="padding: 22px 25px; display: grid; grid-template-columns: 213px 474px 534px; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
+                            <div style="padding: 22px 25px; display: grid; grid-template-columns: 0.3fr 0.65fr 0.75fr; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 24px; font-style: normal; font-weight: 600; line-height: 30.026px; margin: 0;"><strong>Data Depth</strong></p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0;">Deep biological data (blood <br> biomarkers, metabolic risk)</p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0;">Lifestyle and preference data, possibly some <br> blood data, but less intensive</p>
                             </div>
                             
-                            <div style="padding: 24px 25px; display: grid; grid-template-columns: 213px 474px 534px; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
+                            <div style="padding: 24px 25px; display: grid; grid-template-columns: 0.3fr 0.65fr 0.75fr; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 24px; font-style: normal; font-weight: 600; line-height: 30.026px; margin: 0;"><strong>Predictive Capability</strong></p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0; align-self: center;">High - forecasts future health risks</p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0; align-self: center;">Moderate - based on current habits and goals</p>
                             </div>
                             
-                            <div style="padding: 25px 25px; display: grid; grid-template-columns: 213px 474px 534px; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
+                            <div style="padding: 25px 25px; display: grid; grid-template-columns: 0.3fr 0.65fr 0.75fr; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
                                 <div style="align-self: center;">
                                     <p style="color: #063533; font-family: 'DM Sans'; font-size: 24px; font-style: normal; font-weight: 600; line-height: 30.026px; margin: 0;"><strong>Plan <br> Specificity</strong></p>
                                 </div>
@@ -776,13 +779,13 @@
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0; align-self: center;">Flexible, goal- and habit-based plans</p>
                             </div>
                             
-                            <div style="padding: 42px 25px; display: grid; grid-template-columns: 213px 474px 534px; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
+                            <div style="padding: 42px 25px; display: grid; grid-template-columns: 0.3fr 0.65fr 0.75fr; border-bottom: 1px solid rgba(0, 0, 0, 0.2);">
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 24px; font-style: normal; font-weight: 600; line-height: 30.026px; margin: 0; align-self: center;"><strong>Scalability</strong></p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0; align-self: center;">Requires lab infrastructure, AI systems</p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0;">Easier to scale with human coaching, fewer<br> diagnostic tests</p>
                             </div>
                             
-                            <div style="padding: 42px 25px; display: grid; grid-template-columns: 213px 474px 534px;">
+                            <div style="padding: 42px 25px; display: grid; grid-template-columns: 0.3fr 0.65fr 0.75fr;">
                                 <p style="color: #063533; font-family: 'DM Sans'; font-size: 24px; font-style: normal; font-weight: 600; line-height: 30.026px; margin: 0; align-self: center;"><strong>Use Case</strong></p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0;">Ideal for early detection of metabolic <br> issues, preventive health</p>
                                 <p style="font-family: 'DM Sans'; font-size: 20.017px; font-weight: 400; line-height: 30.026px; color: #0a0a0a; margin: 0;">Best for behavior change, sustainable eating,<br> long-term adherence</p>
@@ -793,7 +796,7 @@
 
                 <div id="how-supershyft" style="display: flex; flex-direction: column; gap: 16px; border-radius: 17.515px;">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <h2 style="font-family: 'DM Sans'; font-size: 40px; font-weight: 600; line-height: 30.026px; color: #FFF; margin: 0;">How SuperShyft Uses Precision Nutrition</h2>
+                        <h2 style="font-family: 'DM Sans'; font-size: 40px; font-weight: 600; line-height: 30.026px; color: #FFF; margin: 0;"><br>How SuperShyft Uses Precision Nutrition</h2>
                         <p style="font-family: 'Sora'; font-size: 18px; font-weight: 400; line-height: 30.026px; color: #FFF; margin: 0;">SuperShyft builds its model on precision health — not just nutrition. Here's how it applies precision principles:</p>
                     </div>
                     
@@ -843,33 +846,33 @@
         </section>
 
         <section class="blog-section" id="why-matters">
-            <div class="container">
-                <div style="width: 100%; height: 100%; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: inline-flex; margin: 40px 0 48px 5px;">
-                    <div style="color: black; font-size: 40px; font-family: DM Sans; font-weight: 600; line-height: 30.03px; word-wrap: break-word; margin-bottom: 16px;">Why This Distinction Matters</div>
+            <div class="container-fluid" style="padding-left: 0; padding-right: 0;">
+                <div style="width: 100%; height: 100%; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: inline-flex; margin: 40px 0 48px 0; padding: 0 36px;">
+                    <div style="color: black; font-size: 40px; font-family: DM Sans; font-weight: 600; line-height: 30.03px; word-wrap: break-word; margin-bottom: 16px; margin-left:60px;">Why This Distinction Matters</div>
                     <div style="align-self: stretch; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                        <div style="flex: 1 1 0; color: black; font-size: 18px; font-family: Sora; font-weight: 400; line-height: 30.03px; word-wrap: break-word">Choosing between precision and personalized nutrition isn't just semantics — it affects how effective, long-lasting, and health-focused your wellness journey can be.</div>
+                        <div style="flex: 1 1 0; color: black; font-size: 18px; font-family: Sora; font-weight: 400; line-height: 30.03px; word-wrap: break-word;margin-left:60px;">Choosing between precision and personalized nutrition isn't just semantics — it affects how effective, long-lasting, and health-focused your wellness journey can be.</div>
                     </div>
                 </div>
-                <div class="feature-grid-2x2", style="margin-left: 70px; margin-right: 70px">
-                    <div style="padding: 30px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
+                <div class="feature-grid-2x2" style="margin-left: 200px; padding: 0 36px; gap: 36px;">
+                    <div style="padding: 30px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px;">🛡️</span> Preventative Power
                         </h3>
                         <p style="font-size: 14px; line-height: 1.6; color: #555;">Detect early metabolic risks before they manifest as disease.</p>
                     </div>
-                    <div style="padding: 30px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
+                    <div style="padding: 30px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px;">🎯</span> Tailored Interventions
                         </h3>
                         <p style="font-size: 14px; line-height: 1.6; color: #555;">Data-backed insights aligned with your biology and risk profile.</p>
                     </div>
-                    <div style="padding: 28px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
+                    <div style="padding: 30px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px;">💪</span> Behavioral Sustainability
                         </h3>
                         <p style="font-size: 14px; line-height: 1.6; color: #555;">Plans that fit your life, habits, and daily reality.</p>
                     </div>
-                    <div style="padding: 28px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
+                    <div style="padding: 30px; background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 24px; outline: 1px rgba(204, 32, 59, 0.50) solid;">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px;">📈</span> Long-Term Tracking
                         </h3>
@@ -880,13 +883,13 @@
         </section>
 
         <section class="blog-section">
-            <div class="container">
-                <div style="border:1px solid; width: 100%; height: 100%; padding-left: 64px; padding-right: 64px; padding-top: 32px; padding-bottom: 32px; background: white; border-radius: 16px; border-left: 5px #CC203B solid; flex-direction: column; justify-content: center; align-items: center; gap: 24px; display: inline-flex">
+            <div class="container-fluid" style="padding-left: 0; padding-right: 0;">
+                <div style="border:1px solid; width: 90%; height: 100%; padding-left: 64px; padding-right: 64px; padding-top: 32px; padding-bottom: 32px; background: white; border-radius: 16px; border-left: 5px #CC203B solid; flex-direction: column; justify-content: center; align-items: center; gap: 24px; display: inline-flex; margin: 40px 36px 48px -36px; margin-left: 90px;">
                     <div style="align-self: stretch; height: 30.03px; position: relative">
                         <div style="left: 0px; top: -2.75px; position: absolute; color: #CC203B; font-size: 32px; font-family: DM Sans; font-weight: 400; line-height: 30.03px; word-wrap: break-word; background: var(--Gradient-1, linear-gradient(90deg, #CC203B 0%, #063533 100%));
 background-clip: text;
 -webkit-background-clip: text;
--webkit-text-fill-color: transparent;">Questions to Ask When Choosing Your Approach</div>
+-webkit-text-fill-color: transparent; ">Questions to Ask When Choosing Your Approach</div>
                     </div>
                     <div style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                         <div style="align-self: stretch; padding-left: 9px; padding-right: 9px; padding-top: 12px; padding-bottom: 12px; justify-content: flex-start; align-items: center; gap: 16px; display: inline-flex">
@@ -923,38 +926,38 @@ background-clip: text;
         </section>
 
         <section class="blog-section" id="supershyft-edge">
-            <div class="container">
-                <div class="section-title" style="text-align: left; margin: 0 0 32px 0;">
-                    <h2>The Supershyft Edge: Blending Both Worlds</h2>
-                    <p>While SuperShyft centers on precision nutrition, it doesn't ignore the power of personalization. Here's how their program brings together both approaches:</p>
+            <div class="container-fluid">
+                <div class="section-title" style="text-align: left; margin: 0 0 34px 80px;">
+                    <h2 style="color: #000; font-family: 'DM Sans'; font-size: 40px; font-style: normal; font-weight: 600; line-height: 30.026px;">The Supershyft Edge: Blending Both Worlds</h2>
+                    <p style="color: #000; font-family: Sora; font-size: 18px; font-style: normal; font-weight: 400; line-height: 30.026px;">While SuperShyft centers on precision nutrition, it doesn't ignore the power of personalization. Here's how their program brings together both approaches:</p>
                 </div>
 
-                <div style="position: relative; margin-bottom: 40px;">
-                    <div class="image-tile" style="height: 400px; background: url('assets/images/blogs/s6.png') center/cover no-repeat; display: flex; align-items: center; justify-content: center;">
+                <div style="position: relative; margin: 0 0 34px 36px; margin-left:70px;">
+                    <div class="image-tile" style="height: 400px; width:97%; background: url('assets/images/blogs/s6.png') center/cover no-repeat; display: flex; align-items: center; justify-content: center;">
                         <img src="assets/images/blogs/logo6.png" alt="SuperShyft Logo" style="max-width: 150px; max-height: 150px;">
                     </div>
                 </div>
 
-                <div class="feature-grid-2x2">
-                    <div style="padding: 28px; background: linear-gradient(90deg, #e0e0e0 0%, #fdf1f3 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px;">
+                <div class="feature-grid-2x2" style="margin: 0 0 34px 200px; padding: 0 36px; gap: 36px;">
+                    <div style="display: flex; width: 100%; height: 168px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px; color: #4b7ba7;">📊</span> AI-Backed Precision
                         </h3>
                         <p style="font-size: 14px; line-height: 1.6; color: #555;">Blood biomarker analysis gives you an evidence-based foundation.</p>
                     </div>
-                    <div style="padding: 28px; background: linear-gradient(90deg, #e0e0e0 0%, #fdf1f3 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px;">
+                    <div style="display: flex; width: 100%; height: 168px; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px; color: #4b7ba7;">📋</span> Personalized Action Plan
                         </h3>
                         <p style="font-size: 14px; line-height: 1.6; color: #555;">Built around your data and your preferences.</p>
                     </div>
-                    <div style="padding: 28px; background: linear-gradient(90deg, #e0e0e0 0%, #fdf1f3 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px;">
+                    <div style="display: flex; width: 100%; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px; color: #4b7ba7;">🧠</span> Behavioral Sustainability
                         </h3>
                         <p style="font-size: 14px; line-height: 1.6; color: #555;">Delivered in a way that supports realistic, long-term habits.</p>
                     </div>
-                    <div style="padding: 28px; background: linear-gradient(90deg, #e0e0e0 0%, #fdf1f3 50%, #e0e0e0 100%); border: 2px solid #e0e0e0; border-radius: 20px;">
+                    <div style="display: flex; width: 100%; padding: 32px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; border-radius: 24px; border: 1px solid #CC203B; background: linear-gradient(277deg, #CEC9C9 -30.55%, #FFF 34.22%, #FFF 65.77%, #CEC9C9 126.99%);">
                         <h3 style="color: #cc203b; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 24px; color: #4b7ba7;">📈</span> Progress Tracking
                         </h3>
@@ -962,14 +965,14 @@ background-clip: text;
                     </div>
                 </div>
 
-                <div style="background: linear-gradient(135deg, #cc203b 0%, #0f473f 100%); color: #fff; padding: 36px 40px; border-radius: 16px; text-align: center; font-size: 16px; line-height: 1.6; margin-top: 40px;">
+                <div style="background: linear-gradient(135deg, #cc203b 0%, #0f473f 100%); color: #fff; padding: 36px 40px; border-radius: 16px; text-align: center; font-size: 16px; line-height: 1.6; margin: 40px 36px 0 36px; ">
                     "SuperShyft isn't purely 'precision' – it's a hybrid model with deep biological insights and real-world, human-centered coaching built in."
                 </div>
             </div>
         </section>
 
         <section class="blog-section" id="summary" style="background: url('assets/images/blogs/bg2.png') center/cover no-repeat;">
-            <div class="container">
+            <div class="container-fluid">
                 <div style="background: #fff; border: 2px solid #cc203b; border-radius: 16px; padding: 32px 28px; position: relative; margin-bottom: 50px; box-shadow: 0 10px 24px rgba(0,0,0,0.08);">
                     <h3 style="color: #0b2c2a; font-size: 26px; margin: 0 0 22px 0;">Summary: In a Nutshell</h3>
                     <div style="display: grid; gap: 14px;">
