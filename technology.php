@@ -43,6 +43,59 @@
             }
         });
     </script>
+    
+    <!-- Fix for Science Section boxes visibility -->
+    <style>
+        /* Force ALL boxes in science section to be visible - override global .box { opacity: 0 !important } */
+        #scienceSection .boxes .box {
+            opacity: 1 !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 16px !important;
+            visibility: visible !important;
+        }
+        
+        /* Make the top headings visible */
+        #scienceSection .top-box-wrapper .box {
+            opacity: 1 !important;
+            display: block !important;
+        }
+        
+        /* Progress bars: start hidden for GSAP height animation */
+        #scienceSection .scroll-progress-bar.green,
+        #scienceSection .scroll-progress-bar.red {
+            height: 0%;
+            border-radius: 100px !important;
+        }
+
+        #scienceSection .scroll-progress-bar.green {
+            width: 56px !important;
+        }
+
+        /* Red bar - wider and aligned without top gap */
+        #scienceSection .scroll-progress-bar.red {
+            margin-top: 0;
+            width: 90px !important;
+        }
+
+        /* Match font sizes between green and red sections */
+        #scienceSection .red-boxes .bs-para {
+            font-size: 18px !important;
+        }
+
+        #scienceSection .green-boxes .bs-para {
+            font-size: 18px !important;
+        }
+        /* Ensure all points visible in "How Supershyft works" section ON TECHNOLOGY PAGE ONLY */
+        .lyt-section.typ-marketing-section:not(.step-section) .left-box {
+            height: auto !important;
+        }
+
+        .lyt-section.typ-marketing-section:not(.step-section) .right-box {
+            height: auto !important;
+            position: relative !important;
+            top: auto !important;
+        }    </style>
 </head>
 
 <body>
@@ -235,11 +288,7 @@
                                     </div>
                                 </div>
                                 <div class="img-box body-img">
-                                    <img src="assets/images/technology/man.gif" class="img-fluid" alt="">
-                                    <!-- <video class="img-fluid" autoplay muted loop playsinline>
-                                        <source src="assets/video/man.mp4" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video> -->
+                                    <!-- Placeholder for spacing - video removed -->
                                 </div>
                                 <div class="red-box-wrapper">
                                     <div class="boxes red-boxes" id="scienceSectionRed">
@@ -682,138 +731,58 @@
         //         ScrollTrigger.refresh();
         //     });
         // }
-        function heroBanner() {
+        function initScienceSection() {
             gsap.registerPlugin(ScrollTrigger);
+            
+            const section = document.querySelector("#scienceSection");
+            if (!section) return;
 
-            // Set z-index for stacking
-            gsap.set(".boxes .box", {
-                zIndex: (i, target, targets) => targets.length - i
-            });
-
-            const images = gsap.utils.toArray('.boxes.green-boxes .box:not(.box-4)');
-
-            // Set initial opacities
-            gsap.set(images, { opacity: 0 });
-            gsap.set(".box-4", { opacity: 0 });
-
-            const totalSteps = images.length + 1; // total steps including box-4
-
-            // Timeline for box fade-ins and step-based progress bar
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#scienceSection .boxes.green-boxes",
-                    scrub: 1.25,
-                    start: "top center",
-                    anticipatePin: 1,
-                    markers: false,
-                    invalidateOnRefresh: true,
-                    immediateRender: false
+            // KILL ALL existing triggers on this section first
+            ScrollTrigger.getAll().forEach(trigger => {
+                if (trigger.trigger === section) {
+                    trigger.kill();
                 }
             });
 
-            // Fade in boxes 1–3 and update progress height
-            images.forEach((image, i) => {
-                const progressHeight = ((i + 1) / totalSteps) * 50 + "%";
+            const greenProgressBar = section.querySelector('.scroll-progress-bar.green');
+            const redProgressBar = section.querySelector('.scroll-progress-bar.red');
 
-                tl.to(image, {
-                    opacity: 1,
-                    duration: 1,
-                    ease: "power2.out"
-                });
+            // Initialize - Progress bars at 0
+            gsap.set([greenProgressBar, redProgressBar], { height: "0%" });
 
-                tl.to(".scroll-progress-bar.green", {
-                    height: progressHeight,
-                    duration: 0.5,
-                    ease: "power2.out"
-                }, "<"); // sync with box fade-in
-            });
-
-            // Fade in box-4 and final progress bar step
-            tl.to(".box-4", {
-                opacity: 1,
-                duration: 1.5,
-                ease: "power2.out"
-            });
-
-            tl.to(".scroll-progress-bar.green", {
+            // Animate lines growing down when section enters viewport
+            gsap.to(greenProgressBar, {
                 height: "50%",
-                duration: 0.5,
-                ease: "power2.out"
-            }, "<"); // sync with box-4
-
-            // Refresh on resize
-            window.addEventListener('resize', () => {
-                ScrollTrigger.refresh();
-            });
-        }
-
-        function heroBannerNew() {
-            gsap.registerPlugin(ScrollTrigger);
-
-            // Set z-index for stacking
-            gsap.set(".boxes .box", {
-                zIndex: (i, target, targets) => targets.length - i
-            });
-
-            const images = gsap.utils.toArray('.boxes.red-boxes .box:not(.box-4)');
-
-            // Set initial opacities
-            gsap.set(images, { opacity: 0 });
-            gsap.set(".box-4", { opacity: 0 });
-
-            const totalSteps = images.length + 1; // total steps including box-4
-
-            // Timeline for box fade-ins and step-based progress bar
-            const tl = gsap.timeline({
+                duration: 3,
+                ease: "power2.inOut",
                 scrollTrigger: {
-                    trigger: "#scienceSection .boxes.red-boxes",
-                    scrub: 1.25,
+                    trigger: section,
                     start: "top center",
-                    anticipatePin: 1,
-                    markers: false,
-                    invalidateOnRefresh: true,
-                    immediateRender: false
+                    toggleActions: "play none none none"
                 }
             });
 
-            // Fade in boxes 1–3 and update progress height
-            images.forEach((image, i) => {
-                const progressHeight = ((i + 1) / totalSteps) * 85 + "%";
-
-                tl.to(image, {
-                    opacity: 1,
-                    duration: 1,
-                    ease: "power2.out"
-                });
-
-                tl.to(".scroll-progress-bar.red", {
-                    height: progressHeight,
-                    duration: 0.5,
-                    ease: "power2.out"
-                }, "<"); // sync with box fade-in
-            });
-
-            // Fade in box-4 and final progress bar step
-            tl.to(".box-4", {
-                opacity: 1,
-                duration: 1.5,
-                ease: "power2.out"
-            });
-
-            tl.to(".scroll-progress-bar.red", {
+            gsap.to(redProgressBar, {
                 height: "90%",
-                duration: 0.5,
-                ease: "power2.out"
-            }, "<"); // sync with box-4
-
-            // Refresh on resize
-            window.addEventListener('resize', () => {
-                ScrollTrigger.refresh();
+                duration: 3,
+                ease: "power2.inOut",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top center",
+                    toggleActions: "play none none none"
+                }
             });
+
+            // Force refresh after init
+            ScrollTrigger.refresh();
         }
 
-        heroBanner();
-        heroBannerNew();
+        // Wait for page to load before initializing
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initScienceSection);
+        } else {
+            initScienceSection();
+        }
     </script>
     <script>
         const isMobile = window.innerWidth <= 767; // Adjust breakpoint as needed

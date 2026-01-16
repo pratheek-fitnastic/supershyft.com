@@ -25,6 +25,92 @@
     <?php include_once 'view/include_css.html'; ?>
     <!-- css group end -->
 
+    <!-- Custom vertical animation for content-box -->
+    <style>
+        /* PC VERSION: Show all 4 points - Override default animations */
+        .step-section .boxes-wrapper {
+            display: flex !important;
+            gap: 30px !important;
+            align-items: flex-start !important;
+            height: auto !important;
+        }
+
+        .step-section .left-box {
+            height: auto !important;
+            display: block !important;
+            width: 100% !important;
+        }
+
+        .step-section .right-box {
+            height: auto !important;
+            width: 100% !important;
+        }
+
+        .step-section .left-box .content-box {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: all 0.6s ease;
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+            margin-bottom: 20px !important;
+        }
+
+        .step-section .left-box .content-box .number {
+            flex-shrink: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        .step-section .left-box .content-box .content {
+            flex: 1 !important;
+        }
+
+        .step-section .left-box .content-box.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile: Stack panels vertically instead of horizontally */
+        @media (max-width: 1024px) {
+            .mobile-step-section .mobile-content-wrapper {
+                position: relative;
+                height: auto;
+                min-height: 180px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .mobile-step-section {
+                padding-bottom: 20px !important;
+            }
+            
+            .mobile-step-section .panel {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                transform: translateY(100%);
+                width: 100% !important;
+                min-width: 100% !important;
+                padding: 20px;
+                opacity: 0;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+            
+            .mobile-step-section .panel.active-panel {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            .mobile-step-section .panel:first-child {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
     <script>
         window.addEventListener("load", function () {
             if (screen.width <= 992) {
@@ -1215,7 +1301,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             function initStepSection(section) {
                 const contentBoxes = section.querySelectorAll(".content-box");
                 const steps = section.querySelectorAll(".step");
+                let currentIndex = 0;
 
+                // Initialize first step
                 setActive(0);
 
                 const tl = gsap.timeline({
@@ -1233,8 +1321,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 contentBoxes.forEach((_, index) => {
                     tl.to({}, {
                         duration: 1,
-                        onStart: () => setActive(index),
-                        onReverseComplete: () => setActive(index),
+                        onStart: () => {
+                            currentIndex = index;
+                            setActive(index);
+                        },
+                        onReverseComplete: () => {
+                            currentIndex = index;
+                            setActive(index);
+                        },
+                    });
+                });
+
+                // Add click functionality to content boxes
+                contentBoxes.forEach((box, index) => {
+                    box.style.cursor = "pointer";
+                    box.addEventListener("click", () => {
+                        if (currentIndex !== index) {
+                            setActive(index);
+                            currentIndex = index;
+                        }
                     });
                 });
 
@@ -1245,7 +1350,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         step.classList.toggle("active", i === index);
                         if (video) {
                             if (i === index) {
-                                video.play();
+                                video.play().catch(() => {
+                                    // Autoplay might be blocked, video will play when user interacts
+                                });
                             } else {
                                 video.pause();
                                 video.currentTime = 0;
@@ -1288,31 +1395,94 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 let dots = gsap.utils.toArray(".pagination-dots .dot");
                 let sections = gsap.utils.toArray(".mobile-step-section .panel");
                 let videos = gsap.utils.toArray(".mobile-video-wrapper .mobile-video");
+                let currentMobileIndex = 0;
 
-                gsap.to(sections, {
-                    xPercent: -100 * (sections.length - 1),
-                    ease: "none",
+                // Initialize first step as active
+                updateMobileStep(0);
+
+                // Initialize first panel
+                sections[0].classList.add('active-panel');
+                
+                // Create timeline for one-by-one animation
+                let tl = gsap.timeline({
                     scrollTrigger: {
                         trigger: howSuperShftSection,
                         pin: true,
                         markers: false,
                         scrub: 1,
                         snap: 1 / (sections.length - 1),
-                        end: () => "+=" + document.querySelector(".mobile-step-section .mobile-content-wrapper").offsetWidth,
+                        end: () => "+=" + (window.innerHeight * sections.length),
                         onUpdate: (self) => {
                             let index = Math.round(self.progress * (sections.length - 1));
-
-                            videos.forEach((vid, i) => {
-                                vid.style.opacity = i === index ? 1 : 0;
-                                vid.style.pointerEvents = i === index ? "auto" : "none";
-                            });
-
-                            dots.forEach((dot, i) => {
-                                dot.classList.toggle("active", i === index);
-                            });
+                            if (currentMobileIndex !== index) {
+                                currentMobileIndex = index;
+                                updateMobileStep(index);
+                            }
                         }
                     }
                 });
+
+                // Animate each section sliding up one by one
+                sections.forEach((section, index) => {
+                    if (index > 0) {
+                        tl.to(sections[index - 1], {
+                            y: "-100%",
+                            opacity: 0,
+                            duration: 1,
+                            ease: "power2.inOut"
+                        }, index)
+                        .fromTo(sections[index], {
+                            y: "100%",
+                            opacity: 0
+                        }, {
+                            y: "0%",
+                            opacity: 1,
+                            duration: 1,
+                            ease: "power2.inOut",
+                            onStart: () => {
+                                sections[index].classList.add('active-panel');
+                                sections[index - 1].classList.remove('active-panel');
+                            }
+                        }, index);
+                    }
+                });
+
+                // Add click functionality to mobile panels
+                sections.forEach((panel, index) => {
+                    panel.style.cursor = "pointer";
+                    panel.addEventListener("click", () => {
+                        if (currentMobileIndex !== index) {
+                            updateMobileStep(index);
+                            currentMobileIndex = index;
+                        }
+                    });
+                });
+
+                // Add click functionality to dots
+                dots.forEach((dot, index) => {
+                    dot.style.cursor = "pointer";
+                    dot.addEventListener("click", () => {
+                        if (currentMobileIndex !== index) {
+                            updateMobileStep(index);
+                            currentMobileIndex = index;
+                        }
+                    });
+                });
+
+                function updateMobileStep(index) {
+                    sections.forEach((section, i) => {
+                        section.classList.toggle('active-panel', i === index);
+                    });
+                    
+                    videos.forEach((vid, i) => {
+                        vid.style.opacity = i === index ? 1 : 0;
+                        vid.style.pointerEvents = i === index ? "auto" : "none";
+                    });
+
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle("active", i === index);
+                    });
+                }
 
                 ScrollTrigger.refresh();
             }
