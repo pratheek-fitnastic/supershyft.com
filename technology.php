@@ -288,7 +288,7 @@
                                     </div>
                                 </div>
                                 <div class="img-box body-img">
-                                    <!-- Placeholder for spacing - video removed -->
+                                    <img src="./assets/images/images/rotating-man.gif" alt="Rotating human body" class="img-fluid">
                                 </div>
                                 <div class="red-box-wrapper">
                                     <div class="boxes red-boxes" id="scienceSectionRed">
