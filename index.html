@@ -21,9 +21,24 @@
     <meta property="og:image" content="https://www.supershyft.com/assets/images/our-story/super-shyft.png" />
     <!-- Canonical Tag -->
     <link rel="canonical" href="https://www.supershyft.com/" />
-    <!-- css group start -->
-    <?php include_once 'view/include_css.html'; ?>
-    <!-- css group end -->
+        <!-- css group start -->
+        <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+        <link rel="apple-touch-icon" sizes="57x57" href="assets/images/fav.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="assets/images/fav.png">
+        <meta property="og:image" content="assets/images/meta-thumbnail.jpg">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NGCC7R99GH"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-NGCC7R99GH');
+        </script>
+        <!-- css group end -->
 
     <!-- Custom vertical animation for content-box -->
     <style>
@@ -156,9 +171,44 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="#">upgrade your browser</a> to improve your experience.
       </p>
     <![endif]-->
-    <!-- header start -->
-    <?php include_once 'view/header.html'; ?>
-    <!-- header end -->
+        <!-- header start -->
+        <header class="bs-header fixed-top" id="header">
+            <nav id="navbar" class="navbar navbar-expand-md " aria-label="Offcanvas navbar large">
+                <div class="container">
+                    <a class="navbar-brand" href="index.html">
+                        <img class="img-fluid" src="assets/images/logo.png" alt="logo">
+                    </a>
+                    <button class="navbar-toggler px-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2"
+                        aria-controls="offcanvasNavbar2">
+                        <span class="icon icon-menu"></span>
+                    </button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar2">
+                        <div class="offcanvas-header">
+                            <a class="navbar-brand" href="index.html"><img src="assets/images/logo.png" alt="logo" class="img-fluid">
+                            </a>
+                            <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="index.html">Home</a>
+                                </li>
+                                <li class="nav-item dropdown custom-dropdown">
+                                    <a class="nav-link" href="technology.html">Our Tech</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="our-story.html">Our Story</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="contact-us.html">Contact Us</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <!-- header end -->
 
     <main>
         <div class="bs-banner">
@@ -1142,11 +1192,45 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
     <!-- footer start -->
-    <?php include_once 'view/footer.html' ?>
+    <footer class="bs-footer">
+        <div class="container">
+            <div class="top-footer">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="assets/images/footer-logo.png" class="img-fluid" alt="footer-logo">
+                    </a>
+                </div>
+                <ul class="list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="technology.html">Our Tech</a></li>
+                    <li><a href="our-story.html">Our Story</a></li>
+                    <li><a href="contact-us.html">Contact us</a></li>
+                </ul>
+                <div class="social-media">
+                    <p>Follow us</p>
+                    <a href="https://www.instagram.com/supershyft?igsh=bjFlZzZsbDdhaTdy" target="_blank"><span
+                            class="icon icon-insta"></span></a>
+                    <a href="https://www.linkedin.com/company/fitnasticindia/" target="_blank"><span
+                            class="icon icon-linkdin"></span></a>
+                </div>
+            </div>
+            <div class="d-lg-flex d-md-flex justify-content-between">
+                <div class="copywrite">
+                    © 2025 Supershyft. All rights reserved.
+                </div>
+                <div class="copywrite copywrite-new">
+                  Developed By
+                <a href="https://creativewebo.com/" target="_blank">CreativeWebo Pvt. Ltd.</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     <!-- footer end -->
 
     <!-- js group start -->
-    <?php include_once 'view/include_js.html' ?>
+    <script src="assets/js/vendor.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+    <script src="assets/js/custom.js" defer></script>
     <!-- js group end -->
 
 

@@ -7,22 +7,37 @@
 <!--<![endif]-->
 
 <head>
-        <title>Supershyft BIO‑AI Technology | Reveal Your True Biological Age</title>
-        <meta name="description" content="Discover Supershyft's clinically validated BIO AI Technology—analyzing metabolic risk profiles with 93.2% accuracy to reveal your true biological age and unlock longevity potential.">
+        <title>Supershyft BIOâ€‘AI Technology | Reveal Your True Biological Age</title>
+        <meta name="description" content="Discover Supershyft's clinically validated BIO AI Technologyâ€”analyzing metabolic risk profiles with 93.2% accuracy to reveal your true biological age and unlock longevity potential.">
 
         <!-- Open Graph -->
-        <meta property="og:title" content="Supershyft BIO‑AI Technology | True Biological Age Revealed">
-        <meta property="og:description" content="Unlock your biological age with Supershyft’s advanced, clinically validated BIO AI Technology analyzing health at 93.2% accuracy.">
+        <meta property="og:title" content="Supershyft BIOâ€‘AI Technology | True Biological Age Revealed">
+        <meta property="og:description" content="Unlock your biological age with Supershyftâ€™s advanced, clinically validated BIO AI Technology analyzing health at 93.2% accuracy.">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="https://www.supershyft.com/technology.php">
+        <meta property="og:url" content="https://www.supershyft.com/technology.html">
         <meta property="og:image" content="https://www.supershyft.com/assets/images/our-story/super-shyft.png">
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <link rel="canonical" href="https://www.supershyft.com/technology.php">
-    <!-- css group start -->
-    <?php include_once 'view/include_css.html'; ?>
-    <!-- css group end -->
+        <link rel="canonical" href="https://www.supershyft.com/technology.html">
+        <!-- css group start -->
+        <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+        <link rel="apple-touch-icon" sizes="57x57" href="assets/images/fav.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="assets/images/fav.png">
+        <meta property="og:image" content="assets/images/meta-thumbnail.jpg">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NGCC7R99GH"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-NGCC7R99GH');
+        </script>
+        <!-- css group end -->
 
     <script>
         window.addEventListener("load", function () {
@@ -95,7 +110,143 @@
             height: auto !important;
             position: relative !important;
             top: auto !important;
-        }    </style>
+        }
+
+        .parent-container {
+            position: relative;
+            min-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1500px;
+        }
+
+        .beam-outer {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 500px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(0, 180, 255, 0.3) 0%, rgba(0, 180, 255, 0.05) 60%, transparent 100%);
+            filter: blur(50px);
+            animation: beamPulse 5s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .beam-inner {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 380px;
+            height: 400px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(0, 255, 255, 0.7) 0%, rgba(0, 255, 255, 0.1) 50%, transparent 100%);
+            filter: blur(30px);
+            animation: beamPulse 5s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes beamPulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .beam-ring {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 540px;
+            height: 25px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.7) 0%, rgba(0, 255, 255, 0) 80%);
+            filter: blur(12px);
+            z-index: 2;
+        }
+
+        .cube-container {
+            width: 320px;
+            height: 320px;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            animation: spin3D 22s linear infinite;
+            position: relative;
+            z-index: 3;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: rgba(0, 255, 255, 0.08);
+            box-shadow: inset 0 0 100px rgba(0, 255, 255, 0.15), 0 0 70px rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            border: 3px solid #00ffff;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+        }
+
+        .icon-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.9), 0 0 100px rgba(0, 255, 255, 0.5), inset 0 0 15px rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-circle img {
+            width: 250px;
+            height: 180px;
+            filter: drop-shadow(0 0 40px rgba(255, 0, 0, 1)) drop-shadow(0 0 80px rgba(255, 0, 0, 0.7));
+            transition: filter 0.3s ease;
+        }
+
+        .front { transform: rotateY(0deg) translateZ(160px); }
+        .back { transform: rotateY(180deg) translateZ(160px); }
+        .right { transform: rotateY(90deg) translateZ(160px); }
+        .left { transform: rotateY(-90deg) translateZ(160px); }
+        .top { transform: rotateX(90deg) translateZ(160px); }
+        .bottom { transform: rotateX(-90deg) translateZ(160px); }
+
+        @keyframes spin3D {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+
+            100% {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        @media (max-width:767px) {
+            .cube-face {
+                box-shadow: none;
+                backdrop-filter: none;
+            }
+
+            .cube-face .icon-circle img {
+                filter: none;
+            }
+
+            .beam-outer,
+            .beam-inner,
+            .beam-ring {
+                bottom: -120px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -105,9 +256,44 @@
         <a href="#">upgrade your browser</a> to improve your experience.
       </p>
     <![endif]-->
-    <!-- header start -->
-    <?php include_once 'view/header.html'; ?>
-    <!-- header end -->
+        <!-- header start -->
+        <header class="bs-header fixed-top" id="header">
+            <nav id="navbar" class="navbar navbar-expand-md " aria-label="Offcanvas navbar large">
+                <div class="container">
+                    <a class="navbar-brand" href="index.html">
+                        <img class="img-fluid" src="assets/images/logo.png" alt="logo">
+                    </a>
+                    <button class="navbar-toggler px-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2"
+                        aria-controls="offcanvasNavbar2">
+                        <span class="icon icon-menu"></span>
+                    </button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar2">
+                        <div class="offcanvas-header">
+                            <a class="navbar-brand" href="index.html"><img src="assets/images/logo.png" alt="logo" class="img-fluid">
+                            </a>
+                            <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <ul class="navbar-nav justify-content-end flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="index.html">Home</a>
+                                </li>
+                                <li class="nav-item dropdown custom-dropdown">
+                                    <a class="nav-link" href="technology.html">Our Tech</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="our-story.html">Our Story</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="contact-us.html">Contact Us</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <!-- header end -->
 
     <main>
         <div class="bs-banner typ-technology">
@@ -177,7 +363,46 @@
                             <div class="right-box">
                                 <div class="img-box">
                                     <!-- <img src="assets/images/technology/hero/cube.png" class="img-fluid" alt=""> -->
-                                    <?php include_once 'components/cube.html' ?>
+                                    <!-- Begin cube.html include -->
+                                    <div class="parent-container">
+                                        <div class="beam-outer"></div>
+                                        <div class="beam-inner"></div>
+                                        <div class="beam-ring"></div>
+
+                                        <div class="cube-container">
+                                            <div class="cube-face front">
+                                                <div class="icon-circle">
+                                                    <img src="./assets/images/technology/cube/1.svg" alt="Icon 1" />
+                                                </div>
+                                            </div>
+                                            <div class="cube-face back">
+                                                <div class="icon-circle">
+                                                    <img src="./assets/images/technology/cube/2.svg" alt="Icon 2" />
+                                                </div>
+                                            </div>
+                                            <div class="cube-face right">
+                                                <div class="icon-circle">
+                                                    <img src="./assets/images/technology/cube/3.svg" alt="Icon 3" />
+                                                </div>
+                                            </div>
+                                            <div class="cube-face left">
+                                                <div class="icon-circle">
+                                                    <img src="./assets/images/technology/cube/4.svg" alt="Icon 4" />
+                                                </div>
+                                            </div>
+                                            <div class="cube-face top">
+                                                <div class="icon-circle">
+                                                    <img src="./assets/images/technology/cube/5.svg" alt="Icon 5" />
+                                                </div>
+                                            </div>
+                                            <div class="cube-face bottom">
+                                                <div class="icon-circle">
+                                                    <img src="./assets/images/technology/cube/6.svg" alt="Icon 6" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End cube.html include -->
                                     <!-- <iframe src="components/cube-1.html" width="300" height="300" style="border:none;" scrolling="no"></iframe> -->
                                 </div>
                             </div>
@@ -229,7 +454,7 @@
                         </h2>
                         <p class="bs-para typgrey2 l-spacing2 px-4" data-aos="fade" data-aos-delay="300">Your biological
                             age often differs significantly from
-                            your calendar age—many people appear healthy while their internal systems age
+                            your calendar ageâ€”many people appear healthy while their internal systems age
                             prematurely without visible signs.</p>
                     </div>
                     <div class="col-12">
@@ -410,7 +635,147 @@
                     <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">Supershyft Biology
                         AI</button>
                 </div>
-                <?php include_once 'components/card-animation.html' ?>
+                <style>
+                    .deck {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        position: relative;
+                        gap: 12px;
+                        height: 90vh;
+                    }
+
+                    .card {
+                        width: 150px;
+                        height: 225px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        transition: all 0.6s ease var(--delay, 0s);
+                        cursor: pointer;
+                        background: none;
+                        box-shadow: none;
+                        border: none;
+                    }
+
+                    .card img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        object-position: center;
+                    }
+
+                    .card.center {
+                        z-index: 999;
+                    }
+
+                    .card.center.pulse {
+                        z-index: 999;
+                        cursor: pointer;
+                        box-shadow: 0 0 0 rgba(255, 0, 0, 0.7);
+                        animation: pulse-glow 3s ease-in-out infinite;
+                    }
+
+                    @keyframes pulse-glow {
+                        0% {
+                            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+                        }
+
+                        70% {
+                            box-shadow: 0 0 0 20px rgba(255, 0, 0, 0);
+                        }
+
+                        100% {
+                            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+                        }
+                    }
+
+                    .layout-active .card:not(.center) {
+                        position: absolute;
+                    }
+
+                    .layout-active .card.left-1 { transform: translate(-250%, -150%); }
+                    .layout-active .card.left-2 { transform: translate(-250%, -50%); }
+                    .layout-active .card.left-3 { transform: translate(-250%, 50%); }
+                    .layout-active .card.right-1 { transform: translate(150%, -150%); }
+                    .layout-active .card.right-2 { transform: translate(150%, -50%); }
+                    .layout-active .card.right-3 { transform: translate(150%, 50%); }
+                    .layout-active .card.left-4 { transform: translate(-380%, -150%); }
+                    .layout-active .card.left-5 { transform: translate(-380%, -50%); }
+                    .layout-active .card.left-6 { transform: translate(-380%, 50%); }
+                    .layout-active .card.right-4 { transform: translate(280%, -150%); }
+                    .layout-active .card.right-5 { transform: translate(280%, -50%); }
+                    .layout-active .card.right-6 { transform: translate(280%, 50%); }
+
+                    .card.left-1 { --delay: 0.1s; }
+                    .card.left-2 { --delay: 0.2s; }
+                    .card.left-3 { --delay: 0.3s; }
+                    .card.left-4 { --delay: 0.4s; }
+                    .card.left-5 { --delay: 0.5s; }
+                    .card.left-6 { --delay: 0.6s; }
+                    .card.right-1 { --delay: 0.1s; }
+                    .card.right-2 { --delay: 0.2s; }
+                    .card.right-3 { --delay: 0.3s; }
+                    .card.right-4 { --delay: 0.4s; }
+                    .card.right-5 { --delay: 0.5s; }
+                    .card.right-6 { --delay: 0.6s; }
+
+                    @media (max-width: 768px) {
+                        .deck {
+                            height: 900px;
+                        }
+
+                        .card {
+                            width: 100px;
+                            height: 152px;
+                        }
+
+                        .layout-active .card.left-1 { transform: translate(-170%, -300%); }
+                        .layout-active .card.left-2 { transform: translate(-170%, -200%); }
+                        .layout-active .card.left-3 { transform: translate(-170%, -100%); }
+                        .layout-active .card.right-1 { transform: translate(70%, -300%); }
+                        .layout-active .card.right-2 { transform: translate(70%, -200%); }
+                        .layout-active .card.right-3 { transform: translate(70%, -100%); }
+                        .layout-active .card.left-4 { transform: translate(-170%, 0%); }
+                        .layout-active .card.left-5 { transform: translate(-170%, 100%); }
+                        .layout-active .card.left-6 { transform: translate(-170%, 200%); }
+                        .layout-active .card.right-4 { transform: translate(70%, 0%); }
+                        .layout-active .card.right-5 { transform: translate(70%, 100%); }
+                        .layout-active .card.right-6 { transform: translate(70%, 200%); }
+                    }
+                </style>
+
+                <div class="deck" id="deck">
+                    <div class="typ-click-heading"><h5 class="clickBtn">Click Here</h5></div>
+                    <div class="card left-1" style="--i: 1"><img src="assets/images/technology/cards/webp/red-2.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-2" style="--i: 2"><img src="assets/images/technology/cards/webp/red-4.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-3" style="--i: 3"><img src="assets/images/technology/cards/webp/red-6.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-1" style="--i: 1"><img src="assets/images/technology/cards/webp/green-1.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-2" style="--i: 2"><img src="assets/images/technology/cards/webp/green-3.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-3" style="--i: 3"><img src="assets/images/technology/cards/webp/green-5.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-4" style="--i: 4"><img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-5" style="--i: 5"><img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-6" style="--i: 6"><img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-4" style="--i: 4"><img src="assets/images/technology/cards/webp/green-2.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-5" style="--i: 5"><img src="assets/images/technology/cards/webp/green-4.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-6" style="--i: 6"><img src="assets/images/technology/cards/webp/green-6.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card center pulse" id="centerCard"><img src="assets/images/technology/cards/webp/middle-card.png" alt="card-img" class="img-fluid"></div>
+                </div>
+
+                <script>
+                    const centerCard = document.getElementById("centerCard");
+                    const deck = document.getElementById("deck");
+                    let activated = false;
+
+                    centerCard.addEventListener("click", () => {
+                        activated = !activated;
+                        deck.classList.toggle("layout-active", activated);
+                    });
+                </script>
             </div>
         </section>
 
@@ -445,7 +810,7 @@
                                                 <div class="text-box">
                                                     <p class="bs-para typ26 typ-fnt1 typ500">Our <strong>Bio AI</strong>
                                                         technology
-                                                        goes beyond <strong>nutrition and body metrics—it</strong>
+                                                        goes beyond <strong>nutrition and body metricsâ€”it</strong>
                                                         includes your
                                                         <strong>blood markers, lifestyle</strong>, and your
                                                         <strong>family
@@ -560,16 +925,50 @@
     </main>
 
     <!-- footer start -->
-    <?php include_once 'view/footer.html' ?>
+    <footer class="bs-footer">
+        <div class="container">
+            <div class="top-footer">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="assets/images/footer-logo.png" class="img-fluid" alt="footer-logo">
+                    </a>
+                </div>
+                <ul class="list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="technology.html">Our Tech</a></li>
+                    <li><a href="our-story.html">Our Story</a></li>
+                    <li><a href="contact-us.html">Contact us</a></li>
+                </ul>
+                <div class="social-media">
+                    <p>Follow us</p>
+                    <a href="https://www.instagram.com/supershyft?igsh=bjFlZzZsbDdhaTdy" target="_blank"><span
+                            class="icon icon-insta"></span></a>
+                    <a href="https://www.linkedin.com/company/fitnasticindia/" target="_blank"><span
+                            class="icon icon-linkdin"></span></a>
+                </div>
+            </div>
+            <div class="d-lg-flex d-md-flex justify-content-between">
+                <div class="copywrite">
+                    Â©Â 2025Â Supershyft. All rights reserved.
+                </div>
+                <div class="copywrite copywrite-new">
+                  Developed By
+                <a href="https://creativewebo.com/" target="_blank">CreativeWebo Pvt. Ltd.</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     <!-- footer end -->
 
     <!-- js group start -->
-    <?php include_once 'view/include_js.html' ?>
+    <script src="assets/js/vendor.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+    <script src="assets/js/custom.js" defer></script>
     <!-- js group end -->
     <!-- <script src="https://assets.codepen.io/16327/ScrollTrigger.min.js"></script>
     <script src="https://assets.codepen.io/16327/gsap-latest-beta.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
         <script>
         const isMobileVideo = window.innerWidth <= 768;
 
@@ -648,8 +1047,7 @@
         });
 
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <!-- <script>
         document.addEventListener("DOMContentLoaded", function () {
             const middleBox = document.querySelector(".middle-box img");

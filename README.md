@@ -27,17 +27,17 @@ supershyft.com/
 │   ├── header.html
 │   ├── footer.html
 │   └── include_*.html
-├── index.php                 # Homepage
-├── technology.php           # Technology page
-├── our-story.php           # Our story page
-├── contact-us.php          # Contact page
+├── index.html               # Homepage
+├── technology.html          # Technology page
+├── our-story.html           # Our story page
+├── contact-us.html          # Contact page
 └── CHANGELOG.md            # Version history
 ```
 
 ## 🛠 Tech Stack
 
 - **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **Backend:** PHP
+- **Backend:** None (static HTML site)
 - **Animations:** GSAP ScrollTrigger
 - **Carousel:** Swiper.js
 - **Utilities:** Bootstrap, jQuery, AOS (Animate On Scroll)
@@ -45,7 +45,7 @@ supershyft.com/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- PHP 8.0+
+- Python 3.x (for simple local HTTP server)
 - Modern web browser
 
 ### Installation
@@ -60,14 +60,14 @@ git clone https://github.com/pratheek-fitnastic/supershyft.com.git
 cd supershyft.com
 ```
 
-3. Start a local PHP server:
+3. Start a local HTTP server:
 ```bash
-php -S localhost:8000
+python -m http.server 8080
 ```
 
 4. Open in browser:
 ```
-http://localhost:8000
+http://localhost:8080/index.html
 ```
 
 ## 📝 Recent Changes
