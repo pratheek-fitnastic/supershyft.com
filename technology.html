@@ -22,6 +22,13 @@
         <link rel="canonical" href="https://www.supershyft.com/technology.html">
         <!-- css group start -->
         <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
+        <style>
+            /* Reduce rotating human gif size so full body (including legs) is visible */
+            .bottom-box-wrapper .img-box.body-img img {
+                transform: scale(0.88);
+                transform-origin: top center;
+            }
+        </style>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Sora:wght@100..800&display=swap" rel="stylesheet">
@@ -667,10 +674,9 @@
 
                     </div>
                 </div>
-                <div class="bs-grid typ-cards typ-cards-1">
-                    <button class="bs-btn typ-bio typ-red mx-auto d-md-none d-block mb-5">Regular AI</button>
-                    <button class="bs-btn typ-bio typ-green mx-auto d-md-none d-block mb-5">Supershyft Biology
-                        AI</button>
+                <div class="bs-grid typ-cards typ-cards-1 d-flex justify-content-between align-items-start gap-3">
+                    <button class="bs-btn typ-bio typ-green d-block mb-5">SuperShyft Bio AI</button>
+                    <button class="bs-btn typ-bio typ-red d-block mb-5">Other AI</button>
                 </div>
                 <style>
                     .deck {
@@ -788,18 +794,18 @@
 
                 <div class="deck" id="deck">
                     <div class="typ-click-heading"><h5 class="clickBtn">Click Here</h5></div>
-                    <div class="card left-1" style="--i: 1"><img src="assets/images/technology/cards/webp/red-2.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card left-2" style="--i: 2"><img src="assets/images/technology/cards/webp/red-4.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card left-3" style="--i: 3"><img src="assets/images/technology/cards/webp/red-6.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card right-1" style="--i: 1"><img src="assets/images/technology/cards/webp/green-1.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card right-2" style="--i: 2"><img src="assets/images/technology/cards/webp/green-3.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card right-3" style="--i: 3"><img src="assets/images/technology/cards/webp/green-5.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card left-4" style="--i: 4"><img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card left-5" style="--i: 5"><img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card left-6" style="--i: 6"><img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card right-4" style="--i: 4"><img src="assets/images/technology/cards/webp/green-2.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card right-5" style="--i: 5"><img src="assets/images/technology/cards/webp/green-4.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card right-6" style="--i: 6"><img src="assets/images/technology/cards/webp/green-6.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-1" style="--i: 1"><img src="assets/images/technology/cards/webp/green-1.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-2" style="--i: 2"><img src="assets/images/technology/cards/webp/green-3.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-3" style="--i: 3"><img src="assets/images/technology/cards/webp/green-5.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-1" style="--i: 1"><img src="assets/images/technology/cards/webp/red-2.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-2" style="--i: 2"><img src="assets/images/technology/cards/webp/red-4.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-3" style="--i: 3"><img src="assets/images/technology/cards/webp/red-6.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-4" style="--i: 4"><img src="assets/images/technology/cards/webp/green-2.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-5" style="--i: 5"><img src="assets/images/technology/cards/webp/green-4.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card left-6" style="--i: 6"><img src="assets/images/technology/cards/webp/green-6.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-4" style="--i: 4"><img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-5" style="--i: 5"><img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid"></div>
+                    <div class="card right-6" style="--i: 6"><img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid"></div>
                     <div class="card center pulse" id="centerCard"><img src="assets/images/technology/cards/webp/middle-card.png" alt="card-img" class="img-fluid"></div>
                 </div>
 
@@ -979,7 +985,7 @@
                     <li><a href="technology.html">Our Tech</a></li>
                     <li><a href="our-story.html">Our Story</a></li>
                     <li><a href="contact-us.html">Contact us</a></li>
-                    <li><a href="blogs.html">Blogs</a></li>
+                    <li><a href="#" target="_blank">Blogs</a></li>
                 </ul>
                 <div class="social-media">
                     <p>Follow us</p>
