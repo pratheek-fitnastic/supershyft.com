@@ -46,26 +46,6 @@
         </script>
         <!-- css group end -->
 
-    <script>
-        window.addEventListener("load", function () {
-            if (screen.width <= 992) {
-                var deskVideos = document.querySelectorAll(
-                    ".bs-banner .desk-video"
-                );
-                deskVideos.forEach(function (video) {
-                    video.remove();
-                });
-            } else {
-                var mobVideos = document.querySelectorAll(
-                    ".bs-banner .mobile-video"
-                );
-                mobVideos.forEach(function (video) {
-                    video.remove();
-                });
-            }
-        });
-    </script>
-    
     <!-- Fix for Science Section boxes visibility -->
     <style>
         /* Force ALL boxes in science section to be visible - override global .box { opacity: 0 !important } */
@@ -330,6 +310,9 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="contact-us.html">Contact Us</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="bs-btn login-btn" href="https://www.metsights.com/">Login</a>
                                 </li>
                             </ul>
                         </div>
@@ -1030,153 +1013,6 @@
         });
     </script>
     <script>
-        const cardData = [
-            { img: "./assets/images/technology/cards/red-1.svg" }, // 0
-            { img: "./assets/images/technology/cards/green-1.svg" }, // 1
-            { img: "./assets/images/technology/cards/red-2.svg" }, // 2
-            { img: "./assets/images/technology/cards/green-2.svg" }, // 3
-            { img: "./assets/images/technology/cards/red-3.svg" }, // 4
-            { img: "./assets/images/technology/cards/green-3.svg" }, // 5
-            { img: "./assets/images/technology/cards/red-5.svg" }, // 6
-            { img: "./assets/images/technology/cards/green-4.svg" }, // 7
-            { img: "./assets/images/technology/cards/red-4.svg" }, // 8
-            { img: "./assets/images/technology/cards/green-6.svg" }, // 9
-            { img: "./assets/images/technology/cards/red-6.svg" }, // 10
-            { img: "./assets/images/technology/cards/green-5.svg" }  // 11
-        ];
-
-        const pairs = [
-            [0, 3],
-            [2, 1],
-            [4, 7],
-            [8, 5],
-            [6, 9],
-            [10, 11]
-        ];
-
-        const stack = document.getElementById("cardStack");
-        const leftCol = document.getElementById("leftColumn");
-        const rightCol = document.getElementById("rightColumn");
-
-        let isExpanded = false;
-
-        stack.addEventListener("click", () => {
-            if (isExpanded) return;
-
-            pairs.forEach((pair, pairIndex) => {
-                setTimeout(() => {
-                    pair.forEach(idx => {
-                        const card = cardData[idx];
-                        const el = document.createElement("div");
-                        el.className = "image-box";
-                        el.dataset.index = idx;
-
-                        const img = document.createElement("img");
-                        img.src = card.img;
-                        img.alt = "";
-                        img.className = "img-fluid";
-                        el.appendChild(img);
-
-                        // Assign to column based on index
-                        if (idx % 2 === 0) {
-                            leftCol.appendChild(el);
-                        } else {
-                            rightCol.appendChild(el);
-                        }
-
-                        requestAnimationFrame(() => {
-                            el.classList.add("show");
-                        });
-                    });
-                }, pairIndex * 1000); // Each pair shows every 200ms
-            });
-
-            isExpanded = true;
-        });
-
-    </script>
-
-    <!-- <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const middleBox = document.querySelector(".middle-box img");
-
-            middleBox.addEventListener("click", function () {
-                const imageBoxes = document.querySelectorAll(".left-box, .right-box");
-                imageBoxes.forEach(box => {
-                    box.classList.add("active");
-                });
-            });
-        });
-    </script> -->
-    <script>
-        // function heroBanner() {
-        //     gsap.registerPlugin(ScrollTrigger);
-
-        //     // Set z-index so boxes stack properly
-        //     gsap.set(".boxes .box", {
-        //         zIndex: (i, target, targets) => targets.length - i
-        //     });
-
-        //     const images = gsap.utils.toArray('.boxes.green-boxes .box:not(.box-4)');
-
-        //     // Set initial opacity to 0 for all except box-4
-        //     gsap.set(images, { opacity: 0 });
-        //     gsap.set(".box-4", { opacity: 0 });
-
-        //     const tl = gsap.timeline({
-        //         scrollTrigger: {
-        //             trigger: "#scienceSection .box-wrapper",
-        //             scrub: 1.25,
-        //             // pin: true,
-        //             start: "top top",
-        //             // end: "+=300%",
-        //             // anticipatePin: 1,
-        //             markers: false,
-        //             invalidateOnRefresh: true,
-        //             immediateRender: false
-        //         }
-        //     });
-
-        //     // Fade in each box one-by-one
-        //     images.forEach((image, i) => {
-        //         tl.to(image, {
-        //             opacity: 1,
-        //             duration: 1,
-        //             ease: "power2.out"
-        //         }, i); // Each gets a slot in the timeline
-        //     });
-
-        //     // Finally fade in .box-4
-        //     tl.to(".box-4", {
-        //         opacity: 1,
-        //         duration: 1.5,
-        //         ease: "power2.out"
-        //     });
-
-        //     // Refresh on resize
-        //     window.addEventListener('resize', () => {
-        //         ScrollTrigger.refresh();
-        //     });
-
-        //     gsap.registerPlugin(ScrollTrigger);
-
-        //     // Animate scroll progress bar
-        //     gsap.to(".scroll-progress-bar", {
-        //         width: "100%",
-        //         ease: "none",
-        //         scrollTrigger: {
-        //             trigger: "#scienceSection",
-        //             start: "top top",
-        //             end: "bottom bottom",
-        //             scrub: true
-        //         }
-        //     });
-
-        //     // Refresh ScrollTrigger on resize
-        //     window.addEventListener("resize", () => {
-        //         ScrollTrigger.refresh();
-        //     });
-        // }
         function initScienceSection() {
             gsap.registerPlugin(ScrollTrigger);
             

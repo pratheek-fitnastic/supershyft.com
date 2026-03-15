@@ -126,26 +126,6 @@
         }
     </style>
 
-    <script>
-        window.addEventListener("load", function () {
-            if (screen.width <= 992) {
-                var deskVideos = document.querySelectorAll(
-                    ".bs-banner .desk-video"
-                );
-                deskVideos.forEach(function (video) {
-                    video.remove();
-                });
-            } else {
-                var mobVideos = document.querySelectorAll(
-                    ".bs-banner .mobile-video"
-                );
-                mobVideos.forEach(function (video) {
-                    video.remove();
-                });
-            }
-        });
-    </script>
-
     <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -212,6 +192,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <li class="nav-item">
                                     <a class="nav-link" href="contact-us.html">Contact Us</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="bs-btn login-btn" href="https://www.metsights.com/">Login</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -224,12 +207,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="bs-banner">
             <div class="banner-layer">
 
-                <video class="desk-video" autoplay playsinline loop muted>
-                    <source src="assets/video/banner.mp4" type="video/mp4" />
+                <video class="desk-video" autoplay playsinline loop muted preload="none">
+                    <source data-src="assets/video/banner.mp4" type="video/mp4" />
                 </video>
 
-                <video class="mobile-video" autoplay playsinline loop muted>
-                    <source src="assets/video/banner.mp4" type="video/mp4" />
+                <video class="mobile-video" autoplay playsinline loop muted preload="none">
+                    <source data-src="assets/video/banner.mp4" type="video/mp4" />
                 </video>
 
                 <div class="content container-left-space-target">
@@ -251,7 +234,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
 
                         <div class="text-lg-start text-center">
-                            <a href="https://longevity-bio-ai.supershyft.com/" target="_blank" target="_blank" class="bs-btn">Get
+                            <a href="https://longevity-bio-ai.supershyft.com/" target="_blank" class="bs-btn">Get
                                 Supershyft
                                 Today</a>
                         </div>
