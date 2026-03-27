@@ -106,6 +106,8 @@
             align-items: center;
             justify-content: center;
             perspective: 1500px;
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .beam-outer {
@@ -162,9 +164,11 @@
             height: 320px;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            animation: spin3D 22s linear infinite;
+            animation: spin3D 30s linear infinite;
             position: relative;
             z-index: 3;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .cube-face {
@@ -172,14 +176,15 @@
             width: 320px;
             height: 320px;
             background: rgba(0, 255, 255, 0.08);
-            box-shadow: inset 0 0 100px rgba(0, 255, 255, 0.15), 0 0 70px rgba(0, 255, 255, 0.3);
+            box-shadow: inset 0 0 50px rgba(0, 255, 255, 0.14), 0 0 24px rgba(0, 255, 255, 0.22);
             border-radius: 12px;
             border: 3px solid #00ffff;
-            backdrop-filter: blur(10px);
+            backdrop-filter: none;
             display: flex;
             align-items: center;
             justify-content: center;
             backface-visibility: hidden;
+            will-change: transform;
         }
 
         .icon-circle {
@@ -187,7 +192,7 @@
             height: 160px;
             border-radius: 50%;
             border: none;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.9), 0 0 100px rgba(0, 255, 255, 0.5), inset 0 0 15px rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 24px rgba(0, 255, 255, 0.6), 0 0 44px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -196,8 +201,10 @@
         .icon-circle img {
             width: 250px;
             height: 180px;
-            filter: drop-shadow(0 0 40px rgba(255, 0, 0, 1)) drop-shadow(0 0 80px rgba(255, 0, 0, 0.7));
-            transition: filter 0.3s ease;
+            filter: none;
+            transition: transform 0.3s ease;
+            image-rendering: auto;
+            transform: translateZ(0);
         }
 
         .front { transform: rotateY(0deg) translateZ(160px); }
@@ -216,6 +223,7 @@
                 transform: rotateX(360deg) rotateY(360deg);
             }
         }
+
 
         @media (max-width:767px) {
             .cube-face {
@@ -241,16 +249,18 @@
             color: #fff;
             background-color: #cc203b;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 52px !important;
+            height: 52px !important;
+            min-width: 52px !important;
+            min-height: 52px !important;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .arrow-icon {
-            width: 28px;
-            height: 28px;
+            width: 24px !important;
+            height: 24px !important;
             color: #fff;
             transition: all 0.3s ease;
         }
@@ -312,7 +322,7 @@
                                     <a class="nav-link" href="contact-us.html">Contact Us</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="bs-btn login-btn" href="https://www.metsights.com/">Login</a>
+                                    <a class="bs-btn login-btn" href="https://www.metsights.com/" style="font-size:16px;padding:6px 16px;line-height:1.2;">Login</a>
                                 </li>
                             </ul>
                         </div>
@@ -507,7 +517,7 @@
                                     <div class="boxes green-boxes" id="scienceSectionGreen">
                                         <div class="box box-1">
                                             <div class="icon-lottie lottie-1" id="lottieG1">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                             <h3 class="bs-para typ18 typwhite text-start">
                                                 Your cells repair themselves efficiently
@@ -515,7 +525,7 @@
                                         </div>
                                         <div class="box box-2">
                                             <div class="icon-lottie lottie-1" id="lottieG2">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                             <h3 class="bs-para typ18 typwhite text-start">
                                                 Significantly lower disease risks
@@ -523,7 +533,7 @@
                                         </div>
                                         <div class="box box-3">
                                             <div class="icon-lottie lottie-1" id="lottieG3">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                             <h3 class="bs-para typ18 typwhite text-start">
                                                 Better energy and cognitive function
@@ -531,7 +541,7 @@
                                         </div>
                                         <div class="box box-4">
                                             <div class="icon-lottie lottie-1" id="lottieG4">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                             <h3 class="bs-para typ18 typwhite text-start">
                                                 More quality years of active living
@@ -540,7 +550,7 @@
                                     </div>
                                 </div>
                                 <div class="img-box body-img">
-                                    <img src="./assets/images/images/rotating-man.gif" alt="Rotating human body" class="img-fluid">
+                                    <img src="./assets/images/technology/man.gif" alt="Rotating human body" class="img-fluid" loading="lazy" decoding="async">
                                 </div>
                                 <div class="red-box-wrapper">
                                     <div class="boxes red-boxes" id="scienceSectionRed">
@@ -549,7 +559,7 @@
                                                 Your cells age faster than normal
                                             </h3>
                                             <div class="icon-lottie lottie-1" id="lottieR1">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                         </div>
                                         <div class="box box-2">
@@ -557,7 +567,7 @@
                                                 Higher risk of age-related diseases
                                             </h3>
                                             <div class="icon-lottie lottie-1" id="lottieR2">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                         </div>
                                         <div class="box box-3">
@@ -565,7 +575,7 @@
                                                 Decreased energy and mental clarity
                                             </h3>
                                             <div class="icon-lottie lottie-1" id="lottieR3">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                         </div>
                                         <div class="box box-4">
@@ -573,7 +583,7 @@
                                                 Fewer healthy, active years ahead
                                             </h3>
                                             <div class="icon-lottie lottie-1" id="lottieR4">
-                                                <!-- <img src="assets/images/technology/g1.svg" class="img-fluid" alt=""> -->
+                                                <img src="assets/images/technology/g1.svg" class="img-fluid" alt="">
                                             </div>
                                         </div>
                                     </div>
@@ -662,6 +672,35 @@
                     <button class="bs-btn typ-bio typ-red d-block mb-5">Other AI</button>
                 </div>
                 <style>
+                    .typ-cards-section .container {
+                        position: relative;
+                    }
+
+                    .typ-cards-section .typ-cards.typ-cards-1 {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        top: 250px;
+                        z-index: 2000;
+                        padding: 0 12px;
+                        min-height: 56px;
+                    }
+
+                    .typ-cards-section .typ-cards.typ-cards-1 .bs-btn {
+                        position: absolute;
+                        margin-bottom: 0 !important;
+                    }
+
+                    .typ-cards-section .typ-cards.typ-cards-1 .typ-green {
+                        left: 20%;
+                        transform: translateX(-50%);
+                    }
+
+                    .typ-cards-section .typ-cards.typ-cards-1 .typ-red {
+                        left: 80%;
+                        transform: translateX(-50%);
+                    }
+
                     .deck {
                         display: flex;
                         flex-direction: column;
@@ -669,6 +708,7 @@
                         position: relative;
                         gap: 12px;
                         height: 90vh;
+                        z-index: 1;
                     }
 
                     .card {
@@ -678,7 +718,7 @@
                         justify-content: center;
                         align-items: center;
                         position: absolute;
-                        top: 50%;
+                        top: 62%;
                         left: 50%;
                         transform: translate(-50%, -50%);
                         transition: all 0.6s ease var(--delay, 0s);
@@ -751,6 +791,18 @@
                     .card.right-6 { --delay: 0.6s; }
 
                     @media (max-width: 768px) {
+                        .typ-cards-section .typ-cards.typ-cards-1 {
+                            top: 205px;
+                        }
+
+                        .typ-cards-section .typ-cards.typ-cards-1 .typ-green {
+                            left: 22%;
+                        }
+
+                        .typ-cards-section .typ-cards.typ-cards-1 .typ-red {
+                            left: 78%;
+                        }
+
                         .deck {
                             height: 900px;
                         }
@@ -758,6 +810,7 @@
                         .card {
                             width: 100px;
                             height: 152px;
+                            top: 58%;
                         }
 
                         .layout-active .card.left-1 { transform: translate(-170%, -300%); }
