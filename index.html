@@ -539,11 +539,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </div>
                 <div class="box-wrapper">
+                    <div class="mobile-step-cards-viewport">
                     <div class="mobile-content-wrapper">
                         <div class="mobile-content panel">
                             <div class="list-number">1.</div>
                             <div>
-                                <h3> Schedule Your Bio AI Test</h3>
+                                <h3>Schedule Your Bio AI Test</h3>
                                 <p class="bs-para">Instantly schedule blood tests on our platform and answer your
                                     lifestyle questions.
                                 </p>
@@ -573,6 +574,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             </div>
                         </div>
                     </div>
+                    </div>
                     <div class="pagination-dots text-center">
                         <span class="dot active"></span>
                         <span class="dot"></span>
@@ -594,9 +596,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     </div>
                 </div>
-                <!-- CTA Button -->
                 <div class="cta-wrapper text-center pt-4">
-                    <button class="bs-btn">Get Supershyft Today</button>
+                    <a href="https://longevity-bio-ai.supershyft.com/" target="_blank" rel="noopener noreferrer" class="bs-btn">Get Supershyft Today</a>
                 </div>
             </div>
         </section>
@@ -1213,12 +1214,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger);
 
         /** ===========================
      * Section 2 Animation (Pinning)
@@ -1425,43 +1427,90 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         /** ===========================
-         * Mobile Step Section Scroll Animation
+         * Mobile Step Section Scroll Animation (viewport ≤767px only)
          * =========================== */
-        {
-            const howSuperShftSection = document.querySelector("#howSuperShftSection");
-            if (howSuperShftSection) {
-                let dots = gsap.utils.toArray(".pagination-dots .dot");
-                let sections = gsap.utils.toArray(".mobile-step-section .panel");
-                let videos = gsap.utils.toArray(".mobile-video-wrapper .mobile-video");
+        ScrollTrigger.matchMedia({
+            "(max-width: 767px)": function () {
+                const howSuperShftSection = document.querySelector("#howSuperShftSection");
+                if (!howSuperShftSection) return;
 
-                gsap.to(sections, {
-                    xPercent: -100 * (sections.length - 1),
+                const contentWrapper = howSuperShftSection.querySelector(".mobile-content-wrapper");
+                const cardsViewport = howSuperShftSection.querySelector(".mobile-step-cards-viewport");
+                if (!contentWrapper || !cardsViewport) return;
+
+                const dots = gsap.utils.toArray(howSuperShftSection.querySelectorAll(".pagination-dots .dot"));
+                const panels = gsap.utils.toArray(howSuperShftSection.querySelectorAll(".mobile-content-wrapper .panel"));
+                const videoWraps = gsap.utils.toArray(howSuperShftSection.querySelectorAll(".mobile-video-wrapper .mobile-video"));
+
+                function syncCardsViewportHeight() {
+                    if (!panels.length) return;
+                    var h = 0;
+                    panels.forEach(function (p) {
+                        h = Math.max(h, p.offsetHeight);
+                    });
+                    cardsViewport.style.height = h + "px";
+                }
+
+                function scrollableCardsRange() {
+                    return Math.max(0, contentWrapper.offsetHeight - cardsViewport.clientHeight);
+                }
+
+                function syncStepVisuals(progress) {
+                    const index = Math.round(progress * (panels.length - 1));
+                    videoWraps.forEach((wrap, i) => {
+                        const video = wrap.querySelector("video");
+                        wrap.style.opacity = i === index ? 1 : 0;
+                        wrap.style.pointerEvents = i === index ? "auto" : "none";
+                        if (video) {
+                            if (i === index) {
+                                video.play().catch(function () {});
+                            } else {
+                                video.pause();
+                                video.currentTime = 0;
+                            }
+                        }
+                    });
+                    dots.forEach((dot, i) => dot.classList.toggle("active", i === index));
+                }
+
+                syncCardsViewportHeight();
+
+                gsap.to(contentWrapper, {
+                    y: function () {
+                        return -scrollableCardsRange();
+                    },
                     ease: "none",
                     scrollTrigger: {
                         trigger: howSuperShftSection,
                         pin: true,
                         markers: false,
                         scrub: 1,
-                        snap: 1 / (sections.length - 1),
-                        end: () => "+=" + document.querySelector(".mobile-step-section .mobile-content-wrapper").offsetWidth,
-                        onUpdate: (self) => {
-                            let index = Math.round(self.progress * (sections.length - 1));
-
-                            videos.forEach((vid, i) => {
-                                vid.style.opacity = i === index ? 1 : 0;
-                                vid.style.pointerEvents = i === index ? "auto" : "none";
-                            });
-
-                            dots.forEach((dot, i) => {
-                                dot.classList.toggle("active", i === index);
-                            });
+                        snap: 1 / (panels.length - 1),
+                        invalidateOnRefresh: true,
+                        end: function () {
+                            return "+=" + scrollableCardsRange();
+                        },
+                        onRefresh: function (self) {
+                            syncCardsViewportHeight();
+                            syncStepVisuals(self.progress);
+                        },
+                        onUpdate: function (self) {
+                            syncStepVisuals(self.progress);
                         }
                     }
                 });
 
-                ScrollTrigger.refresh();
+                return function () {
+                    videoWraps.forEach(function (wrap) {
+                        var v = wrap.querySelector("video");
+                        if (v) v.pause();
+                    });
+                    gsap.set(contentWrapper, { clearProps: "transform" });
+                    cardsViewport.style.height = "";
+                };
             }
-        }
+        });
+        });
     </script>
 
 <!-- <script>

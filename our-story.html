@@ -200,7 +200,7 @@
                         <p class="discription">
                             He saw <span class="pink">more family members fade</span> - an uncle, an aunt. <span
                                 class="text-block">Each loss felt personal, like a warning.</span> He began to wonder -
-                            <span class="linear-color">Why WAIT till itG��s too late? </span>
+                            <span class="linear-color">Why WAIT till it's too late? </span>
                         </p>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                         <h2 class="title">Another Setback</h2>
                         <p class="discription">
                             In 2013, <span class="pink"> an accident fractured his left hand.</span> <span
-                                class="text-block">A rod was inserted.</span> He couldnG��t work out freely - <span
+                                class="text-block">A rod was inserted.</span> He couldn't work out freely - <span
                                 class="linear-color">His STRENGTH was tested again.</span>
                         </p>
                     </div>
@@ -270,7 +270,7 @@
                             He joined <span class="pink">Cipla</span> - handling cancer marketing and strategy.
                             <span class="text-block">Life had come full circle - back to a world of pain and loss.
                             </span>
-                            <span class="text-block">Rich or poor, <span class="pink">cancer didnG��t spare
+                            <span class="text-block">Rich or poor, <span class="pink">cancer didn't spare
                                     anyone.</span></span> Everyone fought disease, <span class="linear-color">But few
                                 worked to PREVENT it. </span>
                         </p>
@@ -316,7 +316,7 @@
                         <h2 class="title">A Hard Truth</h2>
                         <p class="discription">
                             People spent <span class="pink"> lakhs on cure, but ignored prevention.</span> <span
-                                class="text-block">He realized fitness wasnG��t enough - it had to start with
+                                class="text-block">He realized fitness wasn't enough - it had to start with
                                 health.</span> <span class="linear-color">That sparked the idea of FITNASTIC.</span>
                         </p>
                     </div>
@@ -468,7 +468,7 @@
         </div>
         <div class="d-lg-flex d-md-flex justify-content-between">
             <div class="copywrite">
-                ��2025�Supershyft. All rights reserved.
+                © 2025 Supershyft. All rights reserved.
             </div>
             <div class="copywrite copywrite-new">
               Developed By
@@ -481,62 +481,103 @@
 
     <!-- js group start -->
     <script src="assets/js/vendor.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 <script src="assets/js/custom.js"></script>    <!-- js group end -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
-
 
     <script>
-        // Detect mobile
-        const isMobile = window.innerWidth <= 768;
+        (function () {
+            var section = document.querySelector(".contact-section");
+            var container = document.getElementById("lottie-container");
+            if (!section || !container) return;
 
-        // Load animation
-        const animation = lottie.loadAnimation({
-            container: document.getElementById("lottie-container"),
-            renderer: "svg",
-            loop: false,
-            autoplay: false,
-            path: isMobile
-                ? "assets/json/our-story-new.json"
-                : "assets/json/our-story-new-mob.json" 
-        });
+            var animation = null;
+            var scrollBound = false;
 
-        window.addEventListener("scroll", () => {
-            const section = document.querySelector(".contact-section");
-            const rect = section.getBoundingClientRect();
-
-            const sectionHeight = section.offsetHeight;
-            const windowHeight = window.innerHeight;
-
-            // Define scroll start/end points
-            const scrollStart = windowHeight;
-            const scrollEnd = -sectionHeight + windowHeight;
-
-            const totalScroll = scrollStart - scrollEnd;
-            const scrollPos = scrollStart - rect.top;
-
-            // Clamp progress between 0 and 1
-            let scrollProgress = scrollPos / totalScroll;
-            scrollProgress = Math.min(Math.max(scrollProgress, 0), 1);
-
-            // Go to animation frame
-            const frame = scrollProgress * animation.totalFrames;
-            animation.goToAndStop(frame, true);
-
-            // Optional: Reset to first frame when scroll is at top
-            if (window.scrollY === 0) {
-                animation.goToAndStop(0, true);
+            function lottiePath() {
+                var narrow = window.innerWidth <= 768;
+                return narrow
+                    ? "assets/json/our-story-new.json"
+                    : "assets/json/our-story-new-mob.json";
             }
-        });
+
+            function loadLottieScript() {
+                if (window.lottie) return Promise.resolve();
+                return new Promise(function (resolve, reject) {
+                    var s = document.createElement("script");
+                    s.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
+                    s.async = true;
+                    s.onload = resolve;
+                    s.onerror = reject;
+                    document.body.appendChild(s);
+                });
+            }
+
+            function updateFromScroll() {
+                if (!animation || !animation.totalFrames) return;
+                var rect = section.getBoundingClientRect();
+                var sectionHeight = section.offsetHeight;
+                var windowHeight = window.innerHeight;
+                var scrollStart = windowHeight;
+                var scrollEnd = -sectionHeight + windowHeight;
+                var totalScroll = scrollStart - scrollEnd;
+                var scrollPos = scrollStart - rect.top;
+                var scrollProgress = scrollPos / totalScroll;
+                scrollProgress = Math.min(Math.max(scrollProgress, 0), 1);
+                var frame = scrollProgress * animation.totalFrames;
+                animation.goToAndStop(frame, true);
+                if (window.scrollY === 0) {
+                    animation.goToAndStop(0, true);
+                }
+            }
+
+            function bindScroll() {
+                if (scrollBound) return;
+                scrollBound = true;
+                window.addEventListener("scroll", updateFromScroll, { passive: true });
+                updateFromScroll();
+            }
+
+            function startLottie() {
+                loadLottieScript().then(function () {
+                    animation = window.lottie.loadAnimation({
+                        container: container,
+                        renderer: "svg",
+                        loop: false,
+                        autoplay: false,
+                        path: lottiePath()
+                    });
+                    animation.addEventListener("DOMLoaded", function () {
+                        bindScroll();
+                    });
+                }).catch(function () {});
+            }
+
+            if ("IntersectionObserver" in window) {
+                var io = new IntersectionObserver(
+                    function (entries) {
+                        entries.forEach(function (e) {
+                            if (e.isIntersecting) {
+                                io.disconnect();
+                                startLottie();
+                            }
+                        });
+                    },
+                    { rootMargin: "320px 0px", threshold: 0 }
+                );
+                io.observe(section);
+            } else {
+                startLottie();
+            }
+        })();
     </script>
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger);
 
         const tl = gsap.timeline({
             scrollTrigger: {
@@ -560,9 +601,11 @@
             .to(".super-shyft", { x: 0, y: 4000, duration: 1 })
             .to(".super-shyft", { x: 0, y: 4400, duration: 1 })
             .to(".super-shyft", { x: 0, y: 4800, duration: 1 })
+        });
     </script>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
 
         if (window.innerWidth >= 320) {
@@ -612,6 +655,7 @@
             });
         }
 
+        });
     </script>
     <script>
         const flagObserver = new IntersectionObserver(entries => {
