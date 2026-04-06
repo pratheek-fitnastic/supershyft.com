@@ -88,6 +88,23 @@
         #scienceSection .green-boxes .bs-para {
             font-size: 18px !important;
         }
+
+        @media (max-width: 767px) {
+            #scienceSection .red-boxes .bs-para,
+            #scienceSection .green-boxes .bs-para,
+            #scienceSection .red-boxes h3.bs-para,
+            #scienceSection .green-boxes h3.bs-para {
+                font-size: 14px !important;
+                line-height: 1.35 !important;
+            }
+
+            #scienceSection .green-boxes .icon-lottie,
+            #scienceSection .red-boxes .icon-lottie {
+                max-width: 28px;
+                flex-shrink: 0;
+            }
+        }
+
         /* Ensure all points visible in "How Supershyft works" section ON TECHNOLOGY PAGE ONLY */
         .lyt-section.typ-marketing-section:not(.step-section) .left-box {
             height: auto !important;
@@ -711,6 +728,40 @@
                         z-index: 1;
                     }
 
+                    .deck-center-stack {
+                        position: absolute;
+                        top: 62%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: 10px;
+                        z-index: 1000;
+                        width: max-content;
+                        max-width: calc(100% - 24px);
+                        pointer-events: none;
+                    }
+
+                    .deck-center-stack .typ-click-heading {
+                        margin: 0;
+                        text-align: center;
+                        pointer-events: none;
+                    }
+
+                    .deck-center-stack .typ-click-heading .clickBtn {
+                        margin: 0;
+                    }
+
+                    .deck-center-stack .card.center {
+                        position: relative !important;
+                        top: auto !important;
+                        left: auto !important;
+                        transform: none !important;
+                        pointer-events: auto;
+                    }
+
                     .card {
                         width: 150px;
                         height: 225px;
@@ -791,45 +842,133 @@
                     .card.right-6 { --delay: 0.6s; }
 
                     @media (max-width: 768px) {
+                        .typ-cards-section {
+                            position: relative;
+                            isolation: isolate;
+                        }
+
+                        .typ-cards-section .bio-tech-lottie-container:not(:has(*)) {
+                            display: none !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            overflow: hidden !important;
+                        }
+
+                        .typ-cards-section .row.text-center.mb-lg-5.mb-4:first-of-type {
+                            margin-bottom: 0.65rem !important;
+                            position: relative;
+                            z-index: 120;
+                        }
+
                         .typ-cards-section .typ-cards.typ-cards-1 {
-                            top: 205px;
+                            position: relative !important;
+                            top: auto !important;
+                            left: auto !important;
+                            right: auto !important;
+                            display: flex !important;
+                            flex-direction: row !important;
+                            justify-content: space-between !important;
+                            align-items: stretch !important;
+                            gap: 10px;
+                            padding: 0 10px !important;
+                            margin: 0 0 0 !important;
+                            min-height: 0;
+                            z-index: 120;
                         }
 
-                        .typ-cards-section .typ-cards.typ-cards-1 .typ-green {
-                            left: 22%;
-                        }
-
-                        .typ-cards-section .typ-cards.typ-cards-1 .typ-red {
-                            left: 78%;
+                        .typ-cards-section .typ-cards.typ-cards-1 .bs-btn {
+                            position: relative !important;
+                            left: auto !important;
+                            transform: none !important;
+                            flex: 1 1 0;
+                            min-width: 0;
+                            margin-bottom: 0 !important;
+                            min-height: 52px;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            text-align: center !important;
+                            font-size: 11px !important;
+                            line-height: 1.2 !important;
+                            padding: 10px 8px !important;
+                            white-space: normal !important;
                         }
 
                         .deck {
-                            height: 900px;
+                            position: relative;
+                            height: 520px;
+                            z-index: 1;
+                            margin-top: 0;
+                        }
+
+                        .deck-center-stack {
+                            top: 56%;
+                            gap: 6px;
+                            z-index: 10;
+                        }
+
+                        .deck.layout-active {
+                            z-index: 1;
+                            min-height: 880px;
+                            padding-bottom: 24px;
+                            padding-top: 0;
+                        }
+
+                        /* Expanded deck is tall; keeping top:56% leaves ~half the deck empty under the titles */
+                        .deck.layout-active .card {
+                            top: 36% !important;
+                        }
+
+                        .deck.layout-active .deck-center-stack {
+                            top: 36%;
+                        }
+
+                        .typ-cards-section.layout-cards-expanded {
+                            padding-bottom: min(24vh, 280px);
+                            margin-bottom: 0.25rem;
+                        }
+
+                        .deck.layout-active .card:not(.center) {
+                            z-index: 2;
+                        }
+
+                        .deck.layout-active .card.center {
+                            z-index: 12;
+                        }
+
+                        .deck.layout-active .deck-center-stack {
+                            z-index: 15;
+                        }
+
+                        .deck-center-stack .typ-click-heading .clickBtn {
+                            font-size: 0.9rem;
                         }
 
                         .card {
                             width: 100px;
                             height: 152px;
-                            top: 58%;
+                            top: 56%;
                         }
 
-                        .layout-active .card.left-1 { transform: translate(-170%, -300%); }
-                        .layout-active .card.left-2 { transform: translate(-170%, -200%); }
-                        .layout-active .card.left-3 { transform: translate(-170%, -100%); }
-                        .layout-active .card.right-1 { transform: translate(70%, -300%); }
-                        .layout-active .card.right-2 { transform: translate(70%, -200%); }
-                        .layout-active .card.right-3 { transform: translate(70%, -100%); }
-                        .layout-active .card.left-4 { transform: translate(-170%, 0%); }
-                        .layout-active .card.left-5 { transform: translate(-170%, 100%); }
-                        .layout-active .card.left-6 { transform: translate(-170%, 200%); }
-                        .layout-active .card.right-4 { transform: translate(70%, 0%); }
-                        .layout-active .card.right-5 { transform: translate(70%, 100%); }
-                        .layout-active .card.right-6 { transform: translate(70%, 200%); }
+                        /* Softer fan-out so cards stay below the title pills (no overlap into z-index 120 row) */
+                        .layout-active .card.left-1 { transform: translate(-155%, -185%); }
+                        .layout-active .card.left-2 { transform: translate(-155%, -95%); }
+                        .layout-active .card.left-3 { transform: translate(-155%, -5%); }
+                        .layout-active .card.right-1 { transform: translate(55%, -185%); }
+                        .layout-active .card.right-2 { transform: translate(55%, -95%); }
+                        .layout-active .card.right-3 { transform: translate(55%, -5%); }
+                        .layout-active .card.left-4 { transform: translate(-155%, 85%); }
+                        .layout-active .card.left-5 { transform: translate(-155%, 175%); }
+                        .layout-active .card.left-6 { transform: translate(-155%, 265%); }
+                        .layout-active .card.right-4 { transform: translate(55%, 85%); }
+                        .layout-active .card.right-5 { transform: translate(55%, 175%); }
+                        .layout-active .card.right-6 { transform: translate(55%, 265%); }
                     }
                 </style>
 
                 <div class="deck" id="deck">
-                    <div class="typ-click-heading"><h5 class="clickBtn">Click Here</h5></div>
                     <div class="card left-1" style="--i: 1"><img src="assets/images/technology/cards/webp/green-1.png" alt="card-img" class="img-fluid"></div>
                     <div class="card left-2" style="--i: 2"><img src="assets/images/technology/cards/webp/green-3.png" alt="card-img" class="img-fluid"></div>
                     <div class="card left-3" style="--i: 3"><img src="assets/images/technology/cards/webp/green-5.png" alt="card-img" class="img-fluid"></div>
@@ -842,7 +981,10 @@
                     <div class="card right-4" style="--i: 4"><img src="assets/images/technology/cards/webp/red-1.png" alt="card-img" class="img-fluid"></div>
                     <div class="card right-5" style="--i: 5"><img src="assets/images/technology/cards/webp/red-3.png" alt="card-img" class="img-fluid"></div>
                     <div class="card right-6" style="--i: 6"><img src="assets/images/technology/cards/webp/red-5.png" alt="card-img" class="img-fluid"></div>
-                    <div class="card center pulse" id="centerCard"><img src="assets/images/technology/cards/webp/middle-card.png" alt="card-img" class="img-fluid"></div>
+                    <div class="deck-center-stack">
+                        <div class="typ-click-heading"><h5 class="clickBtn">Click Here</h5></div>
+                        <div class="card center pulse" id="centerCard"><img src="assets/images/technology/cards/webp/middle-card.png" alt="card-img" class="img-fluid"></div>
+                    </div>
                 </div>
 
                 <script>
@@ -850,9 +992,14 @@
                     const deck = document.getElementById("deck");
                     let activated = false;
 
+                    const cardsSection = deck.closest(".typ-cards-section");
+
                     centerCard.addEventListener("click", () => {
                         activated = !activated;
                         deck.classList.toggle("layout-active", activated);
+                        if (cardsSection) {
+                            cardsSection.classList.toggle("layout-cards-expanded", activated);
+                        }
                     });
                 </script>
             </div>
@@ -1021,7 +1168,6 @@
                     <li><a href="technology.html">Our Tech</a></li>
                     <li><a href="our-story.html">Our Story</a></li>
                     <li><a href="contact-us.html">Contact us</a></li>
-                    <li><a href="#" target="_blank">Blogs</a></li>
                 </ul>
                 <div class="social-media">
                     <p>Follow us</p>
