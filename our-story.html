@@ -469,10 +469,6 @@
             <div class="copywrite">
                 © 2025 Supershyft. All rights reserved.
             </div>
-            <div class="copywrite copywrite-new">
-              Developed By
-            <a href="https://creativewebo.com/" target="_blank">CreativeWebo Pvt. Ltd.</a>
-            </div>
         </div>
 
     </div>
@@ -578,28 +574,48 @@
         document.addEventListener("DOMContentLoaded", function () {
             gsap.registerPlugin(ScrollTrigger);
 
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".lyt-section.typ-lines", // main scrollable section
-                start: "top top",
-                end: "bottom bottom",
-                scrub: true,
-                // markers: true, // remove in production
+            function superShyftTimeline(scrollTriggerOpts) {
+                const tl = gsap.timeline({ scrollTrigger: scrollTriggerOpts });
+                tl.to(".super-shyft", { x: 0, y: 400, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 800, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 1200, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 1600, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 2000, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 2400, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 2800, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 3200, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 3600, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 4000, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 4400, duration: 1 })
+                    .to(".super-shyft", { x: 0, y: 4800, duration: 1 });
+                return tl;
             }
-        });
 
-        tl.to(".super-shyft", { x: 0, y: 400, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 800, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 1200, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 1600, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 2000, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 2400, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 2800, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 3200, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 3600, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 4000, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 4400, duration: 1 })
-            .to(".super-shyft", { x: 0, y: 4800, duration: 1 })
+            const mm = gsap.matchMedia();
+
+            mm.add("(min-width: 768px)", function () {
+                superShyftTimeline({
+                    trigger: ".lyt-section.typ-lines",
+                    start: "top top",
+                    end: function () {
+                        return "+=" + (window.innerHeight * 0.85);
+                    },
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                });
+            });
+
+            mm.add("(max-width: 767px)", function () {
+                superShyftTimeline({
+                    trigger: ".lyt-section.typ-lines",
+                    start: "top top",
+                    end: function () {
+                        return "+=" + (window.innerHeight * 0.85);
+                    },
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                });
+            });
         });
     </script>
 
@@ -612,15 +628,38 @@
             gsap.registerPlugin(ScrollTrigger);
 
             // ? Entry animation for .zic-line
-            gsap.from(".zic-line", {
-                scrollTrigger: {
-                    trigger: ".lyt-section.typ-lines",
-                    start: "top center",
-                    end: "bottom center",
-                    scrub: true,
-                },
-                opacity: 1,
-                y: 20,
+            const mmZ = gsap.matchMedia();
+
+            mmZ.add("(min-width: 768px)", function () {
+                gsap.from(".zic-line", {
+                    scrollTrigger: {
+                        trigger: ".lyt-section.typ-lines",
+                        start: "top center",
+                        end: function () {
+                            return "+=" + (window.innerHeight * 0.7);
+                        },
+                        scrub: true,
+                        invalidateOnRefresh: true,
+                    },
+                    opacity: 1,
+                    y: 20,
+                });
+            });
+
+            mmZ.add("(max-width: 767px)", function () {
+                gsap.from(".zic-line", {
+                    scrollTrigger: {
+                        trigger: ".lyt-section.typ-lines",
+                        start: "top center",
+                        end: function () {
+                            return "+=" + (window.innerHeight * 0.7);
+                        },
+                        scrub: true,
+                        invalidateOnRefresh: true,
+                    },
+                    opacity: 1,
+                    y: 20,
+                });
             });
 
             // ? Animate story cards (existing code � kept as-is)
