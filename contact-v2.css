@@ -639,26 +639,20 @@ body {
 
 @media screen and (max-width: 991px) {
   .bs-footer-contact .top-footer .list {
-    grid-gap: 25px;
-    gap: 25px;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .bs-footer-contact .top-footer .list {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    width: 100%;
-    flex: 1 1 100%;
-    align-items: start;
-    justify-items: center;
-    grid-gap: 8px;
-    gap: 8px;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    align-items: start !important;
+    justify-items: center !important;
+    justify-content: unset !important;
+    grid-gap: 8px !important;
+    gap: 8px !important;
   }
 
   .bs-footer-contact .top-footer .list li:last-child {
-    grid-column: 1 / -1;
-    justify-self: center;
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
   }
 }
 
