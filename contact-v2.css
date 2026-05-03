@@ -646,10 +646,19 @@ body {
 
 @media screen and (max-width: 767px) {
   .bs-footer-contact .top-footer .list {
-    display: flex;
-    align-items: flex-end;
-    grid-gap: 12px;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    flex: 1 1 100%;
+    align-items: start;
+    justify-items: center;
+    grid-gap: 8px;
+    gap: 8px;
+  }
+
+  .bs-footer-contact .top-footer .list li:last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
   }
 }
 
