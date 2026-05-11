@@ -654,6 +654,21 @@ body {
     grid-column: 1 / -1 !important;
     justify-self: center !important;
   }
+
+  footer.bs-footer-contact .container > .top-footer > .social-media {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-inline: 0 !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
 }
 
 .bs-footer-contact .top-footer .list li a {
@@ -703,7 +718,8 @@ body {
   .bs-footer-contact .top-footer .social-media {
     margin-top: 12px;
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
+    text-align: left;
   }
   .bs-footer-contact .top-footer .social-media p {
     color: #FFF;
