@@ -1,0 +1,7 @@
+# ── Old blog → new blog (301, permanent) ──────────────────────────────
+# The legacy /blogs.html static page was replaced by the dynamic blog at /blog/.
+Redirect 301 /blogs.html /blog/
+
+# Optional: keep the bare /blog path working without a trailing slash.
+RewriteEngine On
+RewriteRule ^blog$ /blog/ [R=301,L]

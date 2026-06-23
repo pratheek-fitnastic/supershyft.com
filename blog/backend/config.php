@@ -1,0 +1,62 @@
+<?php
+$envFile = file_exists(__DIR__ . '/.env.local')
+    ? __DIR__ . '/.env.local'
+    : __DIR__ . '/.env.production';
+
+if (is_file($envFile)) {
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        if ($line[0] === '#' || !str_contains($line, '=')) continue;
+        [$key, $val] = explode('=', $line, 2);
+        $_ENV[trim($key)] = trim($val);
+    }
+}
+
+function env(string $key, string $default = ''): string {
+    return $_ENV[$key] ?? $default;
+}
+
+define('DB_HOST',    env('DB_HOST', 'localhost'));
+define('DB_NAME',    env('DB_NAME', ''));
+define('DB_USER',    env('DB_USER', ''));
+define('DB_PASS',    env('DB_PASS', ''));
+define('DB_CHARSET', 'utf8mb4');
+
+define('SITE_URL',     env('SITE_URL',     'http://localhost:8000'));
+define('FRONTEND_URL', env('FRONTEND_URL', 'http://localhost:8000'));
+
+define('UPLOAD_DIR',    __DIR__ . '/uploads/');
+define('UPLOAD_URL',    SITE_URL . '/blog/backend/uploads/');
+define('MAX_FILE_SIZE', 5 * 1024 * 1024);
+
+define('ADMIN_EMAIL',  env('ADMIN_EMAIL', ''));
+define('ADMIN_PASS',   env('ADMIN_PASS',  ''));
+define('SESSION_NAME', 'supershyft_blog_admin');
+
+define('SMTP_HOST',   env('SMTP_HOST',   'smtp.hostinger.com'));
+define('SMTP_PORT',   (int) env('SMTP_PORT',   '465'));
+define('SMTP_USER',   env('SMTP_USER',   ''));
+define('SMTP_PASS',   env('SMTP_PASS',   ''));
+define('MAIL_FROM',      env('MAIL_FROM',      ''));   // defaults to SMTP_USER if blank
+define('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'Supershyft'));
+define('CONTACT_TO',     env('CONTACT_TO',     ''));   // where contact leads are emailed; defaults to SMTP_USER
+
+define('DEBUG', env('DEBUG', 'false') === 'true');
+
+/**
+ * Public base URL for the live site (no trailing slash).
+ * Derives from the actual request host so generated URLs (sitemap, RSS)
+ * are correct even when the env file is missing — config defaults
+ * SITE_URL to localhost, which must never leak into public output.
+ * Falls back to SITE_URL, then the canonical production host.
+ */
+function public_base_url(): string {
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    if ($host !== '' && stripos($host, 'localhost') === false && strpos($host, '127.0.0.1') === false) {
+        $https = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+              || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+              || ((int)($_SERVER['SERVER_PORT'] ?? 0) === 443);
+        return ($https ? 'https://' : 'http://') . $host;
+    }
+    $site = rtrim(SITE_URL, '/');
+    return ($site !== '' && stripos($site, 'localhost') === false) ? $site : 'https://www.supershyft.com';
+}
