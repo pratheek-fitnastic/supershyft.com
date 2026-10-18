@@ -43,12 +43,12 @@
     var avail = giftBox.parentElement ? giftBox.parentElement.clientWidth : giftBox.clientWidth;
     var s = Math.min(1, avail / 1302);
     /*
-     * Desktop: Figma's 1440 × 1010 frame shows the whole section on one screen. Section height is
-     * 238px of text/button/padding + 772px × s for the box (868 minus the two 48px overlaps), so
-     * on shorter windows shrink the box until the whole section fits the window again.
+     * Desktop: Figma's 1440 × 1010 frame shows the whole section on one screen. Text, spacing,
+     * button and box all scale by s (CSS uses --g-pack-s), keeping Figma's proportions.
      */
     if (window.matchMedia("(min-width: 992px)").matches) {
-      s = Math.max(0.45, Math.min(s, (window.innerHeight - 238) / 772));
+      /* Everything in the section scales by s, so the full 1010px Figma frame fits the window height */
+      s = Math.max(0.45, Math.min(s, window.innerHeight / 1010));
     }
     var w = Math.round(1302 * s);
     giftBox.style.width = w + "px";

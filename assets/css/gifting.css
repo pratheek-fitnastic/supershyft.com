@@ -103,9 +103,20 @@
   user-select: none;
 }
 
-/* No full-scene black overlay */
-.g-hero__shade {
-  display: none;
+/*
+ * Soft fade of the floor into black over the hero's last ~17% (≈150px at 908), so the
+ * hero melts into section 2 with no visible edge — matches the design's seam.
+ */
+.g-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 17%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 45%, #000 100%);
+  pointer-events: none;
 }
 
 /*
@@ -246,11 +257,16 @@
 }
 
 /* Same 856:10806 fade at top of section 2 — meets hero fade on the seam */
+/*
+ * Figma 856:10806 — the hero's 125px black→clear band hangs over the seam: it starts 22px
+ * inside the hero (hero y 886) and covers the first 103px of this section. Kept behind the
+ * heading so the title stays bright, as in the design.
+ */
 .g-pack__fade {
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
+  top: -22px;
   z-index: 1;
   width: 100%;
   height: 125px;
@@ -1100,15 +1116,21 @@
  * subtitle by 48px and the button overlaps the box by 48px (Figma mb-[-48px]).
  */
 @media (min-width: 992px) {
+  /* Whole section scales as one piece by --g-pack-s (set in gifting.js) so Figma's proportions hold */
   .g-pack {
-    padding: 16px 24px 52px;
+    padding: calc(16px * var(--g-pack-s, 1)) 24px calc(52px * var(--g-pack-s, 1));
   }
 
   .g-pack__title {
-    margin-bottom: -6px;
+    font-size: calc(54px * var(--g-pack-s, 1));
+    line-height: calc(80px * var(--g-pack-s, 1));
+    margin-bottom: calc(-6px * var(--g-pack-s, 1));
   }
 
   .g-pack__sub {
+    max-width: none;
+    font-size: calc(20px * var(--g-pack-s, 1));
+    line-height: calc(30px * var(--g-pack-s, 1));
     margin-bottom: calc(-48px * var(--g-pack-s, 1));
   }
 
@@ -1117,9 +1139,14 @@
     position: relative;
     z-index: 3;
   }
+
+  .g-pack__cta .g-btn {
+    padding: calc(17px * var(--g-pack-s, 1)) calc(85px * var(--g-pack-s, 1));
+    font-size: calc(20px * var(--g-pack-s, 1));
+    line-height: calc(30px * var(--g-pack-s, 1));
+    letter-spacing: calc(0.6px * var(--g-pack-s, 1));
+  }
 }
-
-
 
 /* ===== 3. Four steps — pinned scroll; Figma 856:10815 / 10842 / 10871 / 10897 ===== */
 /*
