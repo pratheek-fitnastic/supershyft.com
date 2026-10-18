@@ -30,35 +30,79 @@
   var stepPanels = document.querySelectorAll(".g-steps__panel");
   var boxHasOpened = false;
   var openAnimTimer = null;
-  var openRevealTimer = null;
-  var LID_LIFT_MS = reducedMotion ? 40 : 580;
-  var OPEN_SETTLE_MS = reducedMotion ? 80 : 1600;
+  /* Must match the 3.2s keyframes on .g-box.is-opening in gifting.css */
+  var OPEN_SEQUENCE_MS = 3200;
+  var SPARKS_AT_MS = 1150;
+  var boxCanvas = document.getElementById("gift-box-canvas");
+  var sparkLayer = document.getElementById("gift-box-sparkles");
+  var giftPackage = document.getElementById("gift-package");
+
+  /* Scale the 1302 × 868 Figma canvas to the box width; on small screens pad for the taller card */
+  function fitGiftBox() {
+    if (!giftBox || !boxCanvas) return;
+    var avail = giftBox.parentElement ? giftBox.parentElement.clientWidth : giftBox.clientWidth;
+    var s = Math.min(1, avail / 1302);
+    /*
+     * Desktop: Figma's 1440 × 1010 frame shows the whole section on one screen. Section height is
+     * 238px of text/button/padding + 772px × s for the box (868 minus the two 48px overlaps), so
+     * on shorter windows shrink the box until the whole section fits the window again.
+     */
+    if (window.matchMedia("(min-width: 992px)").matches) {
+      s = Math.max(0.45, Math.min(s, (window.innerHeight - 238) / 772));
+    }
+    var w = Math.round(1302 * s);
+    giftBox.style.width = w + "px";
+    giftBox.style.setProperty("--g-box-s", s.toFixed(5));
+    if (giftPack) giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
+    giftBox.style.setProperty("--g-box-w", w + "px");
+    giftBox.style.marginBottom = "";
+    if (giftPackage && window.matchMedia("(max-width: 991.98px)").matches && giftBox.classList.contains("is-open")) {
+      var overflow = giftPackage.getBoundingClientRect().bottom - giftBox.getBoundingClientRect().bottom;
+      if (overflow > 0) giftBox.style.marginBottom = Math.ceil(overflow + 16) + "px";
+    }
+  }
+
+  function burstSparkles() {
+    if (!sparkLayer || reducedMotion) return;
+    sparkLayer.innerHTML = "";
+    for (var i = 0; i < 46; i++) {
+      var spark = document.createElement("span");
+      var angle = Math.random() * Math.PI * 2;
+      var dist = 180 + Math.random() * 420;
+      spark.className = "g-box__spark";
+      spark.style.setProperty("--dx", Math.cos(angle) * dist * 1.3 + "px");
+      spark.style.setProperty("--dy", Math.sin(angle) * dist * 0.75 - 120 + "px");
+      spark.style.setProperty("--sz", 6 + Math.random() * 16 + "px");
+      spark.style.setProperty("--dur", 1.1 + Math.random() * 0.9 + "s");
+      spark.style.setProperty("--delay", Math.random() * 0.25 + "s");
+      sparkLayer.appendChild(spark);
+    }
+    window.setTimeout(function () {
+      sparkLayer.innerHTML = "";
+    }, 2600);
+  }
 
   function clearOpenTimers() {
     if (openAnimTimer) {
       window.clearTimeout(openAnimTimer);
       openAnimTimer = null;
     }
-    if (openRevealTimer) {
-      window.clearTimeout(openRevealTimer);
-      openRevealTimer = null;
-    }
   }
 
-  function closeGiftBox() {
-    if (!giftBox) return;
-    clearOpenTimers();
-    giftBox.classList.remove("is-open", "is-opening", "is-flipped");
-    giftBox.setAttribute("aria-expanded", "false");
-    giftBox.setAttribute("aria-label", "Open gift box");
-    giftBox.setAttribute("role", "button");
-    giftBox.setAttribute("tabindex", "0");
-    var openStage = document.getElementById("gift-box-open");
-    if (openStage) openStage.setAttribute("aria-hidden", "true");
+  function finishOpen() {
+    giftBox.classList.remove("is-opening");
+    giftBox.classList.add("is-open");
+    giftBox.setAttribute("aria-expanded", "true");
+    giftBox.setAttribute("aria-label", "Gift box opened — explore the package");
+    giftBox.removeAttribute("role");
+    giftBox.removeAttribute("tabindex");
     var flipBtnEl = document.getElementById("flip-package-card");
-    if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "-1");
+    if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "0");
+    openAnimTimer = null;
+    fitGiftBox();
   }
 
+  /* Closed → shake → lid lifts → light burst + sparkles → open box, card rises (2.8s) */
   function openGiftBox() {
     if (!giftBox || giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) {
       return;
@@ -66,28 +110,74 @@
     boxHasOpened = true;
     clearOpenTimers();
     giftBox.classList.remove("is-flipped");
-    /* Stage 1: lid lift on closed box */
-    giftBox.classList.add("is-opening");
     var openStage = document.getElementById("gift-box-open");
     if (openStage) openStage.setAttribute("aria-hidden", "false");
 
-    /* Stage 2: crossfade to open shell + rising card */
-    openRevealTimer = window.setTimeout(function () {
-      giftBox.classList.add("is-open");
-      openRevealTimer = null;
-    }, LID_LIFT_MS);
+    if (reducedMotion) {
+      finishOpen();
+      return;
+    }
+    /* Decode the big open-box art first so the first frames never hitch on image decoding */
+    /*
+     * Start only once scrolling has settled and the art is decoded, then after two painted
+     * frames — opening mid-scroll is what made the first half-second stutter.
+     */
+    Promise.all([decodeBoxImages(), waitForScrollIdle()]).then(function () {
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          giftBox.classList.add("is-opening");
+          window.setTimeout(burstSparkles, SPARKS_AT_MS);
+          openAnimTimer = window.setTimeout(finishOpen, OPEN_SEQUENCE_MS);
+        });
+      });
+    });
+  }
 
-    /* Stage 3: settle — flip CTA becomes interactive */
-    openAnimTimer = window.setTimeout(function () {
-      giftBox.classList.remove("is-opening");
-      giftBox.setAttribute("aria-expanded", "true");
-      giftBox.setAttribute("aria-label", "Gift box opened — explore the package");
-      giftBox.removeAttribute("role");
-      giftBox.removeAttribute("tabindex");
-      var flipBtnEl = document.getElementById("flip-package-card");
-      if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "0");
-      openAnimTimer = null;
-    }, LID_LIFT_MS + OPEN_SETTLE_MS);
+  /*
+   * Resolves once scrolling has really finished: the browser's `scrollend` event where
+   * supported, otherwise 250ms with no scroll. A smooth scroll can pause mid-way, so a short
+   * idle window alone is not enough. Never waits longer than 2s.
+   */
+  function waitForScrollIdle() {
+    return new Promise(function (resolve) {
+      var done = false;
+      var idleTimer = null;
+      var hasScrollEnd = "onscrollend" in window;
+      function finish() {
+        if (done) return;
+        done = true;
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("scrollend", onScrollEnd);
+        window.clearTimeout(idleTimer);
+        resolve();
+      }
+      function onScroll() {
+        window.clearTimeout(idleTimer);
+        idleTimer = window.setTimeout(finish, hasScrollEnd ? 600 : 250);
+      }
+      function onScrollEnd() {
+        window.clearTimeout(idleTimer);
+        idleTimer = window.setTimeout(finish, 80);
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("scrollend", onScrollEnd);
+      idleTimer = window.setTimeout(finish, 250);
+      window.setTimeout(finish, 2000);
+    });
+  }
+
+  function decodeBoxImages() {
+    if (!giftBox) return Promise.resolve();
+    var imgs = giftPack.querySelectorAll("img");
+    var jobs = Array.prototype.map.call(imgs, function (img) {
+      if (!img.decode) return Promise.resolve();
+      return img.decode().catch(function () {});
+    });
+    /* Never wait more than 1.2s — start anyway on very slow connections */
+    var cap = new Promise(function (resolve) {
+      window.setTimeout(resolve, 1200);
+    });
+    return Promise.race([Promise.all(jobs), cap]);
   }
 
   function flipPackageCard() {
@@ -95,7 +185,24 @@
       return;
     }
     giftBox.classList.toggle("is-flipped");
+    fitGiftBox();
   }
+
+  fitGiftBox();
+  window.addEventListener("resize", fitGiftBox);
+
+  /*
+   * Section 2's art is large (4096px background, 3072px open box). Decode it while the
+   * visitor is still on the hero so reaching the section never stalls the opening animation.
+   */
+  window.addEventListener("load", function () {
+    var warm = function () {
+      decodeBoxImages();
+    };
+    if ("requestIdleCallback" in window) window.requestIdleCallback(warm, { timeout: 1500 });
+    else window.setTimeout(warm, 300);
+  });
+  window.addEventListener("load", fitGiftBox);
 
   function scrollToEl(el, block) {
     if (!el) return;
@@ -110,9 +217,7 @@
     exploreBtn.addEventListener("click", function (e) {
       e.preventDefault();
       scrollToEl(giftPack, "center");
-      window.setTimeout(function () {
-        openGiftBox();
-      }, reducedMotion ? 50 : 450);
+      openGiftBox();
     });
   }
 
@@ -293,6 +398,80 @@
   var previewCardImg = document.getElementById("preview-card-img");
   var previewNote = document.getElementById("preview-note");
   var chipsRoot = document.getElementById("gift-message-chips");
+
+  /* Custom relationship dropdown (Figma 862:12515) — drives the hidden native <select> */
+  var relBox = document.getElementById("rel-box");
+  var relToggle = document.getElementById("rel-toggle");
+  var relList = document.getElementById("rel-list");
+  var relCurrent = document.getElementById("rel-current");
+  var REL_OPTIONS = ["Mom", "Dad", "Spouse", "Sibling", "Friend", "Others"];
+
+  function renderRelOptions() {
+    if (!relList || !relationship) return;
+    relList.innerHTML = "";
+    REL_OPTIONS.forEach(function (value) {
+      if (value === relationship.value) return;
+      var li = document.createElement("li");
+      li.setAttribute("role", "option");
+      li.setAttribute("tabindex", "-1");
+      li.setAttribute("data-value", value);
+      li.textContent = value;
+      relList.appendChild(li);
+    });
+  }
+
+  function setRelOpen(open) {
+    if (!relBox || !relList || !relToggle) return;
+    relBox.classList.toggle("is-open", open);
+    relList.hidden = !open;
+    relToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function chooseRel(value) {
+    if (!relationship) return;
+    relationship.value = value;
+    if (relCurrent) relCurrent.textContent = value;
+    relationship.dispatchEvent(new Event("change", { bubbles: true }));
+    renderRelOptions();
+    setRelOpen(false);
+    if (relToggle) relToggle.focus();
+  }
+
+  if (relBox && relToggle && relList && relationship) {
+    renderRelOptions();
+    relToggle.addEventListener("click", function () {
+      setRelOpen(relList.hidden);
+      if (!relList.hidden && relList.firstElementChild) relList.firstElementChild.focus();
+    });
+    relList.addEventListener("click", function (e) {
+      var li = e.target.closest("li[data-value]");
+      if (li) chooseRel(li.getAttribute("data-value"));
+    });
+    relList.addEventListener("keydown", function (e) {
+      var li = e.target.closest("li[data-value]");
+      if (!li) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        chooseRel(li.getAttribute("data-value"));
+      } else if (e.key === "ArrowDown" && li.nextElementSibling) {
+        e.preventDefault();
+        li.nextElementSibling.focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (li.previousElementSibling) li.previousElementSibling.focus();
+        else relToggle.focus();
+      }
+    });
+    document.addEventListener("click", function (e) {
+      if (!relBox.contains(e.target)) setRelOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !relList.hidden) {
+        setRelOpen(false);
+        relToggle.focus();
+      }
+    });
+  }
 
   var OCCASIONS = {
     diwali: {

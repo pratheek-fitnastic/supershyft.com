@@ -39,8 +39,9 @@
     gtag('config', 'G-NGCC7R99GH');
   </script>
   <link rel="stylesheet" href="assets/css/gifting.css">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-box-closed.png">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-box-open.png">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-box-lid.png">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-box-base.png">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-card-ui.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-inner-scene.png">
   <link rel="preload" as="image" href="assets/images/gifting/bg-teal.jpg">
   <link rel="preload" as="image" href="assets/images/gifting/mandala-with-diya.png">
@@ -106,16 +107,19 @@
 
     <!-- 2. Gift pack — Figma 856:10808 / Gift Box 856:11751 -->
     <section class="g-pack" id="gift-pack">
-      <img class="g-pack__bg" src="assets/images/gifting/bg-teal.png" width="4096" height="2913" alt="" decoding="async">
+      <img class="g-pack__bg" src="assets/images/gifting/bg-teal-2x.jpg" width="3264" height="2321" alt="" decoding="async">
       <img class="g-pack__fade" src="assets/images/gifting/section-fade.png" width="1440" height="125" alt="" decoding="async" aria-hidden="true">
       <div class="g-pack__shade" aria-hidden="true"></div>
-      <div class="g-pack__glow" aria-hidden="true"></div>
       <div class="g-pack__inner">
         <header class="g-pack__intro">
           <h2 class="g-pack__title">A <span class="g-gold">Gift of Health</span>, Wrapped in Love.</h2>
           <p class="g-pack__sub">Choose a SuperShyft Bio-AI health package for the people who mean the most to you.</p>
         </header>
 
+        <!--
+          Gift box — Figma Gift Box 1 (856:11751): closed 856:11752 → open 856:11754 → card back 862:10880.
+          Everything inside .g-box__canvas is laid out at Figma's 1302 × 868 px and scaled to fit (gifting.js).
+        -->
         <div
           class="g-box"
           id="gift-box"
@@ -124,59 +128,60 @@
           aria-expanded="false"
           aria-controls="gift-box-open"
           aria-label="Open gift box"
-          aria-live="polite"
         >
-          <!-- Closed box (Figma 856:11752) -->
-          <div class="g-box__layer g-box__closed">
-            <img src="assets/images/gifting/gift-box-closed.png" width="1352" height="978" alt="Closed SuperShyft gift box">
-          </div>
+          <div class="g-box__canvas" id="gift-box-canvas">
+            <div class="g-box__burst" aria-hidden="true"></div>
+            <div class="g-box__sparkles" id="gift-box-sparkles" aria-hidden="true"></div>
 
-          <!-- Open box + flipable package card (Figma 856:11754 / 862:10880) -->
-          <div class="g-box__open-stage" id="gift-box-open" aria-hidden="true">
-            <div class="g-box__frame">
-              <img class="g-box__shell" src="assets/images/gifting/gift-box-open.png" width="3072" height="2048" alt="Open SuperShyft gift box">
+            <!-- Closed box (856:11752), pre-split at the lid seam with Figma's pink glow baked in -->
+            <div class="g-box__closed" aria-hidden="true">
+              <img class="g-box__closed-part g-box__closed-base" src="assets/images/gifting/gift-box-base.png" width="1184" height="357" alt="">
+              <img class="g-box__closed-part g-box__closed-lid" src="assets/images/gifting/gift-box-lid.png" width="1184" height="486" alt="">
+            </div>
+
+            <!-- Open box + flip card (856:11754 / 862:10880) -->
+            <div class="g-box__open-stage" id="gift-box-open" aria-hidden="true">
+              <img class="g-box__shell" src="assets/images/gifting/gift-card-ui.png" width="3072" height="2048" alt="Open SuperShyft gift box">
 
               <div class="g-box__package" id="gift-package">
                 <div class="g-box__card-flip">
-                  <!-- FRONT — Core+ package -->
+                  <!-- FRONT — 856:11756 -->
                   <div class="g-box__card-face g-box__card-face--front">
+                    <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
                     <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <p class="g-box__script">Wrapped in Love</p>
 
-                    <div class="g-box__package-inner">
-                      <div class="g-box__package-art">
-                        <img src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
-                        <p class="g-box__script">Wrapped in Love</p>
-                      </div>
-                      <div class="g-box__package-panel">
-                        <div class="g-box__badge">Men &amp; Women</div>
-                        <div class="g-box__pkg-head">
-                          <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
-                          <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
-                          <div class="g-box__price-row">
-                            <span class="g-box__price">₹ 3,499/-</span>
-                            <span class="g-box__price-old">₹4,499</span>
-                          </div>
+                    <div class="g-box__package-panel">
+                      <div class="g-box__badge">Men &amp; Women</div>
+                      <div class="g-box__pkg-head">
+                        <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
+                        <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
+                        <div class="g-box__price-row">
+                          <span class="g-box__price">₹ 3,499/-</span>
+                          <span class="g-box__price-old">₹4,499</span>
                         </div>
-                        <ul class="g-box__features">
-                          <li><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt="">97 test parameters</li>
-                          <li><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt="">Doctor consultation included</li>
-                          <li><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt="">Nutritionist consultation included</li>
-                        </ul>
+                      </div>
+                      <ul class="g-box__features">
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 test parameters</li>
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt=""></span>Doctor consultation included</li>
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation included</li>
+                      </ul>
+                      <div class="g-box__explore-wrap">
                         <button type="button" class="g-box__explore" id="flip-package-card">Explore Package</button>
                       </div>
                     </div>
                   </div>
 
-                  <!-- BACK — Profiles Included (Figma 860:10630) -->
+                  <!-- BACK — Profiles Included (860:10630) -->
                   <div class="g-box__card-face g-box__card-face--back">
+                    <div class="g-box__wire" aria-hidden="true"></div>
                     <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
-
                     <div class="g-box__profiles">
                       <div class="g-box__profiles-head">
                         <h3 class="g-box__profiles-title">Profiles Included</h3>
@@ -189,7 +194,7 @@
                       <div class="g-box__profiles-grid">
                         <article class="g-box__profile">
                           <h4>Complete Haemogram <span>(25)</span></h4>
-                          <p>CBC with 25 parameters including RBC, WBC, platelets, differential count, ESR, etc.</p>
+                          <p>CBC with 25 parameters including RBC, <br class="g-br-d">WBC, platelets, differential count, ESR, etc.</p>
                         </article>
                         <article class="g-box__profile">
                           <h4>Diabetes Profile <span>(2)</span></h4>
@@ -197,27 +202,27 @@
                         </article>
                         <article class="g-box__profile">
                           <h4>Thyroid Profile <span>(3)</span></h4>
-                          <p>T3 Free free iodothyronine, T4free free thyroxine, TSH ultra- Sensitive.</p>
+                          <p>T3 Free free iodothyronine, T4free free <br class="g-br-d">thyroxine, TSH ultra- Sensitive.</p>
                         </article>
                         <article class="g-box__profile">
                           <h4>Liver Function Tests <span>(12)</span></h4>
-                          <p>Albumin, alkaline phosphatase, bilirubin direct, bilirubin total, ggpt, proteins serum, sgot/ast, sgpt/alt, bilirubin indirect, globulin, A/G ratio, SGOT/SGPT ratio.</p>
+                          <p>Albumin, alkaline phosphatase, bilirubin <br class="g-br-d">direct, bilirubin total, ggpt, proteins serum, <br class="g-br-d">sgot/ast, sgpt/alt, bilirubin indirect, <br class="g-br-d">globulin, A/G ratio, SGOT/SGPT ratio.</p>
                         </article>
                         <article class="g-box__profile">
                           <h4>Kidney Function Tests <span>(12)</span></h4>
-                          <p>BUN urea nitrogen, calcium total, chlorides, creatinine, sodium, urea, uric acid, BUN/Creatinine ratio, Urea/Creatinine Ratio, EGFR .Phosphorus-Inorganic, Potassium.</p>
+                          <p>BUN urea nitrogen, calcium total, <br class="g-br-d">chlorides, creatinine, sodium, urea, uric <br class="g-br-d">acid, BUN/Creatinine ratio, Urea/Creatinine <br class="g-br-d">Ratio, EGFR .Phosphorus-Inorganic, <br class="g-br-d">Potassium.</p>
                         </article>
                         <article class="g-box__profile">
                           <h4>Lipid Profile <span>(9)</span></h4>
-                          <p>Cholestrol total, HDL cholestrol direct, Triglycerides, Non-HDL cholestrol, CHOL/HDL Ratio, LDL cholestrol, VLDL cholestrol, LDL/HDL cholesterol, HDL / LDL cholestrol ratio.</p>
+                          <p>Cholestrol total, HDL cholestrol direct, <br class="g-br-d">Triglycerides, Non-HDL cholestrol, <br class="g-br-d">CHOL/HDL Ratio, LDL cholestrol, VLDL <br class="g-br-d">cholestrol, LDL/HDL cholesterol, HDL / LDL <br class="g-br-d">cholestrol ratio.</p>
                         </article>
                         <article class="g-box__profile">
                           <h4>Iron Profile <span>(4)</span></h4>
-                          <p>Iron serum, TIBC, UBIC, Transferrin Saturation.</p>
+                          <p>Iron serum, TIBC, UBIC, Transferrin <br class="g-br-d">Saturation.</p>
                         </article>
                         <article class="g-box__profile">
                           <h4>Vitamins <span>(2)</span></h4>
-                          <p>Vit B12 (Cyanocobalamin), vit d total-25 hydroxy.</p>
+                          <p>Vit B12 (Cyanocobalamin), vit d total-25 <br class="g-br-d">hydroxy.</p>
                         </article>
                       </div>
                     </div>
@@ -313,18 +318,17 @@
 
     <!-- 4. Personalize — Figma 862:11795 -->
     <section class="g-form-sec" id="gift-personalize">
-      <img class="g-form-sec__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
-      <img class="g-form-sec__plate" src="assets/images/gifting/bg-gradient-plate.png" alt="" decoding="async">
-      <div class="g-form-sec__shade"></div>
+      <img class="g-form-sec__bg" src="assets/images/gifting/bg-teal-2x.jpg" width="3264" height="2321" alt="" decoding="async">
+      <div class="g-form-sec__shade" aria-hidden="true"></div>
       <div class="g-form-sec__inner">
         <div class="g-form-sec__header">
           <h2>Your Gift. <span class="g-gold">Your Words.</span> Your Love.</h2>
           <p>Choose an occasion, add your personal message, and create a thoughtful gift of health for someone special.</p>
         </div>
         <div class="g-tabs" role="tablist" aria-label="Gift occasion">
-          <button type="button" class="g-tab is-active" data-occasion="diwali" role="tab" aria-selected="true"><img src="assets/images/gifting/icon-diwali.svg" alt=""> Diwali</button>
-          <button type="button" class="g-tab" data-occasion="birthday" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-birthday.svg" alt=""> Birthdays &amp; Anniversaries</button>
-          <button type="button" class="g-tab" data-occasion="just-because" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-sparkle.svg" alt=""> Just Because</button>
+          <button type="button" class="g-tab is-active" data-occasion="diwali" role="tab" aria-selected="true"><img src="assets/images/gifting/icon-diwali-figma.svg" width="32" height="32" alt=""> Diwali</button>
+          <button type="button" class="g-tab" data-occasion="birthday" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-birthday-figma.svg" width="32" height="32" alt=""> Birthdays &amp; Anniversaries</button>
+          <button type="button" class="g-tab" data-occasion="just-because" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-sparkle-figma.svg" width="32" height="32" alt=""> Just Because</button>
         </div>
         <form class="g-form-grid" id="gift-form">
           <div class="g-form-fields">
@@ -335,7 +339,7 @@
               </div>
               <div class="g-field">
                 <label for="your-name">Your Name</label>
-                <input type="text" id="your-name" placeholder="e.g Tanish" required pattern="[A-Za-z ]{2,40}" autocomplete="name">
+                <input type="text" id="your-name" placeholder="e.g Aarti" required pattern="[A-Za-z ]{2,40}" autocomplete="name">
               </div>
             </div>
             <div class="g-row">
@@ -345,7 +349,7 @@
               </div>
               <div class="g-field">
                 <label for="your-email">Your Email</label>
-                <input type="email" id="your-email" placeholder="e.g tanish@gmail.com" required autocomplete="email">
+                <input type="email" id="your-email" placeholder="e.g aarti.patil@gmail.com" required autocomplete="email">
               </div>
             </div>
             <div class="g-row">
@@ -372,8 +376,19 @@
               </div>
               <div class="g-field g-field--rel">
                 <label for="relationship">Relationship</label>
-                <div class="g-rel-box">
-                  <select id="relationship" required>
+                <div class="g-rel-box" id="rel-box">
+                  <button type="button" class="g-rel-toggle" id="rel-toggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="rel-list">
+                    <span id="rel-current">Mom</span>
+                    <img src="assets/images/gifting/caret-figma.svg" width="32" height="32" alt="">
+                  </button>
+                  <ul class="g-rel-list" id="rel-list" role="listbox" aria-label="Relationship" hidden>
+                    <li role="option" data-value="Dad">Dad</li>
+                    <li role="option" data-value="Spouse">Spouse</li>
+                    <li role="option" data-value="Sibling">Sibling</li>
+                    <li role="option" data-value="Friend">Friend</li>
+                    <li role="option" data-value="Others">Others</li>
+                  </ul>
+                  <select id="relationship" class="g-rel-native" required tabindex="-1" aria-hidden="true">
                     <option value="Mom" selected>Mom</option>
                     <option value="Dad">Dad</option>
                     <option value="Spouse">Spouse</option>
@@ -391,7 +406,7 @@
               <div class="g-preview__overlay" id="preview-overlay">
                 <div class="g-preview__body">
                   <div class="g-preview__top">
-                    <img class="g-preview__logo" src="assets/images/logo.png" width="37" height="37" alt="SuperShyft">
+                    <img class="g-preview__logo" src="assets/images/gifting/logo-card.svg" width="37" height="37" alt="SuperShyft">
                     <p class="g-preview__festive" id="preview-festive">SHUBH DEEPAVALI</p>
                   </div>
                   <div class="g-preview__copy">
@@ -415,8 +430,11 @@
 
     <!-- 5. Closing -->
     <section class="g-close" id="gift-closing">
-      <img class="g-close__bg" src="assets/images/gifting/closing-diwali.png" alt="" decoding="async">
-      <div class="g-close__shade"></div>
+      <img class="g-close__teal" src="assets/images/gifting/bg-teal-2x.jpg" width="3264" height="2321" alt="" decoding="async">
+      <div class="g-close__photo" aria-hidden="true">
+        <img src="assets/images/gifting/closing-diwali.png" width="1672" height="940" alt="" decoding="async">
+      </div>
+      <img class="g-close__fade" src="assets/images/gifting/closing-overlay.png" width="1024" height="154" alt="" decoding="async">
       <div class="g-close__inner">
         <h2>Because one <span class="g-gold">festive season</span> is never enough.</h2>
         <p>We want a thousand more moments together.</p>
