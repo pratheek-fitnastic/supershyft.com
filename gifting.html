@@ -27,7 +27,7 @@
   <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lato:wght@400;700&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lato:wght@400;700&family=Sora:wght@100..800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
   <link rel="apple-touch-icon" sizes="57x57" href="assets/images/fav.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/images/fav.png">
@@ -41,9 +41,10 @@
   <link rel="stylesheet" href="assets/css/gifting.css">
   <link rel="preload" as="image" href="assets/images/gifting/gift-box-closed.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-box-open.png">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-card-front.png">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-card-back.png">
-  <link rel="preload" as="image" href="assets/images/gifting/mandala.png">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-inner-scene.png">
+  <link rel="preload" as="image" href="assets/images/gifting/bg-teal.jpg">
+  <link rel="preload" as="image" href="assets/images/gifting/mandala-with-diya.png">
+  <link rel="preload" as="image" href="assets/images/gifting/diya-lamp.png">
 </head>
 
 <body class="gifting-page">
@@ -83,54 +84,145 @@
   <!-- header end -->
 
   <main>
-    <!-- 1. Hero -->
-    <section class="g-hero space-top" id="gifting-hero">
+    <!-- 1. Hero — Figma 856:10783 / bg 856:10784 -->
+    <section class="g-hero" id="gifting-hero">
       <img class="g-hero__bg" src="assets/images/gifting/hero-diwali.png" width="1672" height="940" alt="" decoding="async" fetchpriority="high">
-      <div class="g-hero__shade" aria-hidden="true"></div>
+      <!-- Figma 856:10806 — 125px edge fade into section 2 -->
+      <img class="g-hero__fade" src="assets/images/gifting/section-fade.png" width="1440" height="125" alt="" decoding="async" aria-hidden="true">
       <div class="g-hero__content">
-        <h1 class="g-hero__title">
-          <span class="g-hero__title-top">This Diwali, Gift them</span>
-          <span class="g-hero__title-gold">Good Health.</span>
-        </h1>
-        <p class="g-hero__sub">
-          Because the best gift isn't something they can unwrap.<br>
-          It's more moments together.
-        </p>
+        <div class="g-hero__copy">
+          <h1 class="g-hero__title">
+            <span class="g-hero__title-top">This Diwali, Gift them</span>
+            <span class="g-hero__title-gold">Good Health<span class="g-hero__title-dot">.</span></span>
+          </h1>
+          <p class="g-hero__sub">
+            Because the best gift isn't something they can unwrap.<br>
+            It's more moments together.
+          </p>
+        </div>
         <button type="button" class="g-btn" id="explore-gifts">Explore Gifts</button>
       </div>
     </section>
 
-    <!-- 2. Gift pack -->
+    <!-- 2. Gift pack — Figma 856:10808 / Gift Box 856:11751 -->
     <section class="g-pack" id="gift-pack">
-      <img class="g-pack__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
+      <img class="g-pack__bg" src="assets/images/gifting/bg-teal.png" width="4096" height="2913" alt="" decoding="async">
+      <img class="g-pack__fade" src="assets/images/gifting/section-fade.png" width="1440" height="125" alt="" decoding="async" aria-hidden="true">
       <div class="g-pack__shade" aria-hidden="true"></div>
+      <div class="g-pack__glow" aria-hidden="true"></div>
       <div class="g-pack__inner">
         <header class="g-pack__intro">
           <h2 class="g-pack__title">A <span class="g-gold">Gift of Health</span>, Wrapped in Love.</h2>
           <p class="g-pack__sub">Choose a SuperShyft Bio-AI health package for the people who mean the most to you.</p>
         </header>
 
-        <div class="g-box" id="gift-box" aria-live="polite">
-          <!-- 1) closed first -->
+        <div
+          class="g-box"
+          id="gift-box"
+          role="button"
+          tabindex="0"
+          aria-expanded="false"
+          aria-controls="gift-box-open"
+          aria-label="Open gift box"
+          aria-live="polite"
+        >
+          <!-- Closed box (Figma 856:11752) -->
           <div class="g-box__layer g-box__closed">
-            <img src="assets/images/gifting/gift-box-closed.png" width="1024" height="683" alt="Closed SuperShyft gift box">
+            <img src="assets/images/gifting/gift-box-closed.png" width="1352" height="978" alt="Closed SuperShyft gift box">
           </div>
-          <!-- 2) then open box + 3) flipable front/back card -->
-          <div class="g-box__open-stage" id="gift-box-open">
-            <div class="g-box__stage">
-              <!-- Figma 856:11755 open box + 862:10880 card inset -->
-              <div class="g-box__frame">
-                <img class="g-box__shell" src="assets/images/gifting/gift-box-open.png" width="3072" height="2048" alt="Open SuperShyft gift box">
-                <div class="g-box__card" id="gift-card">
-                  <div class="g-box__card-inner">
-                    <div class="g-box__card-face g-box__card-face--front">
-                      <img src="assets/images/gifting/gift-card-front.png" width="606" height="259" alt="SuperShyft Core+ package card">
-                    </div>
-                    <div class="g-box__card-face g-box__card-face--back">
-                      <img src="assets/images/gifting/gift-card-back.png" width="673" height="298" alt="Profiles included in SuperShyft Core+">
+
+          <!-- Open box + flipable package card (Figma 856:11754 / 862:10880) -->
+          <div class="g-box__open-stage" id="gift-box-open" aria-hidden="true">
+            <div class="g-box__frame">
+              <img class="g-box__shell" src="assets/images/gifting/gift-box-open.png" width="3072" height="2048" alt="Open SuperShyft gift box">
+
+              <div class="g-box__package" id="gift-package">
+                <div class="g-box__card-flip">
+                  <!-- FRONT — Core+ package -->
+                  <div class="g-box__card-face g-box__card-face--front">
+                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+
+                    <div class="g-box__package-inner">
+                      <div class="g-box__package-art">
+                        <img src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
+                        <p class="g-box__script">Wrapped in Love</p>
+                      </div>
+                      <div class="g-box__package-panel">
+                        <div class="g-box__badge">Men &amp; Women</div>
+                        <div class="g-box__pkg-head">
+                          <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
+                          <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
+                          <div class="g-box__price-row">
+                            <span class="g-box__price">₹ 3,499/-</span>
+                            <span class="g-box__price-old">₹4,499</span>
+                          </div>
+                        </div>
+                        <ul class="g-box__features">
+                          <li><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt="">97 test parameters</li>
+                          <li><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt="">Doctor consultation included</li>
+                          <li><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt="">Nutritionist consultation included</li>
+                        </ul>
+                        <button type="button" class="g-box__explore" id="flip-package-card">Explore Package</button>
+                      </div>
                     </div>
                   </div>
-                  <button type="button" class="g-box__card-hit" id="flip-package-card" tabindex="-1" aria-hidden="true" aria-label="Flip package card">Flip card</button>
+
+                  <!-- BACK — Profiles Included (Figma 860:10630) -->
+                  <div class="g-box__card-face g-box__card-face--back">
+                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+
+                    <div class="g-box__profiles">
+                      <div class="g-box__profiles-head">
+                        <h3 class="g-box__profiles-title">Profiles Included</h3>
+                        <div class="g-box__profiles-badge" aria-label="8 tests, 69 parameters">
+                          <span>8 Tests</span>
+                          <span class="g-box__profiles-badge-div" aria-hidden="true"></span>
+                          <span>69 Parameters</span>
+                        </div>
+                      </div>
+                      <div class="g-box__profiles-grid">
+                        <article class="g-box__profile">
+                          <h4>Complete Haemogram <span>(25)</span></h4>
+                          <p>CBC with 25 parameters including RBC, WBC, platelets, differential count, ESR, etc.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Diabetes Profile <span>(2)</span></h4>
+                          <p>Fasting sugar, Hba1c.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Thyroid Profile <span>(3)</span></h4>
+                          <p>T3 Free free iodothyronine, T4free free thyroxine, TSH ultra- Sensitive.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Liver Function Tests <span>(12)</span></h4>
+                          <p>Albumin, alkaline phosphatase, bilirubin direct, bilirubin total, ggpt, proteins serum, sgot/ast, sgpt/alt, bilirubin indirect, globulin, A/G ratio, SGOT/SGPT ratio.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Kidney Function Tests <span>(12)</span></h4>
+                          <p>BUN urea nitrogen, calcium total, chlorides, creatinine, sodium, urea, uric acid, BUN/Creatinine ratio, Urea/Creatinine Ratio, EGFR .Phosphorus-Inorganic, Potassium.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Lipid Profile <span>(9)</span></h4>
+                          <p>Cholestrol total, HDL cholestrol direct, Triglycerides, Non-HDL cholestrol, CHOL/HDL Ratio, LDL cholestrol, VLDL cholestrol, LDL/HDL cholesterol, HDL / LDL cholestrol ratio.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Iron Profile <span>(4)</span></h4>
+                          <p>Iron serum, TIBC, UBIC, Transferrin Saturation.</p>
+                        </article>
+                        <article class="g-box__profile">
+                          <h4>Vitamins <span>(2)</span></h4>
+                          <p>Vit B12 (Cyanocobalamin), vit d total-25 hydroxy.</p>
+                        </article>
+                      </div>
+                    </div>
+                    <button type="button" class="g-box__flip-back" id="flip-package-card-back" aria-label="Flip package card back">Show package</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -143,175 +235,156 @@
       </div>
     </section>
 
-    <!-- 3. Four steps — Figma 856:10815 / 10842 / 10871 / 10897; one rotating mandala per step -->
-    <div class="g-steps" id="gift-steps">
-      <section class="g-step" id="gift-step-1">
-        <img class="g-step__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
-        <div class="g-step__shade"></div>
-        <div class="g-step__visual" aria-hidden="true">
-          <div class="g-step__mandala">
-            <img class="g-step__mandala-img" src="assets/images/gifting/mandala.png" width="1472" height="1642" alt="">
-          </div>
-          <img class="g-step__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="">
-        </div>
-        <div class="g-step__inner">
-          <div class="g-step__intro">
-            <p class="g-step__eyebrow">Four Steps to</p>
-            <p class="g-step__headline">Unwrapping Better Health</p>
-          </div>
-          <div class="g-step__body">
-            <div class="g-step__meta">
-              <img src="assets/images/gifting/icon-calendar.svg" width="40" height="40" alt="">
-              <span class="g-step__num">01</span>
-            </div>
-            <div class="g-step__line"></div>
-            <h2 class="g-step__title">Book the gift.</h2>
-            <p class="g-step__desc">You choose a Bio-AI Package and schedule it for someone you love.</p>
-          </div>
-        </div>
-      </section>
+    <!-- 3. Four steps — Figma 856:10842 (variants 856:10815 / 10871 / 10897) -->
+    <section class="g-steps" id="gift-steps">
+      <div class="g-steps__pin" id="gift-steps-pin">
+        <img class="g-steps__bg" src="assets/images/gifting/bg-teal.jpg" alt="" decoding="async">
+        <div class="g-steps__shade" aria-hidden="true"></div>
 
-      <section class="g-step" id="gift-step-2">
-        <img class="g-step__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
-        <div class="g-step__shade"></div>
-        <div class="g-step__visual" aria-hidden="true">
-          <div class="g-step__mandala">
-            <img class="g-step__mandala-img" src="assets/images/gifting/mandala.png" width="1472" height="1642" alt="">
+        <div class="g-steps__visual" aria-hidden="true">
+          <div class="g-steps__mandala" id="steps-mandala-wrap">
+            <img class="g-steps__mandala-img" id="steps-mandala" src="assets/images/gifting/mandala-with-diya.png" width="1472" height="1642" alt="">
           </div>
-          <img class="g-step__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="">
+          <img class="g-steps__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="">
         </div>
-        <div class="g-step__inner">
-          <div class="g-step__intro">
-            <p class="g-step__eyebrow">Four Steps to</p>
-            <p class="g-step__headline">Unwrapping Better Health</p>
-          </div>
-          <div class="g-step__body">
-            <div class="g-step__meta">
-              <img src="assets/images/gifting/icon-blood.svg" width="40" height="40" alt="">
-              <span class="g-step__num">02</span>
-            </div>
-            <div class="g-step__line"></div>
-            <h2 class="g-step__title">Home Blood Collection</h2>
-            <p class="g-step__desc">A trained professional collects the blood sample at home in your scheduled time.</p>
-          </div>
-        </div>
-      </section>
 
-      <section class="g-step" id="gift-step-3">
-        <img class="g-step__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
-        <div class="g-step__shade"></div>
-        <div class="g-step__visual" aria-hidden="true">
-          <div class="g-step__mandala">
-            <img class="g-step__mandala-img" src="assets/images/gifting/mandala.png" width="1472" height="1642" alt="">
+        <div class="g-steps__content">
+          <div class="g-steps__intro">
+            <p class="g-steps__eyebrow">Four Steps to</p>
+            <p class="g-steps__headline">Unwrapping Better Health</p>
           </div>
-          <img class="g-step__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="">
+          <div class="g-steps__panels" id="gift-step-panels" aria-live="polite">
+            <article class="g-steps__panel is-active" data-step="0">
+              <div class="g-steps__header">
+                <div class="g-steps__meta">
+                  <img src="assets/images/gifting/icon-calendar.svg" width="40" height="40" alt="">
+                  <span class="g-steps__num">01</span>
+                </div>
+                <div class="g-steps__line" aria-hidden="true"></div>
+              </div>
+              <div class="g-steps__copy">
+                <h2 class="g-steps__title">Book the gift.</h2>
+                <p class="g-steps__desc">You choose a Bio-AI Package and schedule it for someone you love.</p>
+              </div>
+            </article>
+            <article class="g-steps__panel" data-step="1">
+              <div class="g-steps__header">
+                <div class="g-steps__meta">
+                  <img src="assets/images/gifting/icon-blood.svg" width="40" height="40" alt="">
+                  <span class="g-steps__num">02</span>
+                </div>
+                <div class="g-steps__line" aria-hidden="true"></div>
+              </div>
+              <div class="g-steps__copy">
+                <h2 class="g-steps__title">Home Blood Collection</h2>
+                <p class="g-steps__desc">A trained professional collects the blood sample at home in your scheduled time.</p>
+              </div>
+            </article>
+            <article class="g-steps__panel" data-step="2">
+              <div class="g-steps__header">
+                <div class="g-steps__meta">
+                  <img src="assets/images/gifting/icon-form.svg" width="40" height="40" alt="">
+                  <span class="g-steps__num">03</span>
+                </div>
+                <div class="g-steps__line" aria-hidden="true"></div>
+              </div>
+              <div class="g-steps__copy">
+                <h2 class="g-steps__title">Complete The Health Assessment</h2>
+                <p class="g-steps__desc">Fill in a health assessment containing family history, lifestyle, vitals, anthropometry, and nutrition questions in the SuperShyft app.</p>
+              </div>
+            </article>
+            <article class="g-steps__panel" data-step="3">
+              <div class="g-steps__header">
+                <div class="g-steps__meta">
+                  <img src="assets/images/gifting/icon-ai.svg" width="40" height="40" alt="">
+                  <span class="g-steps__num">04</span>
+                </div>
+                <div class="g-steps__line" aria-hidden="true"></div>
+              </div>
+              <div class="g-steps__copy">
+                <h2 class="g-steps__title">Discover Your Bio–AI Report</h2>
+                <p class="g-steps__desc">Get disease risk analysis and personalized health insights in the SuperShyft app.</p>
+              </div>
+            </article>
+          </div>
         </div>
-        <div class="g-step__inner">
-          <div class="g-step__intro">
-            <p class="g-step__eyebrow">Four Steps to</p>
-            <p class="g-step__headline">Unwrapping Better Health</p>
-          </div>
-          <div class="g-step__body">
-            <div class="g-step__meta">
-              <img src="assets/images/gifting/icon-form.svg" width="40" height="40" alt="">
-              <span class="g-step__num">03</span>
-            </div>
-            <div class="g-step__line"></div>
-            <h2 class="g-step__title">Complete The Health Assessment</h2>
-            <p class="g-step__desc">Fill in a health assessment containing family history, lifestyle, vitals, anthropometry, and nutrition questions in the SuperShyft app.</p>
-          </div>
-        </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="g-step" id="gift-step-4">
-        <img class="g-step__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
-        <div class="g-step__shade"></div>
-        <div class="g-step__visual" aria-hidden="true">
-          <div class="g-step__mandala">
-            <img class="g-step__mandala-img" src="assets/images/gifting/mandala.png" width="1472" height="1642" alt="">
-          </div>
-          <img class="g-step__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="">
-        </div>
-        <div class="g-step__inner">
-          <div class="g-step__intro">
-            <p class="g-step__eyebrow">Four Steps to</p>
-            <p class="g-step__headline">Unwrapping Better Health</p>
-          </div>
-          <div class="g-step__body">
-            <div class="g-step__meta">
-              <img src="assets/images/gifting/icon-ai.svg" width="40" height="40" alt="">
-              <span class="g-step__num">04</span>
-            </div>
-            <div class="g-step__line"></div>
-            <h2 class="g-step__title">Discover Your Bio–AI Report</h2>
-            <p class="g-step__desc">Get disease risk analysis and personalized health insights in the SuperShyft app.</p>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- 4. Personalize -->
+    <!-- 4. Personalize — Figma 862:11795 -->
     <section class="g-form-sec" id="gift-personalize">
       <img class="g-form-sec__bg" src="assets/images/gifting/bg-teal.png" alt="" decoding="async">
+      <img class="g-form-sec__plate" src="assets/images/gifting/bg-gradient-plate.png" alt="" decoding="async">
       <div class="g-form-sec__shade"></div>
       <div class="g-form-sec__inner">
         <div class="g-form-sec__header">
           <h2>Your Gift. <span class="g-gold">Your Words.</span> Your Love.</h2>
           <p>Choose an occasion, add your personal message, and create a thoughtful gift of health for someone special.</p>
         </div>
-
         <div class="g-tabs" role="tablist" aria-label="Gift occasion">
           <button type="button" class="g-tab is-active" data-occasion="diwali" role="tab" aria-selected="true"><img src="assets/images/gifting/icon-diwali.svg" alt=""> Diwali</button>
           <button type="button" class="g-tab" data-occasion="birthday" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-birthday.svg" alt=""> Birthdays &amp; Anniversaries</button>
           <button type="button" class="g-tab" data-occasion="just-because" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-sparkle.svg" alt=""> Just Because</button>
         </div>
-
         <form class="g-form-grid" id="gift-form">
-          <div>
+          <div class="g-form-fields">
             <div class="g-row">
               <div class="g-field">
                 <label for="recipient-name">Recipient Name</label>
-                <input type="text" id="recipient-name" placeholder="e.g Aarti" required pattern="[A-Za-z ]{2,40}">
+                <input type="text" id="recipient-name" placeholder="e.g Aarti" required pattern="[A-Za-z ]{2,40}" autocomplete="name">
               </div>
               <div class="g-field">
                 <label for="your-name">Your Name</label>
-                <input type="text" id="your-name" placeholder="e.g Tanish" required pattern="[A-Za-z ]{2,40}">
+                <input type="text" id="your-name" placeholder="e.g Tanish" required pattern="[A-Za-z ]{2,40}" autocomplete="name">
               </div>
             </div>
             <div class="g-row">
               <div class="g-field">
                 <label for="recipient-email">Recipient Email</label>
-                <input type="email" id="recipient-email" placeholder="e.g aarti.patil@gmail.com" required>
+                <input type="email" id="recipient-email" placeholder="e.g aarti.patil@gmail.com" required autocomplete="email">
               </div>
               <div class="g-field">
-                <label for="recipient-phone">Recipient Phone</label>
-                <input type="tel" id="recipient-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}">
+                <label for="your-email">Your Email</label>
+                <input type="email" id="your-email" placeholder="e.g tanish@gmail.com" required autocomplete="email">
               </div>
             </div>
             <div class="g-row">
               <div class="g-field">
-                <label for="gift-message">Your Message</label>
-                <textarea id="gift-message" rows="3" placeholder="Write your message..." required></textarea>
-                <div class="g-chips" id="gift-message-chips">
-                  <button type="button" class="g-chip" data-message="Because I want you around for every celebration.">Because I want you around for every celebration.</button>
-                  <button type="button" class="g-chip" data-message="A little gift for more moments together.">A little gift for more moments together.</button>
-                  <button type="button" class="g-chip" data-message="For many more Diwalis together.">For many more Diwalis together.</button>
-                </div>
+                <label for="recipient-phone">Recipient Phone</label>
+                <input type="tel" id="recipient-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}" inputmode="numeric" autocomplete="tel">
               </div>
               <div class="g-field">
+                <label for="your-phone">Your Phone</label>
+                <input type="tel" id="your-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}" inputmode="numeric" autocomplete="tel">
+              </div>
+            </div>
+            <div class="g-row g-row--split">
+              <div class="g-field g-field--msg">
+                <label for="gift-message">Your Message</label>
+                <div class="g-msg-stack">
+                  <div class="g-chips" id="gift-message-chips">
+                    <button type="button" class="g-chip" data-message="For many more Diwalis together.">For many more Diwalis together.</button>
+                    <button type="button" class="g-chip" data-message="A little gift for more moments together.">A little gift for more moments together.</button>
+                    <button type="button" class="g-chip" data-message="Because I want you around for every celebration.">Because I want you around for every celebration.</button>
+                  </div>
+                  <textarea id="gift-message" rows="1" placeholder="Write your message..." required></textarea>
+                </div>
+              </div>
+              <div class="g-field g-field--rel">
                 <label for="relationship">Relationship</label>
-                <select id="relationship" required>
-                  <option value="Mom" selected>Mom</option>
-                  <option value="Dad">Dad</option>
-                  <option value="Spouse">Spouse</option>
-                  <option value="Sibling">Sibling</option>
-                  <option value="Friend">Friend</option>
-                  <option value="Others">Others</option>
-                </select>
+                <div class="g-rel-box">
+                  <select id="relationship" required>
+                    <option value="Mom" selected>Mom</option>
+                    <option value="Dad">Dad</option>
+                    <option value="Spouse">Spouse</option>
+                    <option value="Sibling">Sibling</option>
+                    <option value="Friend">Friend</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-
           <div class="g-preview">
             <div class="g-preview__card is-diwali" id="gift-preview-card">
               <img class="g-preview__env" id="preview-card-img" src="assets/images/gifting/envelope.png" width="453" height="322" alt="Gift card preview">
@@ -381,6 +454,8 @@
   </footer>
   <!-- footer end -->
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
   <script src="assets/js/gifting.js" defer></script>

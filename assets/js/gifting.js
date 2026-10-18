@@ -1,179 +1,283 @@
 (function () {
   "use strict";
 
+  /* Always land on the hero (first section) after reload — ignore restored scroll */
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+  function forceHeroTop() {
+    window.scrollTo(0, 0);
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+  forceHeroTop();
+  window.addEventListener("pageshow", forceHeroTop);
+  window.addEventListener("load", function () {
+    forceHeroTop();
+    /* After pin setup, keep the viewport on the first section */
+    window.requestAnimationFrame(forceHeroTop);
+  });
+
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var giftPack = document.getElementById("gift-pack");
   var giftBox = document.getElementById("gift-box");
   var exploreBtn = document.getElementById("explore-gifts");
-  var flipCardBtn = document.getElementById("flip-package-card");
-  var sequenceRunning = false;
-  var boxOpened = false;
-  var sequenceToken = 0;
-  var cardEnableTimer = null;
+  var bookBtn = document.getElementById("book-the-gift");
+  var stepsRoot = document.getElementById("gift-steps");
+  var stepsPin = document.getElementById("gift-steps-pin");
+  var mandalaImg = document.getElementById("steps-mandala");
+  var mandalaWrap = document.getElementById("steps-mandala-wrap");
+  var stepPanels = document.querySelectorAll(".g-steps__panel");
+  var boxHasOpened = false;
+  var openAnimTimer = null;
+  var openRevealTimer = null;
+  var LID_LIFT_MS = reducedMotion ? 40 : 580;
+  var OPEN_SETTLE_MS = reducedMotion ? 80 : 1600;
 
-  function sleep(ms, token) {
-    return new Promise(function (resolve) {
-      window.setTimeout(function () {
-        resolve(token === sequenceToken);
-      }, ms);
-    });
+  function clearOpenTimers() {
+    if (openAnimTimer) {
+      window.clearTimeout(openAnimTimer);
+      openAnimTimer = null;
+    }
+    if (openRevealTimer) {
+      window.clearTimeout(openRevealTimer);
+      openRevealTimer = null;
+    }
   }
 
-  function setCardHitEnabled(enabled) {
-    if (!flipCardBtn) return;
-    flipCardBtn.tabIndex = enabled ? 0 : -1;
-    flipCardBtn.setAttribute("aria-hidden", enabled ? "false" : "true");
+  function closeGiftBox() {
+    if (!giftBox) return;
+    clearOpenTimers();
+    giftBox.classList.remove("is-open", "is-opening", "is-flipped");
+    giftBox.setAttribute("aria-expanded", "false");
+    giftBox.setAttribute("aria-label", "Open gift box");
+    giftBox.setAttribute("role", "button");
+    giftBox.setAttribute("tabindex", "0");
+    var openStage = document.getElementById("gift-box-open");
+    if (openStage) openStage.setAttribute("aria-hidden", "true");
+    var flipBtnEl = document.getElementById("flip-package-card");
+    if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "-1");
   }
 
   function openGiftBox() {
-    if (!giftBox) return;
-    boxOpened = true;
-    giftBox.classList.add("is-open");
-    if (cardEnableTimer) window.clearTimeout(cardEnableTimer);
-    /* Card clickable after open + card fade-in (~2.4s open + 1.4s delay + fade) */
-    cardEnableTimer = window.setTimeout(
-      function () {
-        setCardHitEnabled(true);
-      },
-      reducedMotion ? 80 : 3200
-    );
+    if (!giftBox || giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) {
+      return;
+    }
+    boxHasOpened = true;
+    clearOpenTimers();
+    giftBox.classList.remove("is-flipped");
+    /* Stage 1: lid lift on closed box */
+    giftBox.classList.add("is-opening");
+    var openStage = document.getElementById("gift-box-open");
+    if (openStage) openStage.setAttribute("aria-hidden", "false");
+
+    /* Stage 2: crossfade to open shell + rising card */
+    openRevealTimer = window.setTimeout(function () {
+      giftBox.classList.add("is-open");
+      openRevealTimer = null;
+    }, LID_LIFT_MS);
+
+    /* Stage 3: settle — flip CTA becomes interactive */
+    openAnimTimer = window.setTimeout(function () {
+      giftBox.classList.remove("is-opening");
+      giftBox.setAttribute("aria-expanded", "true");
+      giftBox.setAttribute("aria-label", "Gift box opened — explore the package");
+      giftBox.removeAttribute("role");
+      giftBox.removeAttribute("tabindex");
+      var flipBtnEl = document.getElementById("flip-package-card");
+      if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "0");
+      openAnimTimer = null;
+    }, LID_LIFT_MS + OPEN_SETTLE_MS);
   }
 
-  function scrollToGiftPack() {
-    if (!giftPack) return;
-    giftPack.scrollIntoView({
+  function flipPackageCard() {
+    if (!giftBox || !giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) {
+      return;
+    }
+    giftBox.classList.toggle("is-flipped");
+  }
+
+  function scrollToEl(el, block) {
+    if (!el) return;
+    el.scrollIntoView({
       behavior: reducedMotion ? "auto" : "smooth",
-      block: "center"
+      block: block || "start"
     });
   }
 
-  /**
-   * Video-like sequence:
-   * 1) smooth scroll to section 2
-   * 2) hold closed box
-   * 3) slowly open box
-   * 4) card fades in (CSS)
-   */
-  async function playGiftRevealSequence(options) {
-    options = options || {};
-    if (!giftPack || !giftBox) return;
-
-    sequenceRunning = true;
-    var token = ++sequenceToken;
-
-    var heroHold = options.heroHold != null ? options.heroHold : 0;
-    var scrollSettle = reducedMotion ? 50 : options.scrollSettle != null ? options.scrollSettle : 900;
-    var closedHold = reducedMotion ? 80 : options.closedHold != null ? options.closedHold : 1100;
-
-    try {
-      if (heroHold > 0) {
-        if (!(await sleep(heroHold, token))) return;
-      }
-
-      /* Always start from closed so the open feels cinematic */
-      if (cardEnableTimer) window.clearTimeout(cardEnableTimer);
-      giftBox.classList.remove("is-open", "is-flipped");
-      boxOpened = false;
-      setCardHitEnabled(false);
-
-      if (!(await sleep(reducedMotion ? 40 : 80, token))) return;
-
-      scrollToGiftPack();
-      if (!(await sleep(scrollSettle, token))) return;
-
-      /* Closed box visible, then slowly open → card reveals via CSS */
-      if (!(await sleep(closedHold, token))) return;
-      openGiftBox();
-    } finally {
-      if (token === sequenceToken) sequenceRunning = false;
-    }
-  }
-
-  /* Page open → brief hero beat, then auto-scroll + open animation */
-  function startPageEntryAnimation() {
-    /* Skip if user deep-linked mid-page */
-    if (window.location.hash && window.location.hash !== "#gifting-hero") {
-      return;
-    }
-    /* If already scrolled past hero (restore), still open when pack is near */
-    var scrollY = window.scrollY || window.pageYOffset || 0;
-    if (scrollY > 120) {
-      playGiftRevealSequence({ heroHold: 0, scrollSettle: 400, closedHold: 900 });
-      return;
-    }
-    playGiftRevealSequence({
-      heroHold: reducedMotion ? 100 : 700,
-      scrollSettle: 1000,
-      closedHold: 1200
-    });
-  }
-
-  if (document.readyState === "complete") {
-    startPageEntryAnimation();
-  } else {
-    window.addEventListener("load", startPageEntryAnimation, { once: true });
-  }
-
-  /* Explore Gifts → same scroll + open sequence */
+  /* Explore Gifts → scroll to section 2 and play box-open animation */
   if (exploreBtn) {
     exploreBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      playGiftRevealSequence({
-        heroHold: 0,
-        scrollSettle: 950,
-        closedHold: 1100
-      });
+      scrollToEl(giftPack, "center");
+      window.setTimeout(function () {
+        openGiftBox();
+      }, reducedMotion ? 50 : 450);
     });
   }
 
-  /* Click only the card to flip — box shell stays still */
-  if (flipCardBtn) {
-    flipCardBtn.addEventListener("click", function (e) {
+  /* Section in view → play opening animation once */
+  if (giftPack && giftBox && "IntersectionObserver" in window) {
+    var packObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !boxHasOpened) {
+            openGiftBox();
+          }
+        });
+      },
+      { threshold: 0.42, rootMargin: "0px 0px -8% 0px" }
+    );
+    packObserver.observe(giftPack);
+  }
+
+  /* Click closed box → open */
+  if (giftBox) {
+    giftBox.addEventListener("click", function (e) {
+      if (e.target.closest && (e.target.closest("#flip-package-card") || e.target.closest("#flip-package-card-back"))) {
+        return;
+      }
+      if (giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) return;
+      openGiftBox();
+    });
+
+    giftBox.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        if (giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) return;
+        e.preventDefault();
+        openGiftBox();
+      }
+    });
+  }
+
+  /* Explore Package → flip card (profiles back); click back to flip again */
+  var flipBtn = document.getElementById("flip-package-card");
+  var flipBackBtn = document.getElementById("flip-package-card-back");
+  if (flipBtn) {
+    flipBtn.setAttribute("tabindex", "-1");
+    flipBtn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      if (!giftBox || !giftBox.classList.contains("is-open")) return;
-      giftBox.classList.toggle("is-flipped");
+      flipPackageCard();
+    });
+  }
+  if (flipBackBtn) {
+    flipBackBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      flipPackageCard();
     });
   }
 
-  /* Book the Gift → scroll through four steps */
-  var bookBtn = document.getElementById("book-the-gift");
-  var stepsRoot = document.getElementById("gift-steps");
-  var tourRunning = false;
-
+  /* Book the Gift → scroll to pinned steps (no auto-tour) */
   if (bookBtn) {
-    bookBtn.addEventListener("click", async function (e) {
+    bookBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      if (tourRunning) return;
-      tourRunning = true;
-      if (!boxOpened) openGiftBox();
-      if (stepsRoot) stepsRoot.classList.add("is-touring");
+      scrollToEl(stepsRoot, "start");
+    });
+  }
 
-      var steps = ["gift-step-1", "gift-step-2", "gift-step-3", "gift-step-4"];
-      var pause = reducedMotion ? 400 : 2200;
+  /* ===== Four steps: GSAP ScrollTrigger pin + mandala rotate (Figma 856:10815–10897) ===== */
+  function setActiveStep(index) {
+    stepPanels.forEach(function (panel, i) {
+      panel.classList.toggle("is-active", i === index);
+      panel.classList.toggle("is-past", i < index);
+    });
+  }
 
-      for (var i = 0; i < steps.length; i++) {
-        var el = document.getElementById(steps[i]);
-        if (el) {
-          el.scrollIntoView({
-            behavior: reducedMotion ? "auto" : "smooth",
-            block: "center"
+  function initStepsScroll() {
+    if (!stepsRoot || !stepsPin || !window.gsap || !window.ScrollTrigger) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    ScrollTrigger.getAll().forEach(function (t) {
+      if (t.vars && t.vars.id === "gifting-steps") t.kill();
+    });
+
+    setActiveStep(0);
+    /*
+     * Rotate only the img — crop window (.g-steps__mandala) stays Figma-sized.
+     */
+    if (mandalaImg) {
+      /* Figma shows the mandala mirrored (rotate-180 inside a flipped group) */
+      gsap.set(mandalaImg, {
+        scaleX: -1,
+        rotation: 0,
+        transformOrigin: "50% 50%",
+        force3D: true
+      });
+    }
+
+    /* ~1 viewport per step so all 4 panels appear while pinned */
+    ScrollTrigger.create({
+      id: "gifting-steps",
+      trigger: stepsRoot,
+      start: "top top",
+      end: function () {
+        return "+=" + Math.round(window.innerHeight * 4);
+      },
+      pin: stepsPin,
+      pinSpacing: true,
+      scrub: reducedMotion ? false : 0.55,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: function (self) {
+        var progress = self.progress;
+        var idx = Math.min(3, Math.floor(progress * 4));
+        if (progress >= 0.999) idx = 3;
+        setActiveStep(idx);
+        if (mandalaImg && !reducedMotion) {
+          /* Mandala PNG is a transparent circle centred in its box: rotate at scale 1 so it never hits the crop edge */
+          gsap.to(mandalaImg, {
+            rotation: progress * 360,
+            duration: 0.4,
+            ease: "power2.out",
+            overwrite: "auto"
           });
-          await sleep(pause);
         }
       }
-
-      var formSec = document.getElementById("gift-personalize");
-      if (formSec) {
-        formSec.scrollIntoView({
-          behavior: reducedMotion ? "auto" : "smooth",
-          block: "start"
-        });
-      }
-      if (stepsRoot) stepsRoot.classList.remove("is-touring");
-      tourRunning = false;
     });
   }
+
+  function bootSteps() {
+    if (window.gsap && window.ScrollTrigger) {
+      initStepsScroll();
+      forceHeroTop();
+      return;
+    }
+    var tries = 0;
+    var timer = window.setInterval(function () {
+      tries += 1;
+      if (window.gsap && window.ScrollTrigger) {
+        window.clearInterval(timer);
+        initStepsScroll();
+        forceHeroTop();
+      } else if (tries > 40) {
+        window.clearInterval(timer);
+      }
+    }, 50);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootSteps);
+  } else {
+    bootSteps();
+  }
+
+  window.addEventListener("load", function () {
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  });
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(function () {
+      if (window.ScrollTrigger) {
+        initStepsScroll();
+        ScrollTrigger.refresh();
+      }
+    }, 200);
+  });
 
   /* Occasion tabs → swap preview card art + message chips */
   var messageInput = document.getElementById("gift-message");
@@ -195,9 +299,9 @@
       theme: "is-diwali",
       festive: "SHUBH DEEPAVALI",
       messages: [
-        "Because I want you around for every celebration.",
+        "For many more Diwalis together.",
         "A little gift for more moments together.",
-        "For many more Diwalis together."
+        "Because I want you around for every celebration."
       ]
     },
     birthday: {
@@ -256,7 +360,6 @@
       previewCard.classList.remove("is-diwali", "is-birthday", "is-just-because");
       previewCard.classList.add(config.theme);
     }
-    /* Envelope stays; only inner card art swaps via CSS theme class */
     if (previewCardImg) {
       previewCardImg.src = "assets/images/gifting/envelope.png";
       previewCardImg.alt = "Gift envelope";
