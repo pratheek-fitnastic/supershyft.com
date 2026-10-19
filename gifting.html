@@ -129,6 +129,79 @@
           aria-controls="gift-box-open"
           aria-label="Open gift box"
         >
+          <!--
+            Mobile box (< 768px only) — Figma "box 1 mobile" 856:11817: closed 856:11818,
+            open card 856:11820, card back 862:11473. Laid out at 552 × 637 and scaled in gifting.js.
+          -->
+          <div class="g-mbox" aria-hidden="true">
+            <div class="g-mbox__stage" id="gift-mbox-stage">
+              <div class="g-mbox__closed">
+                <img src="assets/images/gifting/gift-box-closed-sprite.png" width="1536" height="1024" alt="">
+              </div>
+              <div class="g-mbox__open">
+                <img src="assets/images/gifting/gift-box-closed-sprite.png" width="1536" height="1024" alt="">
+              </div>
+              <div class="g-mbox__card">
+                <div class="g-mbox__flip">
+                  <div class="g-mbox__face g-mbox__face--front">
+                    <img class="g-mbox__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
+                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <div class="g-mbox__panel">
+                      <img class="g-mbox__panel-fil g-mbox__panel-fil--tl" src="assets/images/gifting/filigree-sm-tl.svg" width="16" height="16" alt="">
+                      <img class="g-mbox__panel-fil g-mbox__panel-fil--tr" src="assets/images/gifting/filigree-sm-tr.svg" width="16" height="16" alt="">
+                      <div class="g-mbox__meta">
+                        <img src="assets/images/gifting/icon-lotus.svg" width="24" height="24" alt="">
+                        <span class="g-mbox__pill">Men &amp; Women</span>
+                      </div>
+                      <div class="g-mbox__head">
+                        <h3 class="g-mbox__title">SuperShyft Core+</h3>
+                        <p class="g-mbox__price">₹3,499</p>
+                        <p class="g-mbox__price-old">₹4,499</p>
+                      </div>
+                      <ul class="g-mbox__features">
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 tests</li>
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-home.svg" width="20" height="20" alt=""></span>Home blood collection</li>
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation<br>included</li>
+                      </ul>
+                      <div class="g-box__explore-wrap">
+                        <button type="button" class="g-box__explore js-gift-flip" tabindex="-1">Explore Package</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="g-mbox__face g-mbox__face--back">
+                    <div class="g-mbox__wire" aria-hidden="true"></div>
+                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+                    <div class="g-mbox__profiles">
+                      <h3 class="g-mbox__profiles-title">Profiles Included</h3>
+                      <div class="g-box__profiles-badge g-mbox__badge" aria-label="8 tests, 69 parameters">
+                        <span>8 Tests</span>
+                        <span class="g-box__profiles-badge-div" aria-hidden="true"></span>
+                        <span>69 Parameters</span>
+                      </div>
+                      <ul class="g-mbox__list">
+                    <li>Complete Haemogram <span>(25 tests)</span></li>
+                    <li>Lipid Profile <span>(9 tests)</span></li>
+                    <li>Thyroid Profile <span>(3 tests)</span></li>
+                    <li>Liver Function Tests <span>(12 tests)</span></li>
+                    <li>Kidney Function Tests <span>(12 tests)</span></li>
+                    <li>Diabetes Profile <span>(2 tests)</span></li>
+                    <li>Iron Profile <span>(4 tests)</span></li>
+                    <li>Vitamins <span>(2 tests)</span></li>
+                      </ul>
+                    </div>
+                    <button type="button" class="g-box__flip-back js-gift-flip" aria-label="Flip package card back">Show package</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="g-box__canvas" id="gift-box-canvas">
             <div class="g-box__burst" aria-hidden="true"></div>
             <div class="g-box__sparkles" id="gift-box-sparkles" aria-hidden="true"></div>
@@ -307,7 +380,7 @@
                 <div class="g-steps__line" aria-hidden="true"></div>
               </div>
               <div class="g-steps__copy">
-                <h2 class="g-steps__title">Discover Your Bio–AI Report</h2>
+                <h2 class="g-steps__title">Discover<br class="g-br-m"> Your Bio–AI Report</h2>
                 <p class="g-steps__desc">Get disease risk analysis and personalized health insights in the SuperShyft app.</p>
               </div>
             </article>

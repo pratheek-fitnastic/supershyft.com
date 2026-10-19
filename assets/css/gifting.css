@@ -1642,7 +1642,8 @@
   align-items: center;
 }
 
-@media (min-width: 992px) {
+/* Side-by-side only when 719 + 77 + 453px actually fit; narrower screens stack the card below */
+@media (min-width: 1280px) {
   .g-form-grid {
     grid-template-columns: minmax(0, 719px) 453px;
     justify-content: center;
@@ -1816,7 +1817,7 @@
   box-shadow: 0 0 10px 0 rgba(157, 228, 155, 0.25);
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1280px) {
   .gifting-page .g-form-sec .g-field--msg textarea {
     width: 718px;
     max-width: calc(100% + 312px);
@@ -2283,19 +2284,7 @@
 
 /* ===== Tablet ===== */
 @media (max-width: 991.98px) and (min-width: 768px) {
-  .g-steps__mandala {
-    left: -38%;
-    top: -4%;
-    width: 78%;
-    height: 108%;
-  }
-
-  .g-steps__diya {
-    left: -10%;
-    top: 38%;
-    width: 22%;
-    height: 24%;
-  }
+  /* Mandala + diya keep the shared --g-mandala-d sizing so the diya always sits on the mandala */
 
   .g-steps__content {
     left: max(38%, 260px);
@@ -2319,6 +2308,43 @@
   }
 }
 
+/* Tablet / small laptop: form stacks, tabs shrink so all three stay on one line */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .g-form-grid {
+    max-width: 719px;
+    margin: 0 auto;
+  }
+
+  .gifting-page .g-tab {
+    font-size: 18px;
+  }
+
+  .g-tabs {
+    gap: 40px;
+  }
+
+  .g-tab img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .g-tab.is-active::after {
+    left: 0;
+    width: 100%;
+  }
+}
+
+/* Line breaks that only exist in the mobile design */
+.g-br-m {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-br-m {
+    display: inline;
+  }
+}
+
 /* ===== Mobile — Figma 856:11021 / hero 856:11030 ===== */
 @media (max-width: 767.98px) {
   .g-hero {
@@ -2337,8 +2363,9 @@
     object-position: 18% bottom;
   }
 
+  /* Mobile design 856:11030: title ≈ 44% down the 950px screen, button ≈ 72% */
   .g-hero__content {
-    top: 28%;
+    top: 41%;
     gap: 48px;
     width: min(392px, calc(100% - 48px));
   }
@@ -2374,13 +2401,35 @@
     font-size: 16px;
   }
 
+  /* Mobile design 856:11047: heading near the top, box centred, button at the bottom of one screen */
   .g-pack {
-    padding: 48px 16px 64px;
+    min-height: 100svh;
+    padding: 120px 16px 72px;
+    display: flex;
+    flex-direction: column;
   }
 
+  .g-pack__inner {
+    flex: 1;
+    width: 100%;
+  }
+
+  .g-box {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .g-pack__cta {
+    margin-top: 32px;
+  }
+
+  /* Mobile design: two lines — "A Gift of Health," / "Wrapped in Love." */
   .g-pack__title {
-    font-size: 30px;
-    line-height: 1.2;
+    font-size: 32px;
+    line-height: 1.3;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .g-pack__sub {
@@ -2406,30 +2455,36 @@
     height: 110%;
   }
 
+  /*
+   * Mobile design 856:11057: the mandala is a half circle cut by the left edge, centred
+   * ~68% down the screen (≈ 547px across on a 440px phone), diya at its centre.
+   */
   .g-steps__visual {
-    inset: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 52%;
+    inset: 0;
+  }
+
+  .g-steps__pin {
+    --g-mandala-d: 124vw;
+    --g-mandala-cx: 0px;
   }
 
   .g-steps__mandala {
-    left: -18%;
-    top: auto;
-    bottom: -28%;
-    width: min(120%, 520px);
-    height: auto;
-    aspect-ratio: 1;
+    left: calc(var(--g-mandala-cx) - var(--g-mandala-d) / 2);
+    top: calc(72.5% - var(--g-mandala-d) * 0.5573);
+    width: var(--g-mandala-d);
+    height: calc(var(--g-mandala-d) * 1.1145);
   }
 
+  /* Mobile design: the diya is cut through its middle — flame just inside the left edge, right half of the bowl visible */
   .g-steps__diya {
-    left: -6%;
-    top: auto;
-    bottom: 8%;
-    width: 34%;
-    height: auto;
-    aspect-ratio: var(--g-diya-aspect);
+    left: calc(2.5vw - var(--g-mandala-d) * 0.1585);
+    top: calc(72.5% - var(--g-mandala-d) * 0.1254);
+    width: calc(var(--g-mandala-d) * 0.317);
+    height: calc(var(--g-mandala-d) * 0.2507);
+  }
+
+  .g-steps__line {
+    display: none;
   }
 
   .g-steps__content {
@@ -2440,7 +2495,7 @@
     width: 100%;
     max-width: 100%;
     margin: 0;
-    padding: 40px 20px 0;
+    padding: 60px 20px 0;
     gap: 24px;
     justify-content: flex-start;
   }
@@ -2464,17 +2519,27 @@
     padding: 0;
     min-height: 220px;
     align-self: flex-end;
-    width: min(58%, 240px);
+    width: min(100%, 360px);
+    margin-top: 72px;
     margin-left: auto;
-    margin-right: 4px;
+    margin-right: 20px;
   }
 
+  /* Mobile design 856:11057: step text is right-aligned above the mandala */
   .g-steps__panel {
     padding: 0 0 12px;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .g-steps__header,
+  .g-steps__copy {
+    align-items: flex-end;
   }
 
   .g-steps__meta {
     margin: 0 0 10px;
+    justify-content: flex-end;
   }
 
   .g-steps__meta img {
@@ -2488,13 +2553,14 @@
   }
 
   .g-steps__title {
-    font-size: 28px;
+    font-size: 36px;
     margin: 0 0 8px;
     padding: 0;
     line-height: 1.2;
   }
 
   .g-steps__desc {
+    max-width: 250px;
     font-size: 14px;
     line-height: 1.4;
   }
@@ -2721,5 +2787,472 @@
   .g-box__package,
   .g-box__spark {
     animation: none !important;
+  }
+}
+
+/* ===== Mobile gift box (< 768px only) — Figma "box 1 mobile" 856:11817 ===== */
+.g-mbox {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-box {
+    --g-mbox-s: 1;
+    aspect-ratio: auto;
+    max-width: none;
+    height: calc(637px * var(--g-mbox-s));
+    overflow: visible;
+  }
+
+  .g-box__canvas {
+    display: none;
+  }
+
+  .g-mbox {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 552 × 637 design canvas, centred and scaled to the phone (gifting.js sets --g-mbox-s) */
+  .g-mbox__stage {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 552px;
+    height: 637px;
+    /* zoom (not transform: scale) so text is laid out at its real size and stays sharp */
+    zoom: var(--g-mbox-s);
+    transform: translateX(-50%);
+  }
+
+  /* Closed box 856:11818 — 495 × 427, centred over the open box */
+  .g-mbox__closed {
+    position: absolute;
+    left: 28.5px;
+    top: 160px;
+    width: 495px;
+    height: 427px;
+    overflow: hidden;
+    z-index: 3;
+    filter: drop-shadow(0 0 50px rgba(255, 154, 174, 0.25));
+    will-change: transform, opacity;
+  }
+
+  .g-mbox__closed img {
+    position: absolute;
+    left: -4.96%;
+    top: -24.96%;
+    width: 205.9%;
+    height: 158.76%;
+    max-width: none;
+  }
+
+  /* Open box 856:11820 — sheet crop inside 498 × 425.6 at (27, 161) */
+  .g-mbox__open {
+    position: absolute;
+    left: 27px;
+    top: 161px;
+    width: 498px;
+    height: 425.6px;
+    overflow: hidden;
+    z-index: 1;
+    opacity: 0.001;
+    will-change: opacity;
+  }
+
+  .g-mbox__open img {
+    position: absolute;
+    left: -103.98%;
+    top: -27.93%;
+    width: 210.7%;
+    height: 164.37%;
+    max-width: none;
+  }
+
+  /* Card — inset 10.05% 20.83% 24.65% 20.83% of 552 × 637 */
+  .g-mbox__card {
+    position: absolute;
+    left: 115px;
+    top: 64px;
+    width: 322px;
+    height: 416px;
+    z-index: 2;
+    perspective: 1600px;
+    opacity: 0.001;
+    pointer-events: none;
+    will-change: translate, scale, opacity;
+  }
+
+  /*
+   * 3D only while the card turns (.is-3d / .is-turning, set by gifting.js). At rest the
+   * visible face is drawn flat — a resting 3D-rotated layer is rasterised soft on phones.
+   */
+  .g-mbox__flip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .g-box.is-3d .g-mbox__flip {
+    transform-style: preserve-3d;
+  }
+
+  .g-box.is-3d.is-flipped .g-mbox__flip {
+    transform: rotateY(180deg);
+  }
+
+  .g-box.is-3d.is-turning .g-mbox__flip {
+    transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1);
+  }
+
+  .g-mbox__face {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    padding: 28px;
+    border: 4px solid #dfb76c;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #001e20 0%, #001115 100%);
+    box-shadow: 0 -4px 50px rgba(255, 255, 128, 0.5);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .g-mbox__face--back {
+    padding: 24px;
+    visibility: hidden;
+  }
+
+  .g-box.is-3d .g-mbox__face--back {
+    transform: rotateY(180deg);
+    visibility: visible;
+  }
+
+  /* Resting on the back: flat, front hidden */
+  .g-box.is-flipped:not(.is-3d) .g-mbox__face--back {
+    visibility: visible;
+  }
+
+  .g-box.is-flipped:not(.is-3d) .g-mbox__face--front {
+    visibility: hidden;
+  }
+
+  .g-mbox__scene {
+    position: absolute;
+    left: -134px;
+    top: 0;
+    width: 854px;
+    height: 484px;
+    max-width: none;
+    object-fit: cover;
+    transform: scaleX(-1);
+    pointer-events: none;
+  }
+
+  /* Parchment panel — 275 × 364, centred */
+  .g-mbox__panel {
+    position: absolute;
+    left: calc(50% - 0.5px);
+    top: 50%;
+    z-index: 2;
+    width: 275px;
+    height: 364px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 21px 25px 20px;
+    border: 1px solid #eddcc0;
+    border-bottom: 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
+    box-shadow: 0 -4px 25px rgba(255, 255, 128, 0.25);
+    text-align: center;
+  }
+
+  .g-mbox__panel-fil {
+    position: absolute;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .g-mbox__panel-fil--tl {
+    left: 8px;
+  }
+
+  .g-mbox__panel-fil--tr {
+    right: 8.34px;
+    opacity: 0.7;
+    transform: rotate(90deg);
+  }
+
+  .g-mbox__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0 7px;
+  }
+
+  .g-mbox__meta img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .g-mbox__pill {
+    padding: 2px 12px;
+    border-radius: 9999px;
+    background: #1f2824;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #dfb76c;
+  }
+
+  .g-mbox__head {
+    padding-bottom: 6px;
+  }
+
+  .g-mbox__title {
+    margin: 0 0 -2px;
+    font-family: Sora, sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 22px;
+    color: #1e1713;
+  }
+
+  .g-mbox__price {
+    margin: 0 0 -2px;
+    padding-top: 6px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 30px;
+    color: #1f1915;
+  }
+
+  .g-mbox__price-old {
+    margin: 0;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: #8c7e6e;
+    text-decoration: line-through;
+  }
+
+  .g-mbox__features {
+    list-style: none;
+    margin: 2.25px 0;
+    padding: 13px 8px;
+    border-top: 1px solid rgba(223, 202, 162, 0.6);
+    border-bottom: 1px solid rgba(223, 202, 162, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .g-mbox__features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16.25px;
+    color: #2f241a;
+  }
+
+  /* Back — Profiles Included (862:11473) */
+  .g-mbox__wire {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 298px;
+    height: 392px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  .g-mbox__profiles {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 0 0 4px;
+    text-align: left;
+  }
+
+  .g-mbox__profiles-title {
+    margin: 0;
+    font-family: Sora, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 28px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #e8c872;
+  }
+
+  .g-mbox__badge {
+    font-size: 10px;
+  }
+
+  .g-mbox__list {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .g-mbox__list li {
+    position: relative;
+    padding-left: 24px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.4px;
+    color: #f1f5f9;
+    white-space: nowrap;
+  }
+
+  .g-mbox__list li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, #dac15a, #967901);
+  }
+
+  .g-mbox__list li span {
+    margin-left: 8px;
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(230, 202, 101, 0.9);
+  }
+
+  /* Opening: box lifts and fades → open box appears → card rises out of it */
+  .g-box.is-opening .g-mbox__closed {
+    animation: g-mbox-closed 3.2s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+  }
+
+  .g-box.is-opening .g-mbox__open {
+    animation: g-mbox-open 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .g-box.is-opening .g-mbox__card {
+    animation: g-mbox-card 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .g-box.is-open .g-mbox__closed {
+    visibility: hidden;
+  }
+
+  .g-box.is-open .g-mbox__open,
+  .g-box.is-open .g-mbox__card {
+    opacity: 1;
+  }
+
+  .g-box.is-open .g-mbox__card {
+    pointer-events: auto;
+    cursor: pointer;
+    will-change: auto;
+  }
+
+  .g-box.is-open .g-mbox__open,
+  .g-box.is-open .g-mbox__closed {
+    will-change: auto;
+  }
+
+  @keyframes g-mbox-closed {
+    0% { transform: translateY(0) rotate(0); opacity: 1; }
+    6% { transform: translateY(-3px) rotate(-0.9deg); }
+    12% { transform: translateY(0) rotate(0.9deg); }
+    18%, 26% { transform: translateY(0) rotate(0); opacity: 1; }
+    55%, 100% { transform: translateY(-60px) scale(1.04); opacity: 0; }
+  }
+
+  @keyframes g-mbox-open {
+    0%, 30% { opacity: 0.001; }
+    56%, 100% { opacity: 1; }
+  }
+
+  @keyframes g-mbox-card {
+    0%, 40% { opacity: 0; translate: 0 160px; scale: 0.7; }
+    55% { opacity: 1; }
+    100% { opacity: 1; translate: 0 0; scale: 1; }
+  }
+}
+
+@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  .g-mbox__closed,
+  .g-mbox__open,
+  .g-mbox__card {
+    animation: none !important;
+  }
+}
+
+/*
+ * Mobile backgrounds (Figma mobile frames 856:11047 / 11057 / 11153): the same teal fill,
+ * unmirrored, 1730px wide at x −88, with a 125px black fade top and bottom and a
+ * darkening toward each section's foot (gradient from 74% of the 1081px fill).
+ */
+@media (max-width: 767.98px) {
+  .g-pack__bg,
+  .g-steps__bg,
+  .g-form-sec__bg {
+    left: -88px;
+    top: 0;
+    width: 1730px;
+    height: 1081px;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    transform: none;
+  }
+
+  .g-steps__bg {
+    width: 1763px;
+    height: 1170px;
+  }
+
+  .g-pack__shade,
+  .g-steps__shade,
+  .g-form-sec__shade {
+    z-index: 1;
+    background:
+      linear-gradient(180deg, #000 0, rgba(0, 0, 0, 0) 125px),
+      linear-gradient(0deg, #000 0, rgba(0, 0, 0, 0) 125px),
+      linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0, rgba(0, 0, 0, 0) 280px);
+  }
+
+  .g-pack__fade {
+    display: none;
   }
 }

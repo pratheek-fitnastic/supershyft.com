@@ -2,6 +2,14 @@
   "use strict";
 
   /* Always land on the hero (first section) after reload — ignore restored scroll */
+  /*
+   * The site stylesheet sets html { scroll-behavior: smooth }. ScrollTrigger measures pin
+   * positions by jumping the page to the top for an instant; smooth scrolling turns that jump
+   * into a glide, so later refreshes measured from the wrong place and the pinned steps could
+   * overlap the gift box. Our own smooth scrolls pass behavior: "smooth" explicitly.
+   */
+  document.documentElement.style.scrollBehavior = "auto";
+
   if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
   }
@@ -38,6 +46,7 @@
   var giftPackage = document.getElementById("gift-package");
 
   /* Scale the 1302 × 868 Figma canvas to the box width; on small screens pad for the taller card */
+  var lastDocH = 0;
   function fitGiftBox() {
     if (!giftBox || !boxCanvas) return;
     var avail = giftBox.parentElement ? giftBox.parentElement.clientWidth : giftBox.clientWidth;
@@ -51,14 +60,27 @@
       s = Math.max(0.45, Math.min(s, window.innerHeight / 1010));
     }
     var w = Math.round(1302 * s);
-    giftBox.style.width = w + "px";
+    giftBox.style.width = window.matchMedia("(max-width: 767.98px)").matches ? "" : w + "px";
     giftBox.style.setProperty("--g-box-s", s.toFixed(5));
     if (giftPack) giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
     giftBox.style.setProperty("--g-box-w", w + "px");
+    /* Mobile box (< 768px): 552 × 637 Figma canvas, scaled to the 440px design phone width */
+    /* Phones narrower than the 440px design get a slightly larger box (scale by width / 400) so the card text stays readable */
+    var vw = window.innerWidth;
+    giftBox.style.setProperty("--g-mbox-s", Math.min(1, vw >= 440 ? vw / 440 : vw / 400).toFixed(4));
     giftBox.style.marginBottom = "";
     if (giftPackage && window.matchMedia("(max-width: 991.98px)").matches && giftBox.classList.contains("is-open")) {
       var overflow = giftPackage.getBoundingClientRect().bottom - giftBox.getBoundingClientRect().bottom;
       if (overflow > 0) giftBox.style.marginBottom = Math.ceil(overflow + 16) + "px";
+    }
+    /* The box changes the page height (open state, card flip) — re-measure the pinned steps
+       below so their scroll start stays correct and nothing overlaps. */
+    var newH = document.documentElement.scrollHeight;
+    if (window.ScrollTrigger && newH !== lastDocH) {
+      lastDocH = newH;
+      window.requestAnimationFrame(function () {
+        ScrollTrigger.refresh();
+      });
     }
   }
 
@@ -98,6 +120,9 @@
     giftBox.removeAttribute("tabindex");
     var flipBtnEl = document.getElementById("flip-package-card");
     if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "0");
+    document.querySelectorAll(".js-gift-flip").forEach(function (b) {
+      b.setAttribute("tabindex", "0");
+    });
     openAnimTimer = null;
     fitGiftBox();
   }
@@ -180,11 +205,24 @@
     return Promise.race([Promise.all(jobs), cap]);
   }
 
+  var flipTimer = null;
   function flipPackageCard() {
     if (!giftBox || !giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) {
       return;
     }
-    giftBox.classList.toggle("is-flipped");
+    if (window.matchMedia("(max-width: 767.98px)").matches && !reducedMotion) {
+      /* Mobile: switch 3D on from the current side, turn, then lay the new face flat again */
+      giftBox.classList.add("is-3d");
+      void giftBox.offsetWidth;
+      giftBox.classList.add("is-turning");
+      giftBox.classList.toggle("is-flipped");
+      window.clearTimeout(flipTimer);
+      flipTimer = window.setTimeout(function () {
+        giftBox.classList.remove("is-turning", "is-3d");
+      }, 950);
+    } else {
+      giftBox.classList.toggle("is-flipped");
+    }
     fitGiftBox();
   }
 
@@ -239,7 +277,7 @@
   /* Click closed box → open */
   if (giftBox) {
     giftBox.addEventListener("click", function (e) {
-      if (e.target.closest && (e.target.closest("#flip-package-card") || e.target.closest("#flip-package-card-back"))) {
+      if (e.target.closest && (e.target.closest("#flip-package-card") || e.target.closest("#flip-package-card-back") || e.target.closest(".js-gift-flip"))) {
         return;
       }
       if (giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) return;
@@ -256,6 +294,24 @@
   }
 
   /* Explore Package → flip card (profiles back); click back to flip again */
+  /* Mobile: tapping anywhere on the open card flips it */
+  var mCard = document.querySelector(".g-mbox__card");
+  if (mCard) {
+    mCard.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      flipPackageCard();
+    });
+  }
+
+  document.querySelectorAll(".js-gift-flip").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      flipPackageCard();
+    });
+  });
+
   var flipBtn = document.getElementById("flip-package-card");
   var flipBackBtn = document.getElementById("flip-package-card-back");
   if (flipBtn) {
