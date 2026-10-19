@@ -38,9 +38,9 @@
   var stepPanels = document.querySelectorAll(".g-steps__panel");
   var boxHasOpened = false;
   var openAnimTimer = null;
-  /* Must match the 3.2s keyframes on .g-box.is-opening in gifting.css */
-  var OPEN_SEQUENCE_MS = 3200;
-  var SPARKS_AT_MS = 1150;
+  /* Must match the 5s keyframes on .g-box.is-opening in gifting.css */
+  var OPEN_SEQUENCE_MS = 5000;
+  var SPARKS_AT_MS = 850;
   var boxCanvas = document.getElementById("gift-box-canvas");
   var sparkLayer = document.getElementById("gift-box-sparkles");
   var giftPackage = document.getElementById("gift-package");
@@ -151,7 +151,7 @@
       window.requestAnimationFrame(function () {
         window.requestAnimationFrame(function () {
           giftBox.classList.add("is-opening");
-          window.setTimeout(burstSparkles, SPARKS_AT_MS);
+          /* No sparkles: the reference opening is calm */
           openAnimTimer = window.setTimeout(finishOpen, OPEN_SEQUENCE_MS);
         });
       });
@@ -578,7 +578,10 @@
   function renderOccasionChips(messages) {
     if (!chipsRoot) return;
     chipsRoot.innerHTML = "";
-    messages.forEach(function (msg) {
+    /* Shortest first, as in Figma: only the first pill sits beside the closed dropdown */
+    messages.slice().sort(function (a, b) {
+      return a.length - b.length;
+    }).forEach(function (msg) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "g-chip";
@@ -588,6 +591,42 @@
     });
     bindChipClicks();
   }
+
+  /*
+   * Longer messages (Birthdays, Just Because) wrap onto extra lines. The preview card is centred
+   * beside the form, so a taller chip list would push it down. Reserve the tallest set's height.
+   */
+  function reserveChipHeight() {
+    if (!chipsRoot) return;
+    var saved = Array.prototype.slice.call(chipsRoot.children);
+    var savedMin = chipsRoot.style.minHeight;
+    chipsRoot.style.minHeight = "";
+    var max = 0;
+    Object.keys(OCCASIONS).forEach(function (key) {
+      chipsRoot.innerHTML = "";
+      OCCASIONS[key].messages.forEach(function (msg) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "g-chip";
+        btn.textContent = msg;
+        chipsRoot.appendChild(btn);
+      });
+      max = Math.max(max, chipsRoot.getBoundingClientRect().height);
+    });
+    chipsRoot.innerHTML = "";
+    saved.forEach(function (el) {
+      chipsRoot.appendChild(el);
+    });
+    chipsRoot.style.minHeight = max ? Math.ceil(max) + "px" : savedMin;
+  }
+
+  reserveChipHeight();
+  window.addEventListener("load", reserveChipHeight);
+  window.addEventListener("resize", function () {
+    window.clearTimeout(reserveChipHeight.t);
+    reserveChipHeight.t = window.setTimeout(reserveChipHeight, 150);
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserveChipHeight);
 
   function setOccasion(key) {
     var config = OCCASIONS[key] || OCCASIONS.diwali;
@@ -646,8 +685,100 @@
   });
   updatePreview();
 
+  /* ===== Gift It → Book Appointment panel (Figma 862:13205) ===== */
   var form = document.getElementById("gift-form");
-  var success = document.getElementById("gift-success");
+  var book = document.getElementById("gift-book");
+  var bookBack = document.getElementById("gift-book-back");
+  var bookDates = document.getElementById("book-dates");
+  var bookSlots = document.getElementById("book-slots");
+  var bookError = document.getElementById("gift-book-error");
+  var bookSuccess = document.getElementById("gift-book-success");
+  var formInner = form ? form.parentElement : null;
+
+  function radio(name, value, inner, checked) {
+    var label = document.createElement("label");
+    var input = document.createElement("input");
+    var face = document.createElement("span");
+    input.type = "radio";
+    input.name = name;
+    input.value = value;
+    input.checked = !!checked;
+    face.innerHTML = inner;
+    label.appendChild(input);
+    label.appendChild(face);
+    return label;
+  }
+
+  /* Next four days starting tomorrow; first one pre-selected like the design */
+  function renderBookDates() {
+    if (!bookDates) return;
+    var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    bookDates.innerHTML = "";
+    for (var i = 1; i <= 4; i++) {
+      var d = new Date();
+      d.setDate(d.getDate() + i);
+      var iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      var el = radio("book-date", iso, "<small>" + DAYS[d.getDay()] + "</small><b>" + d.getDate() + "</b>", i === 1);
+      el.className = "g-book__date";
+      bookDates.appendChild(el);
+    }
+  }
+
+  /* 06:00 AM – 01:30 PM in 30-minute steps (16 slots, 8 per row) */
+  function renderBookSlots() {
+    if (!bookSlots) return;
+    bookSlots.innerHTML = "";
+    for (var m = 6 * 60; m <= 13 * 60 + 30; m += 30) {
+      var h = Math.floor(m / 60);
+      var h12 = h % 12 || 12;
+      var text = String(h12).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0") + (h < 12 ? " AM" : " PM");
+      var el = radio("book-slot", text, text, false);
+      el.className = "g-book__slot";
+      bookSlots.appendChild(el);
+    }
+  }
+
+  /* Pin the panel to the form (15px above it, as in Figma) and make room if it is taller */
+  function placeBook() {
+    if (!book || book.hidden || !form || !formInner) return;
+    formInner.style.paddingBottom = "";
+    book.style.setProperty("--g-book-top", form.offsetTop - 15 + "px");
+    /* A small overhang sits in the section's bottom spacing (page height stays at Figma's 1256);
+       grow only when the panel would reach the next section (e.g. stacked mobile layout) */
+    var section = formInner.closest("section");
+    var room = section ? parseFloat(getComputedStyle(section).paddingBottom) - 40 : 0;
+    var extra = book.offsetTop + book.offsetHeight - (form.offsetTop + form.offsetHeight) - Math.max(0, room);
+    if (extra > 0) formInner.style.paddingBottom = extra + "px";
+  }
+
+  function openBook() {
+    if (!book) return;
+    if (bookDates && !bookDates.children.length) renderBookDates();
+    if (bookSlots && !bookSlots.children.length) renderBookSlots();
+    book.hidden = false;
+    form.classList.add("is-booking");
+    form.setAttribute("aria-hidden", "true");
+    form.inert = true;
+    placeBook();
+    void book.offsetWidth;
+    book.classList.add("is-visible");
+    book.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    var first = book.querySelector("input[name='book-gender']");
+    if (first) first.focus({ preventScroll: true });
+  }
+
+  function closeBook() {
+    if (!book) return;
+    book.classList.remove("is-visible");
+    book.hidden = true;
+    form.classList.remove("is-booking");
+    form.removeAttribute("aria-hidden");
+    form.inert = false;
+    if (formInner) formInner.style.paddingBottom = "";
+    var submit = form.querySelector("[type='submit']");
+    if (submit) submit.focus();
+  }
+
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -656,7 +787,48 @@
         return;
       }
       updatePreview();
-      if (success) success.classList.add("is-visible");
+      openBook();
+    });
+  }
+
+  if (bookBack) bookBack.addEventListener("click", closeBook);
+  window.addEventListener("resize", placeBook);
+
+  if (book) {
+    book.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeBook();
+    });
+
+    book.addEventListener("input", function (e) {
+      if (e.target.classList) e.target.classList.remove("is-invalid");
+    });
+
+    book.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var missing = [];
+      book.querySelectorAll(".g-book__input").forEach(function (input) {
+        var bad = !input.checkValidity();
+        input.classList.toggle("is-invalid", bad);
+        if (bad) missing.push(input);
+      });
+      var noGender = !book.querySelector("input[name='book-gender']:checked");
+      var noDate = !book.querySelector("input[name='book-date']:checked");
+      var noSlot = !book.querySelector("input[name='book-slot']:checked");
+      var msg = "";
+      if (noGender) msg = "Please select the recipient's gender.";
+      else if (missing.length) msg = "Please fill in the highlighted details.";
+      else if (noDate || noSlot) msg = "Please choose a date and a collection slot.";
+      if (bookError) {
+        bookError.textContent = msg;
+        bookError.hidden = !msg;
+      }
+      if (msg) {
+        if (missing.length) missing[0].focus();
+        placeBook();
+        return;
+      }
+      if (bookSuccess) bookSuccess.classList.add("is-visible");
+      placeBook();
     });
   }
 })();

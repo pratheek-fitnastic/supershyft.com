@@ -38,7 +38,7 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261019m">
   <link rel="preload" as="image" href="assets/images/gifting/gift-box-lid.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-box-base.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-card-ui.png">
@@ -498,6 +498,81 @@
             </div>
           </div>
         </form>
+
+        <!--
+          Book Appointment (Figma 862:13205) — opens over the form after a valid "Gift It".
+          Frosted glass: 25% black + 250px backdrop blur of the form and envelope behind it.
+        -->
+        <form class="g-book" id="gift-book" aria-labelledby="gift-book-title" hidden novalidate>
+          <button type="button" class="g-book__back" id="gift-book-back" aria-label="Back to gift details">&larr; Back</button>
+          <h3 class="g-book__title" id="gift-book-title">Book Appointment</h3>
+
+          <div class="g-book__body">
+            <fieldset class="g-book__group">
+              <legend class="g-book__heading">Enter Recipient Details</legend>
+              <div class="g-book__details">
+                <div class="g-book__col g-book__col--left">
+                  <div class="g-book__field">
+                    <span class="g-book__label" id="book-gender-label">Gender</span>
+                    <div class="g-book__gender" role="radiogroup" aria-labelledby="book-gender-label">
+                      <label class="g-book__opt">
+                        <input type="radio" name="book-gender" value="Male" required>
+                        <span><img src="assets/images/gifting/icon-male.svg" width="12.5006" height="12.5006" alt="">Male</span>
+                      </label>
+                      <label class="g-book__opt">
+                        <input type="radio" name="book-gender" value="Female">
+                        <span><img src="assets/images/gifting/icon-female.svg" width="10" height="15.9999" alt="">Female</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="g-book__field">
+                    <label class="g-book__label" for="book-age">Age</label>
+                    <input class="g-book__input" type="number" id="book-age" placeholder="e.g 29" min="1" max="110" inputmode="numeric" required>
+                  </div>
+                </div>
+                <div class="g-book__col g-book__col--right">
+                  <div class="g-book__field">
+                    <label class="g-book__label" for="book-address">Address</label>
+                    <input class="g-book__input" type="text" id="book-address" placeholder="e.g 350 A, Avenue Street" autocomplete="street-address" required>
+                  </div>
+                  <div class="g-book__pair">
+                    <div class="g-book__field">
+                      <label class="g-book__label" for="book-city">City</label>
+                      <input class="g-book__input" type="text" id="book-city" placeholder="e.g Mumbai" autocomplete="address-level2" required>
+                    </div>
+                    <div class="g-book__field">
+                      <label class="g-book__label" for="book-pincode">Pincode</label>
+                      <input class="g-book__input" type="text" id="book-pincode" placeholder="e.g 402201" pattern="[0-9]{6}" maxlength="6" inputmode="numeric" autocomplete="postal-code" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="g-book__group g-book__group--schedule">
+              <legend class="g-book__heading">Schedule Blood Collection</legend>
+              <div class="g-book__schedule">
+                <div class="g-book__field">
+                  <span class="g-book__label" id="book-date-label">Select Date</span>
+                  <div class="g-book__dates" id="book-dates" role="radiogroup" aria-labelledby="book-date-label"></div>
+                </div>
+                <div class="g-book__field g-book__field--slots">
+                  <span class="g-book__label" id="book-slot-label">Select Slot</span>
+                  <p class="g-book__hint">Collection window is of 1 hour</p>
+                  <div class="g-book__slots" id="book-slots" role="radiogroup" aria-labelledby="book-slot-label"></div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <p class="g-book__error" id="gift-book-error" role="alert" hidden></p>
+          <div class="g-book__actions">
+            <button type="submit" class="g-book__continue">Continue</button>
+          </div>
+          <div class="g-success g-book__success" id="gift-book-success" role="status">
+            Thank you! Your gift and blood collection slot are booked. Our team will confirm shortly.
+          </div>
+        </form>
       </div>
     </section>
 
@@ -549,7 +624,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js" defer></script>
+  <script src="assets/js/gifting.js?v=20261019m" defer></script>
 </body>
 
 </html>

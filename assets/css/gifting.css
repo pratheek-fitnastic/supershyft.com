@@ -971,117 +971,54 @@
   }
 }
 
-.g-box.is-opening .g-box__closed {
-  animation: g-box-shake 3.2s cubic-bezier(0.37, 0, 0.63, 1) forwards;
-}
-
-.g-box.is-opening .g-box__closed::after {
-  animation: g-box-glow-out 3.2s ease forwards;
-}
-
-.g-box.is-opening .g-box__closed-lid {
-  animation: g-box-lid 3.2s cubic-bezier(0.45, 0, 0.2, 1) forwards;
-}
-
-.g-box.is-opening .g-box__closed-base {
-  animation: g-box-base 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.g-box.is-opening .g-box__burst {
-  animation: g-box-burst 3.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}
-
-.g-box.is-opening .g-box__open-stage {
-  animation: g-box-stage 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.g-box.is-opening .g-box__package {
-  animation: g-box-card-rise 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Soft anticipation wobble — eases in and out instead of snapping between angles */
-@keyframes g-box-shake {
-  0% { transform: translateY(0) rotate(0); }
-  6% { transform: translateY(-3px) rotate(-0.9deg); }
-  12% { transform: translateY(0) rotate(0.9deg); }
-  18% { transform: translateY(-2px) rotate(-0.5deg); }
-  24%,
-  100% { transform: translateY(0) rotate(0); }
-}
+/*
+ * Opening (5s, timing mirrored in gifting.js):
+ *   0–0.6s    box rests, glow brightens
+ *   0.4–0.9s  open box fades in *behind* the closed one (fully opaque before anything moves)
+ *   0.9–2.2s  closed box (lid + base together — never split, so no gap) drifts up and dissolves into it
+ *   2.2–4.6s  card slides up out of the box; clip-path hides whatever is still below the rim
+ */
+.g-box.is-opening .g-box__closed::after { animation: g-box-glow-out 5s linear forwards; }
+.g-box.is-opening .g-box__closed-part { animation: g-box-closed-out 5s linear forwards; }
+.g-box.is-opening .g-box__burst { animation: g-box-burst 5s linear forwards; }
+.g-box.is-opening .g-box__open-stage { animation: g-box-stage 5s linear forwards; }
+.g-box.is-opening .g-box__package { animation: g-box-card-rise 5s linear forwards; }
 
 @keyframes g-box-glow-out {
-  0% { opacity: 0.6; }
-  30%,
+  0% { opacity: 0.5; animation-timing-function: ease-in-out; }
+  12% { opacity: 1; animation-timing-function: ease-in-out; }
+  44%,
   100% { opacity: 0; }
 }
 
-/* Lid rises and tips back in one continuous arc, fading as it leaves */
-@keyframes g-box-lid {
+@keyframes g-box-closed-out {
   0%,
-  20% {
-    opacity: 1;
-    transform: translateY(0) rotateX(0deg);
-  }
-  40% {
-    opacity: 1;
-    transform: translateY(-90px) rotateX(34deg);
-  }
-  60% {
-    opacity: 0;
-    transform: translateY(-210px) rotateX(70deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-210px) rotateX(70deg);
-  }
-}
-
-@keyframes g-box-base {
-  0%,
-  30% { opacity: 1; }
-  56%,
-  100% { opacity: 0; }
+  18% { opacity: 1; transform: translateY(0); animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1); }
+  44%,
+  100% { opacity: 0; transform: translateY(-24px); }
 }
 
 @keyframes g-box-burst {
   0%,
-  22% {
-    opacity: 0.001;
-    transform: scale(0.4);
-  }
-  42% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0.001;
-    transform: scale(1.45);
-  }
+  20% { opacity: 0.001; transform: scale(0.5, 0.3); animation-timing-function: ease-out; }
+  44% { opacity: 0.5; transform: scale(1, 0.8); animation-timing-function: ease-in-out; }
+  80%,
+  100% { opacity: 0.001; transform: scale(1.2, 1); }
 }
 
 @keyframes g-box-stage {
   0%,
-  30% { opacity: 0.001; }
-  56%,
+  8% { opacity: 0.001; animation-timing-function: ease-in-out; }
+  18%,
   100% { opacity: 1; }
 }
 
-/* One smooth rise with a gentle settle (easing does the overshoot — no extra keyframe kink) */
+/* Card moves up by its own height while the clip uncovers it from the rim — it emerges from inside */
 @keyframes g-box-card-rise {
   0%,
-  40% {
-    opacity: 0;
-    translate: 0 150px;
-    scale: 0.7;
-  }
-  55% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0;
-    scale: 1;
-  }
+  44% { translate: 0 100%; clip-path: inset(0 -60px 100% -60px); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+  92%,
+  100% { translate: 0 0; clip-path: inset(-120px -60px 0 -60px); }
 }
 
 /* Final open state */
@@ -1505,7 +1442,7 @@
 /* ===== 4. Personalize — Figma 862:11795 (1440 × 1256) ===== */
 .g-form-sec {
   position: relative;
-  padding: 88px 24px 120px;
+  padding: 88px 24px 142px;
   overflow: hidden;
   background: #000;
 }
@@ -1775,9 +1712,8 @@
 
 /* Suggestion pills 862:12503 — 5% white glass, 50% white Sora 16/32 */
 .gifting-page .g-form-sec .g-chip {
-  padding: 10px 22px;
-  /* 26px = a full pill at Figma's one-line 52px height, and a soft card if a long message wraps */
-  border-radius: 26px;
+  padding: 11px 23px;
+  border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
@@ -1789,10 +1725,26 @@
   letter-spacing: 0.32px;
   line-height: 32px;
   max-width: 100%;
-  white-space: normal;
+  /* Design: every suggestion on one line */
+  white-space: nowrap;
   cursor: pointer;
   text-align: left;
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+/*
+ * Side-by-side row: as in Figma (2nd pill is 452px in a 407px column), pills below the first run
+ * under the dropdown column — its closed box only covers the first row. The first pill may only
+ * use the 32px gap. gifting.js orders messages shortest first, like the design.
+ */
+@media (min-width: 768px) {
+  .gifting-page .g-form-sec .g-chip {
+    max-width: calc(100% + 312px);
+  }
+
+  .gifting-page .g-form-sec .g-chip:first-child {
+    max-width: calc(100% + 28px);
+  }
 }
 
 .g-chip.is-active,
@@ -2150,6 +2102,501 @@
 
 .g-success.is-visible {
   display: block;
+}
+
+/* ===== Book Appointment — Figma 862:13205 (opens over the form after "Gift It") ===== */
+/*
+ * Glass panel: Figma uses rgba(0,0,0,0.25) over a 250px backdrop blur of a grey artboard, which
+ * renders as neutral grey (#3b3b3b) warming to olive (#6e6a50) at the top-right. Our section behind is
+ * dark teal, so the blur alone comes out teal — the gradient below paints the design's colours
+ * (sampled from the Figma render) over the blur.
+ */
+.g-book {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--g-book-top, 0px);
+  z-index: 5;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  /* Figma's 41px includes the 1px border */
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 32px;
+  overflow: hidden;
+  scroll-margin-top: 110px;
+  background:
+    radial-gradient(70% 75% at 96% 6%, rgba(118, 112, 80, 0.95) 0%, rgba(118, 112, 80, 0) 100%),
+    linear-gradient(115deg, #3a3a3a 0%, #3e3e3c 45%, #4a4838 100%);
+  color: #fcfcfc;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .g-book {
+    background:
+      radial-gradient(70% 75% at 96% 6%, rgba(118, 112, 80, 0.9) 0%, rgba(118, 112, 80, 0) 100%),
+      linear-gradient(115deg, rgba(58, 58, 58, 0.9) 0%, rgba(62, 62, 60, 0.9) 45%, rgba(74, 72, 56, 0.9) 100%);
+    backdrop-filter: blur(250px);
+    -webkit-backdrop-filter: blur(250px);
+  }
+}
+
+.g-book[hidden] {
+  display: none;
+}
+
+.g-book.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* The form stays rendered underneath (it is what the glass blurs) but can't be reached */
+.g-form-grid.is-booking {
+  pointer-events: none;
+  user-select: none;
+}
+
+.g-book__back {
+  position: absolute;
+  left: 32px;
+  top: 32px;
+  border: 0;
+  background: none;
+  padding: 6px 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: Sora, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.g-book__back:hover,
+.g-book__back:focus-visible {
+  color: #fff;
+}
+
+.gifting-page .g-book__title {
+  margin: 0;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #fff;
+  text-align: center;
+}
+
+.g-book__body {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.g-book__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+/* Section headings — DM Sans SemiBold 24/30 */
+.gifting-page .g-book__heading {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 12px;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: 0.24px;
+  color: #fcfcfc;
+}
+
+.g-book__group--schedule .g-book__heading {
+  margin-bottom: 24px;
+}
+
+.g-book__details {
+  clear: both;
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.g-book__col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.g-book__col--left {
+  width: 363px;
+  flex-shrink: 0;
+}
+
+.g-book__col--right {
+  width: 741px;
+  min-width: 0;
+}
+
+.g-book__pair {
+  display: flex;
+  gap: 24px;
+}
+
+.g-book__pair > .g-book__field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.g-book__field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Field labels — DM Sans 14/30, 10% tracking, 10px padding */
+.gifting-page .g-book__label {
+  display: block;
+  padding: 10px;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 30px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #fcfcfc;
+}
+
+.gifting-page .g-book__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 43px;
+  padding: 13px 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  line-height: normal;
+  outline: none;
+  -moz-appearance: textfield;
+  transition: border-color 0.2s ease;
+}
+
+.g-book__input::-webkit-outer-spin-button,
+.g-book__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.gifting-page .g-book__input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.gifting-page .g-book__input:focus {
+  border-color: rgba(65, 171, 153, 0.7);
+}
+
+.gifting-page .g-book__input.is-invalid {
+  border-color: rgba(255, 120, 120, 0.7);
+}
+
+/* Selected state shared by gender, date and slot — Figma radial teal 17,121,95 → 28,73,61 */
+.g-book__gender,
+.g-book__dates,
+.g-book__slots {
+  --g-book-on: radial-gradient(ellipse at center, #11795f 0%, #1c493d 100%);
+}
+
+.g-book__gender {
+  display: flex;
+  gap: 12px;
+}
+
+.g-book__opt {
+  flex: 1 1 0;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.g-book__opt input,
+.g-book__date input,
+.g-book__slot input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.g-book__opt span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 43px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9a9a9a;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-size: 14px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Icons are drawn for one state (grey male, white female) — tint them to match the label */
+.g-book__opt img {
+  display: block;
+  flex-shrink: 0;
+  filter: brightness(0) invert(0.6);
+}
+
+.g-book__opt input:checked + span {
+  background: var(--g-book-on);
+  color: #fff;
+}
+
+.g-book__opt input:checked + span img {
+  filter: brightness(0) invert(1);
+}
+
+.g-book__opt input:focus-visible + span,
+.g-book__date input:focus-visible + span,
+.g-book__slot input:focus-visible + span {
+  outline: 2px solid rgba(65, 171, 153, 0.8);
+  outline-offset: 2px;
+}
+
+.g-book__schedule {
+  clear: both;
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+.g-book__dates {
+  display: flex;
+  gap: 12px;
+  height: 79px;
+  align-items: center;
+}
+
+.g-book__date {
+  cursor: pointer;
+}
+
+.g-book__date span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 70px;
+  height: 65px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(204, 204, 204, 0.8);
+  font-family: Lato, sans-serif;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.g-book__date small {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.g-book__date b {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.g-book__date input:checked + span {
+  border-color: transparent;
+  background: var(--g-book-on);
+  color: #fff;
+}
+
+.g-book__field--slots {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.gifting-page .g-book__field--slots .g-book__label {
+  padding: 0 10px;
+}
+
+.gifting-page .g-book__hint {
+  margin: 0 0 12px;
+  padding: 0 10px;
+  font-family: Lato, sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 18px;
+  color: #999;
+}
+
+.g-book__slots {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.g-book__slot {
+  cursor: pointer;
+}
+
+.g-book__slot span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 39px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9a9a9a;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.g-book__slot:hover span,
+.g-book__date:hover span,
+.g-book__opt:hover span {
+  color: #fff;
+}
+
+.g-book__slot input:checked + span {
+  background: var(--g-book-on);
+  color: #fff;
+}
+
+.g-book__error {
+  align-self: stretch;
+  margin: -12px 0 0;
+  color: #ff9c9c;
+  font-family: Sora, sans-serif;
+  font-size: 14px;
+}
+
+.g-book__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-self: stretch;
+}
+
+/* Continue — teal gradient, grey border, soft white drop shadow */
+.g-book__continue {
+  height: 49px;
+  min-width: 232px;
+  padding: 10px 24px;
+  border: 1px solid #969696;
+  border-radius: 36px;
+  background: linear-gradient(90deg, #296359 0%, #41ab99 100%);
+  box-shadow: 0 12px 10px rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-family: Sora, sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.g-book__continue:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.g-book__success {
+  align-self: stretch;
+  margin-top: -12px;
+}
+
+@media (max-width: 1279.98px) {
+  .g-book__details,
+  .g-book__schedule {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .g-book__col--left,
+  .g-book__col--right,
+  .g-book__field--slots {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .g-book {
+    padding: 64px 18px 28px;
+    gap: 24px;
+    border-radius: 24px;
+  }
+
+  .g-book__back {
+    left: 18px;
+    top: 18px;
+  }
+
+  .gifting-page .g-book__title {
+    font-size: 24px;
+  }
+
+  .gifting-page .g-book__heading {
+    font-size: 18px;
+  }
+
+  .g-book__body {
+    gap: 28px;
+  }
+
+  .g-book__pair {
+    gap: 12px;
+  }
+
+  .g-book__dates {
+    height: auto;
+    gap: 8px;
+  }
+
+  .g-book__date {
+    flex: 1 1 0;
+  }
+
+  .g-book__date span {
+    width: 100%;
+  }
+
+  .g-book__slots {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .g-book__slot span {
+    font-size: 12px;
+  }
+
+  .g-book__continue {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-book {
+    transition: none;
+  }
 }
 
 /* ===== 5. Closing — Figma 856:11017 (1440 × 357) ===== */
@@ -3159,15 +3606,15 @@
 
   /* Opening: box lifts and fades → open box appears → card rises out of it */
   .g-box.is-opening .g-mbox__closed {
-    animation: g-mbox-closed 3.2s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+    animation: g-mbox-closed 5s linear forwards;
   }
 
   .g-box.is-opening .g-mbox__open {
-    animation: g-mbox-open 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: g-mbox-open 5s linear forwards;
   }
 
   .g-box.is-opening .g-mbox__card {
-    animation: g-mbox-card 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: g-mbox-card 5s linear forwards;
   }
 
   .g-box.is-open .g-mbox__closed {
@@ -3191,22 +3638,18 @@
   }
 
   @keyframes g-mbox-closed {
-    0% { transform: translateY(0) rotate(0); opacity: 1; }
-    6% { transform: translateY(-3px) rotate(-0.9deg); }
-    12% { transform: translateY(0) rotate(0.9deg); }
-    18%, 26% { transform: translateY(0) rotate(0); opacity: 1; }
-    55%, 100% { transform: translateY(-60px) scale(1.04); opacity: 0; }
+    0%, 18% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1); }
+    44%, 100% { transform: translateY(-12px); opacity: 0; }
   }
 
   @keyframes g-mbox-open {
-    0%, 30% { opacity: 0.001; }
-    56%, 100% { opacity: 1; }
+    0%, 8% { opacity: 0.001; animation-timing-function: ease-in-out; }
+    18%, 100% { opacity: 1; }
   }
 
   @keyframes g-mbox-card {
-    0%, 40% { opacity: 0; translate: 0 160px; scale: 0.7; }
-    55% { opacity: 1; }
-    100% { opacity: 1; translate: 0 0; scale: 1; }
+    0%, 44% { opacity: 1; translate: 0 100%; clip-path: inset(0 -40px 100% -40px); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+    92%, 100% { opacity: 1; translate: 0 0; clip-path: inset(-80px -40px 0 -40px); }
   }
 }
 
