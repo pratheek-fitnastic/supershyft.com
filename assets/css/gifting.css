@@ -1,0 +1,3701 @@
+/* Gifting page — Figma 856:10782 (desktop) / 856:11021 (mobile) */
+
+:root {
+  --g-gold: #dfb76c;
+  --g-gold-a: #edd39d;
+  --g-gold-b: #cfa14c;
+  --g-gold-text: #ecd199;
+  --g-accent: #fdac24;
+  --g-white: #fcfcfc;
+  --g-black: #000;
+  --g-step-num: #c59b63;
+}
+
+.gifting-page {
+  background: var(--g-black);
+  color: var(--g-white);
+  overflow-x: clip;
+}
+
+/* Match Our Story: transparent at top, stuck/translucent on scroll */
+.gifting-page .bs-header {
+  background: transparent;
+  transition: ease 0.5s all;
+}
+
+.gifting-page .bs-header.sticked {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.gifting-page .bs-header.hide {
+  transform: translateY(-100%);
+}
+
+/* Gold CTA */
+.g-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 17px 85px;
+  border-radius: 9999px;
+  border: 1px solid var(--g-gold);
+  background: linear-gradient(90deg, var(--g-gold-a), var(--g-gold) 50%, var(--g-gold-b));
+  color: #000;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.6px;
+  line-height: 30px;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 7.5px rgba(223, 183, 108, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.g-btn:hover {
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(223, 183, 108, 0.4);
+}
+
+.g-gold {
+  font-style: italic;
+  background: linear-gradient(to left, var(--g-gold-text), var(--g-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== 1. Hero — Figma 856:10783 / bg 856:10784 ===== */
+.g-hero {
+  position: relative;
+  width: 100%;
+  /* Figma frame 1440×908 */
+  aspect-ratio: 1440 / 908;
+  height: auto;
+  min-height: 0;
+  max-height: 100svh;
+  overflow: hidden;
+  background: #001a1c;
+  text-align: center;
+  /* Scale type with the hero box (not only viewport width) */
+  container-type: size;
+  container-name: g-hero;
+}
+
+/*
+ * Figma 856:10784 — Diwali Glow: 1640×922 in 1440×908, left -100.
+ * Pin to bottom so diyas aren't clipped (Figma top:22 would crop 36px off the floor).
+ */
+.g-hero__bg {
+  position: absolute;
+  z-index: 0;
+  left: calc(100% * -100 / 1440);
+  top: auto;
+  bottom: 0;
+  width: calc(100% * 1640 / 1440);
+  height: calc(100% * 922 / 908);
+  max-width: none;
+  object-fit: cover;
+  object-position: center bottom;
+  pointer-events: none;
+  user-select: none;
+}
+
+/*
+ * Soft fade of the floor into black over the hero's last ~17% (≈150px at 908), so the
+ * hero melts into section 2 with no visible edge — matches the design's seam.
+ */
+.g-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 17%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 45%, #000 100%);
+  pointer-events: none;
+}
+
+/*
+ * Figma 856:10806 — Rectangle 40928 (1440×125)
+ * Asset is black→transparent top→bottom; flip so black sits on the
+ * hero/pack seam and softens the join into section 2.
+ */
+.g-hero__fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  height: calc(100% * 125 / 908);
+  object-fit: cover;
+  object-position: center;
+  transform: scaleY(-1);
+  pointer-events: none;
+  user-select: none;
+}
+
+/*
+ * Figma 856:10798 — text + Explore Gifts stack
+ * Visual order: title → sub → CTA | gaps 24 / 80 | leading 100 | 48/78/22
+ *
+ * Nav→text deep-dive (measured from Figma hero screenshot):
+ * Title glyphs begin ~297px down a 908 frame (~33% from top), with ~240px
+ * air under the nav — not the raw layer top:169 (flipped tree).
+ */
+.g-hero__content {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: calc(100% * 287 / 908);
+  transform: translateX(-50%);
+  width: min(860px, calc(100% - 48px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(48px, 8.811cqh, 80px);
+}
+
+.g-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: clamp(16px, 2.643cqh, 24px);
+}
+
+.g-hero__title {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-variation-settings: "opsz" 14;
+  color: #fff;
+  margin: 0;
+  padding: clamp(6px, 1.101cqh, 10px);
+  line-height: 0;
+  max-width: 674px;
+}
+
+.g-hero__title-top {
+  display: block;
+  font-size: clamp(24px, min(3.333cqw, 5.286cqh), 48px);
+  font-weight: 600;
+  color: #fff;
+  line-height: clamp(52px, min(6.944cqw, 11.013cqh), 100px);
+  margin: 0;
+}
+
+.g-hero__title-gold {
+  display: block;
+  font-size: clamp(32px, min(5.417cqw, 8.59cqh), 78px);
+  font-weight: 700;
+  font-style: italic;
+  line-height: clamp(52px, min(6.944cqw, 11.013cqh), 100px);
+  margin: 0;
+  background: linear-gradient(to left, #ecd199, #fdac24);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.g-hero__title-dot {
+  font-weight: 600;
+  font-style: normal;
+}
+
+.g-hero__sub {
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: clamp(14px, min(1.528cqw, 2.423cqh), 22px);
+  line-height: clamp(24px, 3.965cqh, 36px);
+  color: #fcfcfc;
+  margin: 0;
+  width: 100%;
+}
+
+.g-hero .g-btn {
+  margin-top: 0;
+  flex-shrink: 0;
+  padding: clamp(10px, 1.872cqh, 17px) clamp(48px, 5.903cqw, 85px);
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: clamp(14px, min(1.389cqw, 2.203cqh), 20px);
+  letter-spacing: 0.6px;
+  line-height: clamp(22px, 3.304cqh, 30px);
+  text-transform: uppercase;
+  color: #000;
+  border: 1px solid #dfb76c;
+  background: linear-gradient(90deg, #edd39d, #dfb76c 50%, #cfa14c);
+  box-shadow: 0 4px 7.5px rgba(223, 183, 108, 0.25);
+}
+
+/* ===== 2. Gift pack — Figma 856:10808 ===== */
+.g-pack {
+  position: relative;
+  padding: 72px 24px 88px;
+  text-align: center;
+  overflow: hidden;
+  background: #041614;
+}
+
+/* Figma fill: stretched (no crop) and mirrored horizontally (measured against the Figma render) */
+.g-pack__bg {
+  position: absolute;
+  left: -3.94%;
+  top: 0.01%;
+  width: 113.37%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+  transform: scale(-1, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Same 856:10806 fade at top of section 2 — meets hero fade on the seam */
+/*
+ * Figma 856:10806 — the hero's 125px black→clear band hangs over the seam: it starts 22px
+ * inside the hero (hero y 886) and covers the first 103px of this section. Kept behind the
+ * heading so the title stays bright, as in the design.
+ */
+.g-pack__fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -22px;
+  z-index: 1;
+  width: 100%;
+  height: 125px;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Figma 856:10808 edge vignettes */
+.g-pack__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 60.896%, #000 96.21%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0) 67.442%, #000 100%);
+}
+
+.g-pack__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1302px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.g-pack__intro {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.g-pack__title {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-size: clamp(30px, 3.75vw, 54px);
+  font-variation-settings: "opsz" 14;
+  color: #fff;
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+
+@media (min-width: 992px) {
+  .g-pack__title {
+    line-height: 80px;
+  }
+}
+
+.g-pack__title .g-gold {
+  font-variation-settings: "opsz" 14;
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(to left, #ecd199, #fdac24);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.g-pack__sub {
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: clamp(14px, 1.39vw, 20px);
+  line-height: 30px;
+  color: rgba(252, 252, 252, 0.95);
+  margin: 0 auto 8px;
+  max-width: 900px;
+}
+
+/*
+ * Gift box — Figma Gift Box 1 (856:11751).
+ * .g-box__canvas is laid out at Figma's exact 1302 × 868 px; gifting.js sets --g-box-s
+ * (box width / 1302) so the whole design scales as one piece and stays pixel-true.
+ */
+.g-box {
+  --g-box-s: 1;
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 1302px;
+  margin: 0 auto;
+  aspect-ratio: 1302 / 868;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.g-box:focus,
+.g-box:focus-visible {
+  outline: none;
+}
+
+.g-box.is-open {
+  cursor: default;
+}
+
+.g-box__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1302px;
+  height: 868px;
+  transform: scale(var(--g-box-s));
+  transform-origin: 0 0;
+  perspective: 1600px;
+}
+
+/* ---------- Closed box (856:11752 — 1286 × 858 at the instance origin) ---------- */
+.g-box__closed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1286px;
+  height: 858px;
+  z-index: 3;
+  transform-origin: 50% 70%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/*
+ * Lid / base PNGs = the 1024 × 683 closed render with 80px padding and the 50px pink glow
+ * baked in, cut at the gold seam (row 406). Drawn at 1286 / 1024 scale → padding = 100.47px.
+ * No runtime clip-path or filter, so the GPU only has to move two finished pictures.
+ */
+.g-box__closed-part {
+  position: absolute;
+  left: -100.47px;
+  width: 1486.94px;
+  max-width: none;
+  display: block;
+  pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Lid hinges at the box's back edge (y 260px of the 858px box) */
+.g-box__closed-lid {
+  top: -100.47px;
+  height: 610.37px;
+  transform-origin: 50% 59.06%;
+  z-index: 2;
+}
+
+.g-box__closed-base {
+  top: 509.9px;
+  height: 448.39px;
+  z-index: 1;
+}
+
+/* Idle: a gentle golden breathing glow under the closed box (opacity only — no layout or jump) */
+.g-box__closed::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 30%;
+  height: 22%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 214, 140, 0.32), rgba(255, 214, 140, 0) 70%);
+  animation: g-box-breathe 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes g-box-breathe {
+  0%,
+  100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+/* ---------- Open box (856:11754) ---------- */
+.g-box__open-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1302px;
+  height: 868px;
+  z-index: 2;
+  /*
+   * 0.001, not 0: Chrome skips painting fully transparent layers, so the open box would
+   * rasterise on the first animation frame and stutter. At 0.001 it is invisible but pre-painted.
+   */
+  opacity: 0.001;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.g-box__shell {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  display: block;
+  filter: drop-shadow(0 0 50px rgba(255, 154, 174, 0.25));
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Card — inset 32.72% 15.91% 22.24% 15.81% of 1302 × 868 */
+.g-box__package {
+  position: absolute;
+  left: 205.85px;
+  top: 284.01px;
+  width: 889px;
+  height: 390.96px;
+  z-index: 2;
+  perspective: 2000px;
+  will-change: translate, scale, opacity;
+}
+
+.g-box__card-flip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1);
+}
+
+.g-box.is-flipped .g-box__card-flip {
+  transform: rotateY(180deg);
+}
+
+.g-box__card-face {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  padding: 28px;
+  border: 4px solid #dfb76c;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #001e20 0%, #001115 100%);
+  box-shadow: 0 -4px 100px rgba(255, 255, 128, 0.5);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.g-box__card-face--back {
+  transform: rotateY(180deg);
+}
+
+/* Scene photo 856:11757 — 838 × 475 at (-117.83, -6), mirrored */
+.g-box__scene {
+  position: absolute;
+  left: -117.83px;
+  top: -6px;
+  width: 838px;
+  height: 475px;
+  max-width: none;
+  object-fit: cover;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.g-box__filigree {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.g-box__filigree--tl {
+  left: 5px;
+  top: 5px;
+  opacity: 1;
+}
+
+.g-box__filigree--tr {
+  right: 5.33px;
+  top: 5px;
+  transform: rotate(90deg);
+}
+
+.g-box__filigree--bl {
+  left: 5px;
+  bottom: 5.5px;
+  transform: rotate(-90deg);
+}
+
+.g-box__filigree--br {
+  right: 5.33px;
+  bottom: 5.5px;
+  transform: rotate(180deg);
+}
+
+/* "Wrapped in Love" 856:11815 */
+.g-box__script {
+  position: relative;
+  z-index: 1;
+  width: 365px;
+  margin: -3px 0 0;
+  padding: 14px 0;
+  font-family: "Alex Brush", cursive;
+  font-size: 38px;
+  line-height: 54px;
+  text-align: center;
+  white-space: nowrap;
+  background: linear-gradient(90deg, #ffe5a3 0%, #ffeed0 50%, #f3cb79 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+}
+
+/* Parchment panel 856:11773 — 449 × 346 at left 413, vertically centred */
+.g-box__package-panel {
+  position: absolute;
+  left: 413px;
+  top: calc(50% - 0.5px);
+  z-index: 2;
+  width: 449px;
+  height: 346px;
+  box-sizing: border-box;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  /* Figma py-21; nudged to match the rendered Figma glyph positions in Chrome */
+  padding: 18px 25px 26px;
+  border: 1px solid #eddcc0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
+  text-align: left;
+}
+
+.g-box__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 13px;
+  border-radius: 9999px;
+  border: 1px solid rgba(217, 119, 6, 0.4);
+  background: rgba(254, 243, 199, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 16.5px;
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #451a03;
+}
+
+.g-box__pkg-head {
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.g-box__pkg-title {
+  margin: 0;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 38px;
+  color: #0f172a;
+}
+
+.g-box__pkg-tag {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(6, 53, 51, 0.8);
+}
+
+/* Title + tag sit together; price row is 12px below */
+.g-box__pkg-title + .g-box__pkg-tag {
+  margin-top: -12px;
+}
+
+.g-box__price-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.g-box__price {
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 40px;
+  letter-spacing: -0.9px;
+  white-space: nowrap;
+  color: #0f172a;
+}
+
+.g-box__price-old {
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+  white-space: nowrap;
+  color: #9a9a9a;
+  text-decoration: line-through;
+}
+
+.g-box__features {
+  list-style: none;
+  margin: 0.5px 0;
+  padding: 13px 8px;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(223, 202, 162, 0.6);
+  border-bottom: 1px solid rgba(223, 202, 162, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.g-box__features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16.25px;
+  white-space: nowrap;
+  color: #2f241a;
+}
+
+.g-box__feat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.g-box__feat-icon img {
+  width: 20px;
+  height: 20px;
+}
+
+.g-box__explore-wrap {
+  width: 100%;
+  padding: 6px 0 4px;
+}
+
+.g-box__explore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 17px;
+  border-radius: 9999px;
+  border: 1px solid #c49b49;
+  background: linear-gradient(90deg, #e7d2ad 0%, #dfb76c 50%, #d6a958 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #2c1d0c;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.g-box__explore:hover,
+.g-box__explore:focus-visible {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+/* ---------- Card back — Profiles Included (860:10630) ---------- */
+.g-box__wire {
+  position: absolute;
+  left: calc(50% + 0.5px);
+  top: calc(50% + 0.5px);
+  width: 866px;
+  height: 368px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.g-box__profiles {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+}
+
+.g-box__profiles-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+.g-box__profiles-title {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  /* Figma says Medium; Chrome on Windows draws DM Sans heavier — 400 matches the Figma render */
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: 4.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #e8c872;
+}
+
+.g-box__profiles-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 17px;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(2, 27, 19, 0.8);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  /* Figma says SemiBold; Chrome on Windows draws DM Sans heavier — 500 matches the Figma render */
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #f5e1a4;
+}
+
+.g-box__profiles-badge-div {
+  width: 1px;
+  height: 14px;
+  background: rgba(212, 175, 55, 0.4);
+}
+
+.g-box__profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.g-box__profile {
+  position: relative;
+  padding-left: 24px;
+  min-width: 0;
+}
+
+.g-box__profile::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #dac15a, #967901);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.g-box__profile h4 {
+  margin: 0 0 4px;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  /* Figma says Medium; Chrome on Windows draws DM Sans heavier — 400 matches the Figma render */
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  color: #f1f5f9;
+}
+
+.g-box__profile h4 span {
+  margin-left: 4px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(230, 202, 101, 0.9);
+}
+
+.g-box__profile p {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: #9ab3a3;
+}
+
+/* Figma's fixed line breaks — desktop only; narrower layouts wrap naturally */
+.g-br-d {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .g-br-d {
+    display: inline;
+  }
+
+  .g-box__profile p {
+    white-space: nowrap;
+  }
+}
+
+/* Back face is fully clickable to flip back */
+.g-box__flip-back {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: transparent;
+  font-size: 0;
+}
+
+/* ---------- Opening sequence (Vecteezy-style): shake → lid lifts → light burst → card rises ---------- */
+.g-box__burst {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  z-index: 4;
+  width: 900px;
+  height: 600px;
+  margin: -300px 0 0 -450px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 236, 170, 0.95) 0%,
+    rgba(255, 210, 120, 0.55) 22%,
+    rgba(255, 190, 90, 0.18) 45%,
+    rgba(255, 190, 90, 0) 70%
+  );
+  opacity: 0.001;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.g-box__sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.g-box__spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--sz, 10px);
+  height: var(--sz, 10px);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff9e0 0%, #ffd77a 45%, rgba(255, 200, 90, 0) 72%);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: g-box-spark var(--dur, 1.4s) cubic-bezier(0.2, 0.7, 0.3, 1) var(--delay, 0s) forwards;
+}
+
+@keyframes g-box-spark {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1);
+  }
+}
+
+/*
+ * Opening (5s, timing mirrored in gifting.js):
+ *   0–0.6s    box rests, glow brightens
+ *   0.4–0.9s  open box fades in *behind* the closed one (fully opaque before anything moves)
+ *   0.9–2.2s  closed box (lid + base together — never split, so no gap) drifts up and dissolves into it
+ *   2.2–4.6s  card slides up out of the box; clip-path hides whatever is still below the rim
+ */
+.g-box.is-opening .g-box__closed::after { animation: g-box-glow-out 5s linear forwards; }
+.g-box.is-opening .g-box__closed-part { animation: g-box-closed-out 5s linear forwards; }
+.g-box.is-opening .g-box__burst { animation: g-box-burst 5s linear forwards; }
+.g-box.is-opening .g-box__open-stage { animation: g-box-stage 5s linear forwards; }
+.g-box.is-opening .g-box__package { animation: g-box-card-rise 5s linear forwards; }
+
+@keyframes g-box-glow-out {
+  0% { opacity: 0.5; animation-timing-function: ease-in-out; }
+  12% { opacity: 1; animation-timing-function: ease-in-out; }
+  44%,
+  100% { opacity: 0; }
+}
+
+@keyframes g-box-closed-out {
+  0%,
+  18% { opacity: 1; transform: translateY(0); animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1); }
+  44%,
+  100% { opacity: 0; transform: translateY(-24px); }
+}
+
+@keyframes g-box-burst {
+  0%,
+  20% { opacity: 0.001; transform: scale(0.5, 0.3); animation-timing-function: ease-out; }
+  44% { opacity: 0.5; transform: scale(1, 0.8); animation-timing-function: ease-in-out; }
+  80%,
+  100% { opacity: 0.001; transform: scale(1.2, 1); }
+}
+
+@keyframes g-box-stage {
+  0%,
+  8% { opacity: 0.001; animation-timing-function: ease-in-out; }
+  18%,
+  100% { opacity: 1; }
+}
+
+/* Card moves up by its own height while the clip uncovers it from the rim — it emerges from inside */
+@keyframes g-box-card-rise {
+  0%,
+  44% { translate: 0 100%; clip-path: inset(0 -60px 100% -60px); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+  92%,
+  100% { translate: 0 0; clip-path: inset(-120px -60px 0 -60px); }
+}
+
+/* Final open state */
+.g-box.is-open .g-box__closed {
+  visibility: hidden;
+  animation: none;
+}
+
+.g-box.is-open .g-box__closed::after {
+  animation: none;
+}
+
+.g-box.is-open .g-box__open-stage {
+  opacity: 1;
+  pointer-events: auto;
+  animation: none;
+}
+
+.g-box.is-open .g-box__package {
+  animation: none;
+}
+
+.g-pack__cta {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/*
+ * Desktop rhythm measured from Figma 856:10808 (1440 × 1010): the box overlaps the
+ * subtitle by 48px and the button overlaps the box by 48px (Figma mb-[-48px]).
+ */
+@media (min-width: 992px) {
+  /* Whole section scales as one piece by --g-pack-s (set in gifting.js) so Figma's proportions hold */
+  .g-pack {
+    padding: calc(16px * var(--g-pack-s, 1)) 24px calc(52px * var(--g-pack-s, 1));
+  }
+
+  .g-pack__title {
+    font-size: calc(54px * var(--g-pack-s, 1));
+    line-height: calc(80px * var(--g-pack-s, 1));
+    margin-bottom: calc(-6px * var(--g-pack-s, 1));
+  }
+
+  .g-pack__sub {
+    max-width: none;
+    font-size: calc(20px * var(--g-pack-s, 1));
+    line-height: calc(30px * var(--g-pack-s, 1));
+    margin-bottom: calc(-48px * var(--g-pack-s, 1));
+  }
+
+  .g-pack__cta {
+    margin-top: calc(-48px * var(--g-pack-s, 1));
+    position: relative;
+    z-index: 3;
+  }
+
+  .g-pack__cta .g-btn {
+    padding: calc(17px * var(--g-pack-s, 1)) calc(85px * var(--g-pack-s, 1));
+    font-size: calc(20px * var(--g-pack-s, 1));
+    line-height: calc(30px * var(--g-pack-s, 1));
+    letter-spacing: calc(0.6px * var(--g-pack-s, 1));
+  }
+}
+
+/* ===== 3. Four steps — pinned scroll; Figma 856:10815 / 10842 / 10871 / 10897 ===== */
+/*
+ * Figma 856:10842 frame = 1440 × 1054
+ * Mandala 856:10848 = inset -5.85% 62.07% -5.95% -35.46% (1056.88 × 1178.36)
+ * Diya    856:10849 = inset 37.38% 88.26% 37.57% -11.53% (335 × 264)
+ * Copy    856:10850 = left 566px, width 821px, gap 174px, vertically centered
+ */
+.g-steps {
+  --g-mandala-aspect: 1056.8816 / 1178.3623;
+  --g-diya-aspect: 335 / 264;
+  position: relative;
+  background: #000;
+}
+
+.g-steps__pin {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* Background — Figma fill: left 109.43% / top 100.01% / w -113.37% / h -100% */
+.g-steps__bg {
+  position: absolute;
+  left: -3.94%;
+  top: 0.01%;
+  width: 113.37%;
+  height: 100%;
+  max-width: none;
+  /* Figma stretches this fill to its box (no crop) — keeps the teal glow where the design has it */
+  object-fit: fill;
+  transform: scale(-1, -1);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Edge vignette — exact Figma gradient stops */
+.g-steps__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 60.896%, #000 96.21%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0) 67.442%, #000 100%);
+}
+
+.g-steps__visual {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/*
+ * One scale for mandala, diya and text column, from the Figma 1440×1054 frame:
+ * mandala box 1057px wide (73.39vw at 1440, 100.28vh at 1054) — use the
+ * smaller so the circle never distorts; centre sits 0.01693 × diameter from the
+ * left edge (17.9px in Figma) so the diya flame is always cut at the same point.
+ * Text column starts 0.5186 × diameter right of that centre (566px in Figma).
+ */
+.g-steps__pin {
+  --g-mandala-d: min(73.39vw, 100.28vh);
+  --g-mandala-cx: calc(var(--g-mandala-d) * 0.01693);
+  --g-steps-text-x: calc(var(--g-mandala-cx) + var(--g-mandala-d) * 0.5186);
+}
+
+/*
+ * Mandala — Figma inset -5.85% 62.07% -5.95% -35.46%
+ * Soft light falloff — see mask below
+ */
+.g-steps__mandala {
+  position: absolute;
+  left: calc(var(--g-mandala-cx) - var(--g-mandala-d) / 2);
+  top: calc(50% - var(--g-mandala-d) * 0.5573);
+  z-index: 1;
+  width: var(--g-mandala-d);
+  height: calc(var(--g-mandala-d) * 1.1145);
+  overflow: hidden;
+  pointer-events: none;
+  /*
+   * Light falloff measured from the Figma render (856:10815 / 10897):
+   * ~25–35% at the screen's left edge ramping to full on the right rim,
+   * slightly darker low down. Lives on the
+   * static wrapper so the lighting stays fixed while the img spins.
+   */
+  -webkit-mask-image: linear-gradient(84deg, transparent 33%, #000 82%);
+  mask-image: linear-gradient(84deg, transparent 33%, #000 82%);
+}
+
+/* Only the img rotates — GSAP scales ≥√2 so corners stay covered while pinned */
+.g-steps__mandala-img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Golden diya overlay — Figma 856:10849 inset 37.38% 88.26% 37.57% -11.53% */
+.g-steps__diya {
+  position: absolute;
+  left: calc(var(--g-mandala-cx) - var(--g-mandala-d) * 0.1731);
+  top: calc(50% - var(--g-mandala-d) * 0.1254);
+  z-index: 3;
+  width: calc(var(--g-mandala-d) * 0.317);
+  height: calc(var(--g-mandala-d) * 0.2507);
+  max-width: none;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
+}
+
+/*
+ * Text column — Figma 856:10850
+ * left 566px (39.306%), width 821px, gap 174px, top 50% + translateY(-50%)
+ * Intro fixed; panels swap on scroll. min-width:0 prevents pin overflow clip.
+ */
+.g-steps__content {
+  position: absolute;
+  left: var(--g-steps-text-x);
+  top: calc(50% - 0.53px);
+  z-index: 3;
+  box-sizing: border-box;
+  width: 57.014%;
+  max-width: 821px;
+  min-width: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 174px;
+}
+
+.g-steps__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px;
+  flex-shrink: 0;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.g-steps__eyebrow {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 40px;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Figma 856:10869 — DM Sans SemiBold Italic 54px / lh 100, gradient #ecd199 → #fdac24 */
+.g-steps__headline {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 54px;
+  line-height: 100px;
+  margin: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  background: linear-gradient(to left, #ecd199, #fdac24);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.g-steps__panels {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 330px;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.g-steps__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  box-sizing: border-box;
+  padding: 0 0 43.94px 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+
+.g-steps__panel.is-active {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Step leaving upward (scrolling forward) */
+.g-steps__panel.is-past {
+  transform: translateY(-28px);
+}
+
+/* Staggered entrance of panel parts */
+.g-steps__panel .g-steps__meta img,
+.g-steps__panel .g-steps__num,
+.g-steps__panel .g-steps__title,
+.g-steps__panel .g-steps__desc {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.g-steps__panel .g-steps__meta img { transform: scale(0.6) rotate(-20deg); }
+.g-steps__panel .g-steps__line {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.g-steps__panel.is-active .g-steps__meta img,
+.g-steps__panel.is-active .g-steps__num,
+.g-steps__panel.is-active .g-steps__title,
+.g-steps__panel.is-active .g-steps__desc {
+  opacity: 1;
+  transform: none;
+}
+.g-steps__panel.is-active .g-steps__line { transform: scaleX(1); }
+.g-steps__panel.is-active .g-steps__meta img { transition-delay: 0.05s; }
+.g-steps__panel.is-active .g-steps__num { transition-delay: 0.12s; }
+.g-steps__panel.is-active .g-steps__line { transition-delay: 0.18s; }
+.g-steps__panel.is-active .g-steps__title,
+.g-steps__panel.is-active .g-steps__desc { transition-delay: 0.28s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .g-steps__panel,
+  .g-steps__panel * { transition: none !important; transform: none !important; }
+}
+
+.g-steps__header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  padding-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.g-steps__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.g-steps__meta {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.g-steps__meta img {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: contain;
+  display: block;
+}
+
+.g-steps__num {
+  display: block;
+  padding-left: 12px;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 70px;
+  color: #c59b63;
+  white-space: nowrap;
+}
+
+.g-steps__line {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+}
+
+.g-steps__title {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-size: 50px;
+  line-height: 70px;
+  color: #fcfcfc;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 0;
+  overflow-wrap: break-word;
+}
+
+.g-steps__desc {
+  font-family: Sora, sans-serif;
+  /* Figma says Regular, but Chrome draws Sora ~17% heavier than Figma; 300 matches the design render */
+  font-weight: 300;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  font-size: 24px;
+  line-height: 35px;
+  color: #fcfcfc;
+  margin: 0;
+  width: 100%;
+}
+
+/* Figma renders every DM Sans line in this section at optical size 14 */
+.g-steps__eyebrow,
+.g-steps__headline,
+.g-steps__num,
+.g-steps__title {
+  font-variation-settings: "opsz" 14;
+}
+
+/* ===== 4. Personalize — Figma 862:11795 (1440 × 1256) ===== */
+.g-form-sec {
+  position: relative;
+  padding: 88px 24px 142px;
+  overflow: hidden;
+  background: #000;
+}
+
+/* Figma fill: stretched (no crop), mirrored — same fill as sections 2 & 3 */
+.g-form-sec__bg {
+  position: absolute;
+  left: -3.94%;
+  top: 0.01%;
+  width: 113.37%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+  transform: scale(-1, 1);
+  pointer-events: none;
+}
+
+/* Figma 862:11795 edge vignettes */
+.g-form-sec__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 60.896%, #000 96.21%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0) 67.442%, #000 100%);
+  pointer-events: none;
+}
+
+.g-form-sec__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1249px;
+  margin: 0 auto;
+}
+
+/* Header 862:11796 — 54/70 title, 10px gap, 20/30 lead */
+.g-form-sec__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.gifting-page .g-form-sec__header h2 {
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 54px;
+  line-height: 70px;
+  color: #fcfcfc;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.gifting-page .g-form-sec__header h2 .g-gold {
+  font-variation-settings: "opsz" 14;
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(to left, #ecd199, #fdac24);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gifting-page .g-form-sec__header p {
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  color: #fcfcfc;
+  margin: 15px auto 0;
+  max-width: 1222px;
+}
+
+/* Occasion tabs — Nav 862:12576: max 1152px, py-24, 100px gaps, 25% white rule */
+.g-tabs {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+  margin: 0 auto 64px;
+  max-width: 1152px;
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.gifting-page .g-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #9a9a9a;
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: 0.325px;
+  line-height: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.g-tab img {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.gifting-page .g-tab.is-active {
+  color: #f3f4f6;
+  font-weight: 600;
+}
+
+/* Line 307: 200 × 4px gold rule sitting on the nav border */
+.g-tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  bottom: 0;
+  width: 200px;
+  height: 4px;
+  border-radius: 2px;
+  background: #dfb76c;
+}
+
+/* Form row 862:12495 — 719px fields | 77px | 453px card, vertically centred */
+.g-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Side-by-side only when 719 + 77 + 453px actually fit; narrower screens stack the card below */
+@media (min-width: 1280px) {
+  .g-form-grid {
+    grid-template-columns: minmax(0, 719px) 453px;
+    justify-content: center;
+    gap: 77px;
+  }
+
+  /* Figma centres the card column 5px lower than the field column */
+  .g-form-grid .g-preview {
+    margin-top: 8px;
+  }
+}
+
+.g-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.g-field {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+/* Labels: DM Sans 18/30, 1.8px tracking, p-10 */
+.gifting-page .g-form-sec .g-field label {
+  display: block;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  line-height: 30px;
+  margin: 0;
+  padding: 10px;
+  color: #fcfcfc;
+}
+
+/* Glass inputs: 5% white, 10% white border, 12px radius, blur 10 — 54px tall */
+.gifting-page .g-form-sec .g-field input,
+.gifting-page .g-form-sec .g-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 54px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.32px;
+  line-height: 32px;
+  outline: none;
+}
+
+.gifting-page .g-form-sec .g-field input::placeholder,
+.gifting-page .g-form-sec .g-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.g-field input:focus,
+.g-field textarea:focus {
+  border-color: rgba(223, 183, 108, 0.65);
+}
+
+.g-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .g-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Message + relationship row 862:12497 — 44px below the field grid, 32px gap, 280px dropdown */
+.g-row--split {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+  .g-row--split {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 32px;
+  }
+}
+
+.g-field--msg,
+.g-field--rel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.g-field--rel {
+  z-index: 3;
+}
+
+.g-msg-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.g-chips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  width: 100%;
+}
+
+/* Suggestion pills 862:12503 — 5% white glass, 50% white Sora 16/32 */
+.gifting-page .g-form-sec .g-chip {
+  padding: 11px 23px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.32px;
+  line-height: 32px;
+  max-width: 100%;
+  /* Design: every suggestion on one line */
+  white-space: nowrap;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+/*
+ * Side-by-side row: as in Figma (2nd pill is 452px in a 407px column), pills below the first run
+ * under the dropdown column — its closed box only covers the first row. The first pill may only
+ * use the 32px gap. gifting.js orders messages shortest first, like the design.
+ */
+@media (min-width: 768px) {
+  .gifting-page .g-form-sec .g-chip {
+    max-width: calc(100% + 312px);
+  }
+
+  .gifting-page .g-form-sec .g-chip:first-child {
+    max-width: calc(100% + 28px);
+  }
+}
+
+.g-chip.is-active,
+.g-chip:hover {
+  border-color: rgba(223, 183, 108, 0.7);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Message pill 862:12500 — 718px wide, teal gradient (bottom → top) + soft green glow */
+.gifting-page .g-form-sec .g-field--msg textarea {
+  width: 100%;
+  border-radius: 999px;
+  resize: none;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to top, rgba(6, 53, 51, 0.25), rgba(76, 184, 163, 0.25));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 10px 0 rgba(157, 228, 155, 0.25);
+}
+
+@media (min-width: 1280px) {
+  .gifting-page .g-form-sec .g-field--msg textarea {
+    width: 718px;
+    max-width: calc(100% + 312px);
+  }
+}
+
+.gifting-page .g-form-sec .g-field--msg textarea:focus {
+  border-color: rgba(157, 228, 155, 0.45);
+  box-shadow: 0 0 10px 0 rgba(157, 228, 155, 0.35), 0 0 22px 2px rgba(76, 184, 163, 0.22);
+}
+
+.gifting-page .g-form-sec .g-field--msg textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Relationship dropdown 862:12515 — glass panel, Mom + caret, rule, then the options */
+.g-rel-box {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gifting-page .g-rel-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-family: Sora, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.32px;
+  line-height: 32px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.g-rel-toggle span {
+  padding: 10px;
+}
+
+.g-rel-toggle img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s ease;
+}
+
+.g-rel-box.is-open {
+  border-radius: 12px 12px 0 0;
+  background: rgba(8, 22, 21, 0.96);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.g-rel-box.is-open .g-rel-toggle img {
+  transform: rotate(180deg);
+}
+
+.g-rel-list {
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  top: 100%;
+  z-index: 5;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 12px 12px;
+  background: rgba(8, 22, 21, 0.96);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  list-style: none;
+  margin: -6px 0 0;
+  padding: 8px 22px 10px;
+  border-top-color: rgba(255, 255, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.g-rel-list[hidden] {
+  display: none;
+}
+
+.g-rel-list li {
+  padding-top: 8px;
+  font-family: Sora, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.32px;
+  line-height: 32px;
+  color: #c4c4c4;
+  cursor: pointer;
+}
+
+.g-rel-list li:first-child {
+  padding-top: 4px;
+}
+
+.g-rel-list li:hover,
+.g-rel-list li[aria-selected="true"] {
+  color: #fff;
+}
+
+/* Keeps the form value + required validation; visually replaced by the custom list */
+.g-rel-native {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Preview column 862:12575 — 453px: card stack, 81px, then GIFT IT + note */
+.g-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 453px;
+  margin: 0 auto;
+}
+
+/* Envelope 453 × 322 with the card (391 × 260) 31px in and rising 52px above it */
+.g-preview__card {
+  position: relative;
+  width: 453px;
+  max-width: 100%;
+  aspect-ratio: 453 / 374;
+  margin: 0 auto 81px;
+}
+
+.g-preview__env {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 86.1%;
+  box-sizing: border-box;
+  border-radius: 30px;
+  border: 2px solid #eeb45f;
+  border-top: 0;
+  object-fit: cover;
+  display: block;
+}
+
+.g-preview__overlay {
+  position: absolute;
+  z-index: 2;
+  left: 6.843%;
+  top: 0;
+  width: 86.298%;
+  height: 69.52%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: url("../images/gifting/card-diya.png") center / cover no-repeat;
+  text-align: left;
+  pointer-events: none;
+  container-type: inline-size;
+}
+
+.g-preview__card.is-birthday .g-preview__overlay {
+  background-image: url("../images/gifting/card-birthday.png");
+}
+
+.g-preview__card.is-just-because .g-preview__overlay {
+  background-image: url("../images/gifting/card-just-because.png");
+}
+
+/* Inner layout in card px (391 × 260): logo (27.8, 22.9), greeting box (189.4, 14.6), copy (37.5, 69) */
+.g-preview__body {
+  position: absolute;
+  inset: 0;
+}
+
+.g-preview__top {
+  display: contents;
+}
+
+.g-preview__logo {
+  position: absolute;
+  left: 7.11%;
+  top: 8.82%;
+  width: 9.5%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.gifting-page .g-preview__festive {
+  position: absolute;
+  left: 48.46%;
+  top: 5.63%;
+  width: 38%;
+  height: 17.86%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 400;
+  font-size: 2.558cqw;
+  letter-spacing: 1.023cqw;
+  line-height: 7.673cqw;
+  color: #720b0b;
+  white-space: nowrap;
+}
+
+.g-preview__copy {
+  position: absolute;
+  left: 9.6%;
+  top: 26.54%;
+  width: 44.5%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gifting-page .g-preview__for {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 700;
+  font-size: 2.558cqw;
+  letter-spacing: 0.639cqw;
+  line-height: 7.673cqw;
+  color: #720b0b;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.gifting-page .g-preview__name {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  /* Figma Bold; Chrome on Windows draws DM Sans heavier — 600 matches the Figma render */
+  font-weight: 600;
+  font-size: 7.673cqw;
+  letter-spacing: 0.23cqw;
+  line-height: 7.673cqw;
+  color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 76.7cqw;
+}
+
+.gifting-page .g-preview__msg {
+  margin: 0;
+  font-family: Lato, Sora, sans-serif;
+  font-size: 3.836cqw;
+  letter-spacing: 0.077cqw;
+  line-height: 4.9cqw;
+  padding-top: 1.4cqw;
+  color: #424242;
+  width: 44.5cqw;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.gifting-page .g-preview__from {
+  margin: 0;
+  font-family: Lato, Sora, sans-serif;
+  font-size: 3.836cqw;
+  letter-spacing: 0.077cqw;
+  line-height: 7.673cqw;
+  color: #424242;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 76.7cqw;
+}
+
+/* "Your name" sits at the bottom of the 168px copy block (justify-between) */
+.g-preview__from {
+  position: absolute;
+  left: 9.6%;
+  top: 79.62%;
+}
+
+.gifting-page .g-preview__submit {
+  width: min(100%, 333px);
+  padding: 17px 20px;
+  margin: 0 auto;
+  font-size: 20px;
+  letter-spacing: 0.6px;
+  line-height: 30px;
+}
+
+.gifting-page .g-preview__note {
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.28px;
+  line-height: 32px;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 6px 0 0;
+  padding: 10px;
+}
+
+.g-preview__card.is-birthday .g-preview__festive,
+.g-preview__card.is-birthday .g-preview__for,
+.g-preview__card.is-just-because .g-preview__festive,
+.g-preview__card.is-just-because .g-preview__for {
+  color: #1a4a42;
+}
+
+.g-preview__card.is-birthday .g-preview__name,
+.g-preview__card.is-just-because .g-preview__name {
+  color: #0f2a26;
+}
+
+.g-success {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--g-gold);
+  background: rgba(223, 183, 108, 0.15);
+  color: #fff;
+  font-family: Sora, sans-serif;
+}
+
+.g-success.is-visible {
+  display: block;
+}
+
+/* ===== Book Appointment — Figma 862:13205 (opens over the form after "Gift It") ===== */
+/*
+ * Glass panel: Figma uses rgba(0,0,0,0.25) over a 250px backdrop blur of a grey artboard, which
+ * renders as neutral grey (#3b3b3b) warming to olive (#6e6a50) at the top-right. Our section behind is
+ * dark teal, so the blur alone comes out teal — the gradient below paints the design's colours
+ * (sampled from the Figma render) over the blur.
+ */
+.g-book {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--g-book-top, 0px);
+  z-index: 5;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  /* Figma's 41px includes the 1px border */
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 32px;
+  overflow: hidden;
+  scroll-margin-top: 110px;
+  background:
+    radial-gradient(70% 75% at 96% 6%, rgba(118, 112, 80, 0.95) 0%, rgba(118, 112, 80, 0) 100%),
+    linear-gradient(115deg, #3a3a3a 0%, #3e3e3c 45%, #4a4838 100%);
+  color: #fcfcfc;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .g-book {
+    background:
+      radial-gradient(70% 75% at 96% 6%, rgba(118, 112, 80, 0.9) 0%, rgba(118, 112, 80, 0) 100%),
+      linear-gradient(115deg, rgba(58, 58, 58, 0.9) 0%, rgba(62, 62, 60, 0.9) 45%, rgba(74, 72, 56, 0.9) 100%);
+    backdrop-filter: blur(250px);
+    -webkit-backdrop-filter: blur(250px);
+  }
+}
+
+.g-book[hidden] {
+  display: none;
+}
+
+.g-book.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* The form stays rendered underneath (it is what the glass blurs) but can't be reached */
+.g-form-grid.is-booking {
+  pointer-events: none;
+  user-select: none;
+}
+
+.g-book__back {
+  position: absolute;
+  left: 32px;
+  top: 32px;
+  border: 0;
+  background: none;
+  padding: 6px 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: Sora, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.g-book__back:hover,
+.g-book__back:focus-visible {
+  color: #fff;
+}
+
+.gifting-page .g-book__title {
+  margin: 0;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #fff;
+  text-align: center;
+}
+
+.g-book__body {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.g-book__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+/* Section headings — DM Sans SemiBold 24/30 */
+.gifting-page .g-book__heading {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 12px;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: 0.24px;
+  color: #fcfcfc;
+}
+
+.g-book__group--schedule .g-book__heading {
+  margin-bottom: 24px;
+}
+
+.g-book__details {
+  clear: both;
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.g-book__col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.g-book__col--left {
+  width: 363px;
+  flex-shrink: 0;
+}
+
+.g-book__col--right {
+  width: 741px;
+  min-width: 0;
+}
+
+.g-book__pair {
+  display: flex;
+  gap: 24px;
+}
+
+.g-book__pair > .g-book__field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.g-book__field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Field labels — DM Sans 14/30, 10% tracking, 10px padding */
+.gifting-page .g-book__label {
+  display: block;
+  padding: 10px;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 30px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #fcfcfc;
+}
+
+.gifting-page .g-book__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 43px;
+  padding: 13px 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  line-height: normal;
+  outline: none;
+  -moz-appearance: textfield;
+  transition: border-color 0.2s ease;
+}
+
+.g-book__input::-webkit-outer-spin-button,
+.g-book__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.gifting-page .g-book__input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.gifting-page .g-book__input:focus {
+  border-color: rgba(65, 171, 153, 0.7);
+}
+
+.gifting-page .g-book__input.is-invalid {
+  border-color: rgba(255, 120, 120, 0.7);
+}
+
+/* Selected state shared by gender, date and slot — Figma radial teal 17,121,95 → 28,73,61 */
+.g-book__gender,
+.g-book__dates,
+.g-book__slots {
+  --g-book-on: radial-gradient(ellipse at center, #11795f 0%, #1c493d 100%);
+}
+
+.g-book__gender {
+  display: flex;
+  gap: 12px;
+}
+
+.g-book__opt {
+  flex: 1 1 0;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.g-book__opt input,
+.g-book__date input,
+.g-book__slot input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.g-book__opt span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 43px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9a9a9a;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-size: 14px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Icons are drawn for one state (grey male, white female) — tint them to match the label */
+.g-book__opt img {
+  display: block;
+  flex-shrink: 0;
+  filter: brightness(0) invert(0.6);
+}
+
+.g-book__opt input:checked + span {
+  background: var(--g-book-on);
+  color: #fff;
+}
+
+.g-book__opt input:checked + span img {
+  filter: brightness(0) invert(1);
+}
+
+.g-book__opt input:focus-visible + span,
+.g-book__date input:focus-visible + span,
+.g-book__slot input:focus-visible + span {
+  outline: 2px solid rgba(65, 171, 153, 0.8);
+  outline-offset: 2px;
+}
+
+.g-book__schedule {
+  clear: both;
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+.g-book__dates {
+  display: flex;
+  gap: 12px;
+  height: 79px;
+  align-items: center;
+}
+
+.g-book__date {
+  cursor: pointer;
+}
+
+.g-book__date span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 70px;
+  height: 65px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(204, 204, 204, 0.8);
+  font-family: Lato, sans-serif;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.g-book__date small {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.g-book__date b {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.g-book__date input:checked + span {
+  border-color: transparent;
+  background: var(--g-book-on);
+  color: #fff;
+}
+
+.g-book__field--slots {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.gifting-page .g-book__field--slots .g-book__label {
+  padding: 0 10px;
+}
+
+.gifting-page .g-book__hint {
+  margin: 0 0 12px;
+  padding: 0 10px;
+  font-family: Lato, sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 18px;
+  color: #999;
+}
+
+.g-book__slots {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.g-book__slot {
+  cursor: pointer;
+}
+
+.g-book__slot span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 39px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9a9a9a;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.g-book__slot:hover span,
+.g-book__date:hover span,
+.g-book__opt:hover span {
+  color: #fff;
+}
+
+.g-book__slot input:checked + span {
+  background: var(--g-book-on);
+  color: #fff;
+}
+
+.g-book__error {
+  align-self: stretch;
+  margin: -12px 0 0;
+  color: #ff9c9c;
+  font-family: Sora, sans-serif;
+  font-size: 14px;
+}
+
+.g-book__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-self: stretch;
+}
+
+/* Continue — teal gradient, grey border, soft white drop shadow */
+.g-book__continue {
+  height: 49px;
+  min-width: 232px;
+  padding: 10px 24px;
+  border: 1px solid #969696;
+  border-radius: 36px;
+  background: linear-gradient(90deg, #296359 0%, #41ab99 100%);
+  box-shadow: 0 12px 10px rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-family: Sora, sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.g-book__continue:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.g-book__success {
+  align-self: stretch;
+  margin-top: -12px;
+}
+
+@media (max-width: 1279.98px) {
+  .g-book__details,
+  .g-book__schedule {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .g-book__col--left,
+  .g-book__col--right,
+  .g-book__field--slots {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .g-book {
+    padding: 64px 18px 28px;
+    gap: 24px;
+    border-radius: 24px;
+  }
+
+  .g-book__back {
+    left: 18px;
+    top: 18px;
+  }
+
+  .gifting-page .g-book__title {
+    font-size: 24px;
+  }
+
+  .gifting-page .g-book__heading {
+    font-size: 18px;
+  }
+
+  .g-book__body {
+    gap: 28px;
+  }
+
+  .g-book__pair {
+    gap: 12px;
+  }
+
+  .g-book__dates {
+    height: auto;
+    gap: 8px;
+  }
+
+  .g-book__date {
+    flex: 1 1 0;
+  }
+
+  .g-book__date span {
+    width: 100%;
+  }
+
+  .g-book__slots {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .g-book__slot span {
+    font-size: 12px;
+  }
+
+  .g-book__continue {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-book {
+    transition: none;
+  }
+}
+
+/* ===== 5. Closing — Figma 856:11017 (1440 × 357) ===== */
+.g-close {
+  position: relative;
+  height: 357px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #000;
+}
+
+.g-close__teal {
+  position: absolute;
+  left: -3.94%;
+  top: 0;
+  width: 113.37%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+  transform: scale(-1, 1);
+  pointer-events: none;
+}
+
+/*
+ * Figma 856:11017 is stored vertically flipped, so its y values mirror: visual y = 357 − y − h.
+ * Photo 856:11018 (1440 × 1054, y −160) → top −537px; 60% black over it.
+ */
+.g-close__photo {
+  position: absolute;
+  left: 0;
+  top: -537px;
+  width: 100%;
+  height: 1054px;
+  pointer-events: none;
+}
+
+.g-close__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.g-close__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Rectangle 40929 (216px, y 146) → top −5px: black at the top fading out downward */
+.g-close__fade {
+  position: absolute;
+  left: 0;
+  top: -5px;
+  width: 100%;
+  height: 216px;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.g-close__inner {
+  position: relative;
+  z-index: 1;
+  width: 1174px;
+  max-width: calc(100% - 32px);
+  /* Text box (286px, y −19) → top 90px */
+  padding-top: 90px;
+}
+
+.g-close__inner h2 {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 54px;
+  line-height: 70px;
+  color: #fff;
+}
+
+.g-close__inner h2 .g-gold {
+  font-variation-settings: "opsz" 14;
+}
+
+.g-close__inner p {
+  margin: 11px 0 0;
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 70px;
+  color: #fff;
+}
+
+/* Below Figma desktop width — scale type so nowrap headline never clips */
+@media (max-width: 1439.98px) {
+  .g-steps__eyebrow {
+    font-size: clamp(18px, 2.08vw, 30px);
+    line-height: 1.35;
+  }
+
+  .g-steps__headline {
+    font-size: clamp(26px, 3.75vw, 54px);
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  .g-steps__title {
+    font-size: clamp(26px, 3.47vw, 50px);
+    line-height: 1.3;
+  }
+
+  .g-steps__desc {
+    font-size: clamp(15px, 1.67vw, 24px);
+    line-height: 1.45;
+  }
+
+  .g-steps__content {
+    gap: clamp(48px, 12vh, 174px);
+    width: min(821px, calc(100% - var(--g-steps-text-x) - 1.25rem));
+    padding-right: 1.25rem;
+  }
+
+  .g-steps__num {
+    font-size: clamp(22px, 2.08vw, 30px);
+    line-height: 1.4;
+  }
+}
+
+/* ===== Tablet ===== */
+@media (max-width: 991.98px) and (min-width: 768px) {
+  /* Mandala + diya keep the shared --g-mandala-d sizing so the diya always sits on the mandala */
+
+  .g-steps__content {
+    left: max(38%, 260px);
+    width: auto;
+    max-width: calc(100% - max(38%, 260px) - 20px);
+    right: 20px;
+    gap: 40px;
+  }
+
+  .g-steps__panel {
+    padding-left: 24px;
+  }
+
+
+  .g-tabs {
+    gap: clamp(32px, 5vw, 100px);
+  }
+
+  .g-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet / small laptop: form stacks, tabs shrink so all three stay on one line */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .g-form-grid {
+    max-width: 719px;
+    margin: 0 auto;
+  }
+
+  .gifting-page .g-tab {
+    font-size: 18px;
+  }
+
+  .g-tabs {
+    gap: 40px;
+  }
+
+  .g-tab img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .g-tab.is-active::after {
+    left: 0;
+    width: 100%;
+  }
+}
+
+/* Line breaks that only exist in the mobile design */
+.g-br-m {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-br-m {
+    display: inline;
+  }
+}
+
+/* ===== Mobile — Figma 856:11021 / hero 856:11030 ===== */
+@media (max-width: 767.98px) {
+  .g-hero {
+    aspect-ratio: auto;
+    height: auto;
+    min-height: 100svh;
+    max-height: none;
+  }
+
+  .g-hero__bg {
+    left: 0;
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    object-position: 18% bottom;
+  }
+
+  /* Mobile design 856:11030: title ≈ 44% down the 950px screen, button ≈ 72% */
+  .g-hero__content {
+    top: 41%;
+    gap: 48px;
+    width: min(392px, calc(100% - 48px));
+  }
+
+  .g-hero__title {
+    max-width: none;
+    padding: 10px;
+  }
+
+  .g-hero__title-top {
+    font-size: 28px;
+    line-height: 50px;
+  }
+
+  .g-hero__title-gold {
+    font-size: 38px;
+    line-height: 50px;
+  }
+
+  .g-hero__sub {
+    font-size: 14px;
+    line-height: 18px;
+    max-width: 386px;
+  }
+
+  .g-hero .g-btn {
+    padding: 9px 65px;
+    font-size: 16px;
+  }
+
+  .g-btn {
+    padding: 9px 65px;
+    font-size: 16px;
+  }
+
+  /* Mobile design 856:11047: heading near the top, box centred, button at the bottom of one screen */
+  .g-pack {
+    min-height: 100svh;
+    padding: 120px 16px 72px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .g-pack__inner {
+    flex: 1;
+    width: 100%;
+  }
+
+  .g-box {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .g-pack__cta {
+    margin-top: 32px;
+  }
+
+  /* Mobile design: two lines — "A Gift of Health," / "Wrapped in Love." */
+  .g-pack__title {
+    font-size: 32px;
+    line-height: 1.3;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .g-pack__sub {
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 0 8px;
+  }
+
+  .g-pack__cta .g-btn {
+    padding: 9px 48px;
+    font-size: 16px;
+    min-width: 230px;
+  }
+
+  .g-steps__pin {
+    height: 100svh;
+  }
+
+  .g-steps__bg {
+    left: -8%;
+    top: -5%;
+    width: 120%;
+    height: 110%;
+  }
+
+  /*
+   * Mobile design 856:11057: the mandala is a half circle cut by the left edge, centred
+   * ~68% down the screen (≈ 547px across on a 440px phone), diya at its centre.
+   */
+  .g-steps__visual {
+    inset: 0;
+  }
+
+  .g-steps__pin {
+    --g-mandala-d: 124vw;
+    --g-mandala-cx: 0px;
+  }
+
+  .g-steps__mandala {
+    left: calc(var(--g-mandala-cx) - var(--g-mandala-d) / 2);
+    top: calc(72.5% - var(--g-mandala-d) * 0.5573);
+    width: var(--g-mandala-d);
+    height: calc(var(--g-mandala-d) * 1.1145);
+  }
+
+  /* Mobile design: the diya is cut through its middle — flame just inside the left edge, right half of the bowl visible */
+  .g-steps__diya {
+    left: calc(2.5vw - var(--g-mandala-d) * 0.1585);
+    top: calc(72.5% - var(--g-mandala-d) * 0.1254);
+    width: calc(var(--g-mandala-d) * 0.317);
+    height: calc(var(--g-mandala-d) * 0.2507);
+  }
+
+  .g-steps__line {
+    display: none;
+  }
+
+  .g-steps__content {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 60px 20px 0;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+
+  .g-steps__intro {
+    padding: 0;
+  }
+
+  .g-steps__eyebrow {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .g-steps__headline {
+    white-space: normal;
+    font-size: 26px;
+    line-height: 1.25;
+  }
+
+  .g-steps__panels {
+    padding: 0;
+    min-height: 220px;
+    align-self: flex-end;
+    width: min(100%, 360px);
+    margin-top: 72px;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+
+  /* Mobile design 856:11057: step text is right-aligned above the mandala */
+  .g-steps__panel {
+    padding: 0 0 12px;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .g-steps__header,
+  .g-steps__copy {
+    align-items: flex-end;
+  }
+
+  .g-steps__meta {
+    margin: 0 0 10px;
+    justify-content: flex-end;
+  }
+
+  .g-steps__meta img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .g-steps__num {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .g-steps__title {
+    font-size: 36px;
+    margin: 0 0 8px;
+    padding: 0;
+    line-height: 1.2;
+  }
+
+  .g-steps__desc {
+    max-width: 250px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .g-form-sec {
+    padding: 56px 16px 64px;
+  }
+
+  .gifting-page .g-form-sec__header h2,
+  .gifting-page .g-form-sec__header h2 .g-gold {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .gifting-page .g-form-sec__header p {
+    font-size: 12px;
+    line-height: 1.45;
+    color: #c4c4c4;
+  }
+
+  .g-tabs {
+    flex-wrap: nowrap;
+    gap: 20px;
+    margin-bottom: 28px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .g-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gifting-page .g-tab {
+    font-size: 12px;
+    padding: 12px 2px;
+  }
+
+  .g-tab img {
+    display: none;
+  }
+
+  .g-tab.is-active::after {
+    height: 2px;
+  }
+
+  .g-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .g-row--split {
+    grid-template-columns: 1fr;
+  }
+
+  .g-row--split .g-field--rel {
+    order: 1;
+  }
+
+  .g-row--split .g-field--msg {
+    order: 2;
+  }
+
+  .gifting-page .g-form-sec .g-field label {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    line-height: 20px;
+  }
+
+  .gifting-page .g-form-sec .g-field input,
+  .gifting-page .g-form-sec .g-field textarea {
+    height: auto;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .gifting-page .g-form-sec .g-chip {
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 20px;
+    white-space: normal;
+  }
+
+  .gifting-page .g-form-sec .g-field--msg textarea {
+    white-space: normal;
+  }
+
+  .g-rel-toggle,
+  .g-rel-list li {
+    font-size: 13px;
+  }
+
+  .g-preview__card {
+    max-width: 313px;
+  }
+
+  .gifting-page .g-preview__submit {
+    width: min(100%, 230px);
+    padding: 9px 40px;
+    font-size: 16px;
+  }
+
+  .g-close {
+    height: auto;
+    min-height: 280px;
+    padding: 48px 20px;
+    justify-content: center;
+  }
+
+  .g-close__inner {
+    padding-top: 0;
+  }
+
+  .g-close__inner h2 {
+    font-size: 28px;
+    line-height: 1.3;
+  }
+
+  .g-close__inner p {
+    font-size: 14px;
+    line-height: 2;
+  }
+}
+
+
+/*
+ * Gift box below 992px — the box art keeps scaling with the canvas, but the card is
+ * counter-scaled back to 1:1 and re-flowed so every line stays readable (≥ 11px).
+ * gifting.js sets --g-box-w (box width in px) and pads the box for the taller card.
+ */
+@media (max-width: 991.98px) {
+  .g-box__package {
+    left: calc(12px / var(--g-box-s));
+    top: 250px;
+    width: calc(var(--g-box-w, 340px) - 24px);
+    height: auto;
+    transform: scale(calc(1 / var(--g-box-s)));
+    transform-origin: 0 0;
+  }
+
+  .g-box__card-flip {
+    height: auto;
+    display: grid;
+  }
+
+  .g-box__card-face {
+    position: relative;
+    inset: auto;
+    grid-area: 1 / 1;
+    padding: 16px;
+    align-self: start;
+  }
+
+  .g-box__scene,
+  .g-box__script {
+    display: none;
+  }
+
+  .g-box__package-panel {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    height: auto;
+    gap: 6px;
+    padding: 18px 18px 16px;
+  }
+
+  .g-box__pkg-title {
+    font-size: 22px;
+    line-height: 32px;
+  }
+
+  .g-box__features li {
+    white-space: normal;
+  }
+
+  .g-box__wire {
+    width: calc(100% - 22px);
+    height: calc(100% - 22px);
+  }
+
+  .g-box__profiles {
+    gap: 16px;
+  }
+
+  .g-box__profiles-title {
+    font-size: 16px;
+    letter-spacing: 2.4px;
+  }
+
+  .g-box__profiles-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+
+  .g-box__profile h4 {
+    white-space: normal;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+@media (max-width: 559.98px) {
+  .g-box__profiles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-box__card-flip,
+  .g-steps__panel {
+    transition-duration: 0.2s !important;
+    transition-delay: 0s !important;
+  }
+
+  /* No lid / burst / rise — gifting.js jumps straight to the open state */
+  .g-box__closed,
+  .g-box__closed::after,
+  .g-box__closed-part,
+  .g-box__burst,
+  .g-box__open-stage,
+  .g-box__package,
+  .g-box__spark {
+    animation: none !important;
+  }
+}
+
+/* ===== Mobile gift box (< 768px only) — Figma "box 1 mobile" 856:11817 ===== */
+.g-mbox {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-box {
+    --g-mbox-s: 1;
+    aspect-ratio: auto;
+    max-width: none;
+    height: calc(637px * var(--g-mbox-s));
+    overflow: visible;
+  }
+
+  .g-box__canvas {
+    display: none;
+  }
+
+  .g-mbox {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 552 × 637 design canvas, centred and scaled to the phone (gifting.js sets --g-mbox-s) */
+  .g-mbox__stage {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 552px;
+    height: 637px;
+    /* zoom (not transform: scale) so text is laid out at its real size and stays sharp */
+    zoom: var(--g-mbox-s);
+    transform: translateX(-50%);
+  }
+
+  /* Closed box 856:11818 — 495 × 427, centred over the open box */
+  .g-mbox__closed {
+    position: absolute;
+    left: 28.5px;
+    top: 160px;
+    width: 495px;
+    height: 427px;
+    overflow: hidden;
+    z-index: 3;
+    filter: drop-shadow(0 0 50px rgba(255, 154, 174, 0.25));
+    will-change: transform, opacity;
+  }
+
+  .g-mbox__closed img {
+    position: absolute;
+    left: -4.96%;
+    top: -24.96%;
+    width: 205.9%;
+    height: 158.76%;
+    max-width: none;
+  }
+
+  /* Open box 856:11820 — sheet crop inside 498 × 425.6 at (27, 161) */
+  .g-mbox__open {
+    position: absolute;
+    left: 27px;
+    top: 161px;
+    width: 498px;
+    height: 425.6px;
+    overflow: hidden;
+    z-index: 1;
+    opacity: 0.001;
+    will-change: opacity;
+  }
+
+  .g-mbox__open img {
+    position: absolute;
+    left: -103.98%;
+    top: -27.93%;
+    width: 210.7%;
+    height: 164.37%;
+    max-width: none;
+  }
+
+  /* Card — inset 10.05% 20.83% 24.65% 20.83% of 552 × 637 */
+  .g-mbox__card {
+    position: absolute;
+    left: 115px;
+    top: 64px;
+    width: 322px;
+    height: 416px;
+    z-index: 2;
+    perspective: 1600px;
+    opacity: 0.001;
+    pointer-events: none;
+    will-change: translate, scale, opacity;
+  }
+
+  /*
+   * 3D only while the card turns (.is-3d / .is-turning, set by gifting.js). At rest the
+   * visible face is drawn flat — a resting 3D-rotated layer is rasterised soft on phones.
+   */
+  .g-mbox__flip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .g-box.is-3d .g-mbox__flip {
+    transform-style: preserve-3d;
+  }
+
+  .g-box.is-3d.is-flipped .g-mbox__flip {
+    transform: rotateY(180deg);
+  }
+
+  .g-box.is-3d.is-turning .g-mbox__flip {
+    transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1);
+  }
+
+  .g-mbox__face {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    padding: 28px;
+    border: 4px solid #dfb76c;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #001e20 0%, #001115 100%);
+    box-shadow: 0 -4px 50px rgba(255, 255, 128, 0.5);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .g-mbox__face--back {
+    padding: 24px;
+    visibility: hidden;
+  }
+
+  .g-box.is-3d .g-mbox__face--back {
+    transform: rotateY(180deg);
+    visibility: visible;
+  }
+
+  /* Resting on the back: flat, front hidden */
+  .g-box.is-flipped:not(.is-3d) .g-mbox__face--back {
+    visibility: visible;
+  }
+
+  .g-box.is-flipped:not(.is-3d) .g-mbox__face--front {
+    visibility: hidden;
+  }
+
+  .g-mbox__scene {
+    position: absolute;
+    left: -134px;
+    top: 0;
+    width: 854px;
+    height: 484px;
+    max-width: none;
+    object-fit: cover;
+    transform: scaleX(-1);
+    pointer-events: none;
+  }
+
+  /* Parchment panel — 275 × 364, centred */
+  .g-mbox__panel {
+    position: absolute;
+    left: calc(50% - 0.5px);
+    top: 50%;
+    z-index: 2;
+    width: 275px;
+    height: 364px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 21px 25px 20px;
+    border: 1px solid #eddcc0;
+    border-bottom: 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
+    box-shadow: 0 -4px 25px rgba(255, 255, 128, 0.25);
+    text-align: center;
+  }
+
+  .g-mbox__panel-fil {
+    position: absolute;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .g-mbox__panel-fil--tl {
+    left: 8px;
+  }
+
+  .g-mbox__panel-fil--tr {
+    right: 8.34px;
+    opacity: 0.7;
+    transform: rotate(90deg);
+  }
+
+  .g-mbox__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0 7px;
+  }
+
+  .g-mbox__meta img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .g-mbox__pill {
+    padding: 2px 12px;
+    border-radius: 9999px;
+    background: #1f2824;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #dfb76c;
+  }
+
+  .g-mbox__head {
+    padding-bottom: 6px;
+  }
+
+  .g-mbox__title {
+    margin: 0 0 -2px;
+    font-family: Sora, sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 22px;
+    color: #1e1713;
+  }
+
+  .g-mbox__price {
+    margin: 0 0 -2px;
+    padding-top: 6px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 30px;
+    color: #1f1915;
+  }
+
+  .g-mbox__price-old {
+    margin: 0;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: #8c7e6e;
+    text-decoration: line-through;
+  }
+
+  .g-mbox__features {
+    list-style: none;
+    margin: 2.25px 0;
+    padding: 13px 8px;
+    border-top: 1px solid rgba(223, 202, 162, 0.6);
+    border-bottom: 1px solid rgba(223, 202, 162, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .g-mbox__features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16.25px;
+    color: #2f241a;
+  }
+
+  /* Back — Profiles Included (862:11473) */
+  .g-mbox__wire {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 298px;
+    height: 392px;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  .g-mbox__profiles {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 0 0 4px;
+    text-align: left;
+  }
+
+  .g-mbox__profiles-title {
+    margin: 0;
+    font-family: Sora, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 28px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #e8c872;
+  }
+
+  .g-mbox__badge {
+    font-size: 10px;
+  }
+
+  .g-mbox__list {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .g-mbox__list li {
+    position: relative;
+    padding-left: 24px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.4px;
+    color: #f1f5f9;
+    white-space: nowrap;
+  }
+
+  .g-mbox__list li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, #dac15a, #967901);
+  }
+
+  .g-mbox__list li span {
+    margin-left: 8px;
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(230, 202, 101, 0.9);
+  }
+
+  /* Opening: box lifts and fades → open box appears → card rises out of it */
+  .g-box.is-opening .g-mbox__closed {
+    animation: g-mbox-closed 5s linear forwards;
+  }
+
+  .g-box.is-opening .g-mbox__open {
+    animation: g-mbox-open 5s linear forwards;
+  }
+
+  .g-box.is-opening .g-mbox__card {
+    animation: g-mbox-card 5s linear forwards;
+  }
+
+  .g-box.is-open .g-mbox__closed {
+    visibility: hidden;
+  }
+
+  .g-box.is-open .g-mbox__open,
+  .g-box.is-open .g-mbox__card {
+    opacity: 1;
+  }
+
+  .g-box.is-open .g-mbox__card {
+    pointer-events: auto;
+    cursor: pointer;
+    will-change: auto;
+  }
+
+  .g-box.is-open .g-mbox__open,
+  .g-box.is-open .g-mbox__closed {
+    will-change: auto;
+  }
+
+  @keyframes g-mbox-closed {
+    0%, 18% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1); }
+    44%, 100% { transform: translateY(-12px); opacity: 0; }
+  }
+
+  @keyframes g-mbox-open {
+    0%, 8% { opacity: 0.001; animation-timing-function: ease-in-out; }
+    18%, 100% { opacity: 1; }
+  }
+
+  @keyframes g-mbox-card {
+    0%, 44% { opacity: 1; translate: 0 100%; clip-path: inset(0 -40px 100% -40px); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+    92%, 100% { opacity: 1; translate: 0 0; clip-path: inset(-80px -40px 0 -40px); }
+  }
+}
+
+@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  .g-mbox__closed,
+  .g-mbox__open,
+  .g-mbox__card {
+    animation: none !important;
+  }
+}
+
+/*
+ * Mobile backgrounds (Figma mobile frames 856:11047 / 11057 / 11153): the same teal fill,
+ * unmirrored, 1730px wide at x −88, with a 125px black fade top and bottom and a
+ * darkening toward each section's foot (gradient from 74% of the 1081px fill).
+ */
+@media (max-width: 767.98px) {
+  .g-pack__bg,
+  .g-steps__bg,
+  .g-form-sec__bg {
+    left: -88px;
+    top: 0;
+    width: 1730px;
+    height: 1081px;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    transform: none;
+  }
+
+  .g-steps__bg {
+    width: 1763px;
+    height: 1170px;
+  }
+
+  .g-pack__shade,
+  .g-steps__shade,
+  .g-form-sec__shade {
+    z-index: 1;
+    background:
+      linear-gradient(180deg, #000 0, rgba(0, 0, 0, 0) 125px),
+      linear-gradient(0deg, #000 0, rgba(0, 0, 0, 0) 125px),
+      linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0, rgba(0, 0, 0, 0) 280px);
+  }
+
+  .g-pack__fade {
+    display: none;
+  }
+}
