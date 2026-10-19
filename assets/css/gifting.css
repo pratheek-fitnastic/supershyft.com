@@ -50,13 +50,31 @@
   text-decoration: none;
   box-shadow: 0 4px 7.5px rgba(223, 183, 108, 0.25);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.5s ease;
 }
 
-.g-btn:hover {
+/*
+ * Same behaviour as the Home page .bs-btn: 0.5s transition; on hover the gradient turns vertical with
+ * its colours reversed and a 1px white border appears. custom.css sets `button { border: none !important }`
+ * (Home uses <a>, so it never hits it) — the !important here gives <button> CTAs their border back.
+ */
+.gifting-page .g-btn,
+.gifting-page .g-book__continue {
+  border: 1px solid transparent !important;
+}
+
+.g-btn:hover,
+.g-btn:focus-visible {
   color: #000;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(223, 183, 108, 0.4);
+  background: linear-gradient(180deg, var(--g-gold-b), var(--g-gold) 50%, var(--g-gold-a));
+}
+
+.gifting-page .g-btn:hover,
+.gifting-page .g-btn:focus-visible,
+.gifting-page .g-book__continue:hover,
+.gifting-page .g-book__continue:focus-visible {
+  border: 1px solid #fff !important;
+  outline: none;
 }
 
 .g-gold {
@@ -244,15 +262,17 @@
 
 /* Figma fill: stretched (no crop) and mirrored horizontally (measured against the Figma render) */
 .g-pack__bg {
+  /* Figma 1250:11726 (image 86): one fill for sections 2–4, scaled evenly (cover), never stretched */
   position: absolute;
-  left: -3.94%;
-  top: 0.01%;
-  width: 113.37%;
+  inset: 0;
+  width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: fill;
-  transform: scale(-1, 1);
+  object-fit: cover;
+  object-position: center;
+  transform: none;
   pointer-events: none;
+  user-select: none;
   z-index: 0;
 }
 
@@ -750,13 +770,19 @@
   text-transform: uppercase;
   color: #2c1d0c;
   cursor: pointer;
-  transition: filter 0.2s ease, transform 0.2s ease;
+  transition: all 0.5s ease;
 }
 
-.g-box__explore:hover,
-.g-box__explore:focus-visible {
-  filter: brightness(1.06);
-  transform: translateY(-1px);
+/* Home-page CTA hover; size stays card-scale because the button is part of the gift-box art */
+.gifting-page .g-box__explore {
+  border: 1px solid #c49b49 !important;
+}
+
+.gifting-page .g-box__explore:hover,
+.gifting-page .g-box__explore:focus-visible {
+  background: linear-gradient(180deg, #d6a958 0%, #dfb76c 50%, #e7d2ad 100%);
+  border: 1px solid #fff !important;
+  outline: none;
 }
 
 /* ---------- Card back — Profiles Included (860:10630) ---------- */
@@ -1111,15 +1137,15 @@
 
 /* Background — Figma fill: left 109.43% / top 100.01% / w -113.37% / h -100% */
 .g-steps__bg {
+  /* Figma 1250:11726 (image 86): one fill for sections 2–4, scaled evenly (cover), never stretched */
   position: absolute;
-  left: -3.94%;
-  top: 0.01%;
-  width: 113.37%;
+  inset: 0;
+  width: 100%;
   height: 100%;
   max-width: none;
-  /* Figma stretches this fill to its box (no crop) — keeps the teal glow where the design has it */
-  object-fit: fill;
-  transform: scale(-1, -1);
+  object-fit: cover;
+  object-position: center;
+  transform: none;
   pointer-events: none;
   user-select: none;
 }
@@ -1157,6 +1183,34 @@
 }
 
 /*
+ * Figma 856:11471 mask (856:11474): luminance gradient, rotated into the group so it runs right → left.
+ * Stops copied from the Figma SVG, measured from the mandala's right edge.
+ */
+.g-steps__pin {
+  --g-rangoli-mask: linear-gradient(
+    to left,
+    #000 20.27%,
+    rgba(0, 0, 0, 0.957) 23.69%,
+    rgba(0, 0, 0, 0.839) 29.74%,
+    rgba(0, 0, 0, 0.647) 37.7%,
+    rgba(0, 0, 0, 0.384) 47.29%,
+    rgba(0, 0, 0, 0.051) 58.15%,
+    transparent 59.76%
+  );
+  /* Vertical light falloff: dark at the top, full from ~38%, a softer fade at the foot */
+  --g-rangoli-mask-v: linear-gradient(
+    to bottom,
+    transparent 4%,
+    rgba(0, 0, 0, 0.25) 14%,
+    rgba(0, 0, 0, 0.6) 24%,
+    #000 38%,
+    #000 78%,
+    rgba(0, 0, 0, 0.55) 90%,
+    transparent 100%
+  );
+}
+
+/*
  * Mandala — Figma inset -5.85% 62.07% -5.95% -35.46%
  * Soft light falloff — see mask below
  */
@@ -1175,8 +1229,14 @@
    * slightly darker low down. Lives on the
    * static wrapper so the lighting stays fixed while the img spins.
    */
-  -webkit-mask-image: linear-gradient(84deg, transparent 33%, #000 82%);
-  mask-image: linear-gradient(84deg, transparent 33%, #000 82%);
+  /*
+   * Figma's right→left fade, intersected with a top/bottom fade so the upper rim (and the foot)
+   * melt into the dark background instead of ending at full brightness.
+   */
+  -webkit-mask-image: var(--g-rangoli-mask), var(--g-rangoli-mask-v);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--g-rangoli-mask), var(--g-rangoli-mask-v);
+  mask-composite: intersect;
 }
 
 /* Only the img rotates — GSAP scales ≥√2 so corners stay covered while pinned */
@@ -1207,6 +1267,8 @@
   object-fit: cover;
   object-position: center center;
   pointer-events: none;
+  /* Figma 856:11476 draws the diya mirrored (-scale-x); the mandala itself is not mirrored */
+  transform: scaleX(-1);
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
 }
 
@@ -1408,8 +1470,8 @@
 .g-steps__title {
   font-family: "DM Sans", sans-serif;
   font-weight: 600;
-  font-size: 50px;
-  line-height: 70px;
+  font-size: 44px;
+  line-height: 62px;
   color: #fcfcfc;
   margin: 0;
   width: 100%;
@@ -1424,8 +1486,8 @@
   font-weight: 300;
   max-width: 100%;
   overflow-wrap: break-word;
-  font-size: 24px;
-  line-height: 35px;
+  font-size: 20px;
+  line-height: 30px;
   color: #fcfcfc;
   margin: 0;
   width: 100%;
@@ -1449,15 +1511,17 @@
 
 /* Figma fill: stretched (no crop), mirrored — same fill as sections 2 & 3 */
 .g-form-sec__bg {
+  /* Figma 1250:11726 (image 86): one fill for sections 2–4, scaled evenly (cover), never stretched */
   position: absolute;
-  left: -3.94%;
-  top: 0.01%;
-  width: 113.37%;
+  inset: 0;
+  width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: fill;
-  transform: scale(-1, 1);
+  object-fit: cover;
+  object-position: center;
+  transform: none;
   pointer-events: none;
+  user-select: none;
 }
 
 /* Figma 862:11795 edge vignettes */
@@ -1541,17 +1605,52 @@
   color: #9a9a9a;
   font-family: Sora, sans-serif;
   font-weight: 400;
-  font-size: 24px;
+  font-size: 21px;
   letter-spacing: 0.325px;
   line-height: 20px;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.g-tab img {
+/* Icons drawn as masks so their colour follows the tab state: grey, gold when selected */
+.g-tab__icon {
+  display: block;
   width: 32px;
   height: 32px;
   flex-shrink: 0;
+  background-color: #9a9a9a;
+  -webkit-mask: var(--g-tab-icon) center / contain no-repeat;
+  mask: var(--g-tab-icon) center / contain no-repeat;
+  transition: background-color 0.3s ease;
+}
+
+/* Paths live here (relative to this stylesheet) — a url() passed in from inline HTML resolved wrongly */
+.g-tab__icon--diwali {
+  --g-tab-icon: url("../images/gifting/icon-diwali-figma.svg");
+}
+
+.g-tab__icon--birthday {
+  --g-tab-icon: url("../images/gifting/icon-birthday-figma.svg");
+}
+
+.g-tab__icon--sparkle {
+  --g-tab-icon: url("../images/gifting/icon-sparkle-figma.svg");
+}
+
+/* Stretch to the tab's content box so its bottom + the tab's padding lands on the nav border */
+.g-tab__label {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.g-tab:hover .g-tab__icon {
+  background-color: #c4c4c4;
+}
+
+.g-tab.is-active .g-tab__icon {
+  background-color: #dfb76c;
 }
 
 .gifting-page .g-tab.is-active {
@@ -1560,12 +1659,13 @@
 }
 
 /* Line 307: 200 × 4px gold rule sitting on the nav border */
+/* Gold rule spans the selected tab exactly — icon + text — sitting on the nav border */
 .g-tab.is-active::after {
   content: "";
   position: absolute;
-  left: -4px;
+  left: 0;
   bottom: 0;
-  width: 200px;
+  width: 100%;
   height: 4px;
   border-radius: 2px;
   background: #dfb76c;
@@ -1611,8 +1711,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 400;
-  font-size: 18px;
-  letter-spacing: 1.8px;
+  font-size: 17px;
+  letter-spacing: 1.7px;
   text-transform: uppercase;
   line-height: 30px;
   margin: 0;
@@ -1980,6 +2080,16 @@
   line-height: 7.673cqw;
   color: #720b0b;
   white-space: nowrap;
+}
+
+/* "CELEBRATING YOU" — shifted left (~27px on the 453px card) so "YOU" clears the card art */
+.gifting-page .g-preview__card.is-birthday .g-preview__festive {
+  left: 42.5%;
+}
+
+/* "BECAUSE YOU'RE SPECIAL" is 22 letters — tighter tracking keeps it inside the 38% slot */
+.gifting-page .g-preview__card.is-just-because .g-preview__festive {
+  letter-spacing: 0.3cqw;
 }
 
 .g-preview__copy {
@@ -2497,25 +2607,32 @@
   align-self: stretch;
 }
 
-/* Continue — teal gradient, grey border, soft white drop shadow */
+/* Continue — Figma's teal gradient, sized and typeset like the Explore Gifts CTA (.g-btn) */
 .g-book__continue {
-  height: 49px;
-  min-width: 232px;
-  padding: 10px 24px;
-  border: 1px solid #969696;
-  border-radius: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 336px;
+  padding: 17px 85px;
+  border-radius: 9999px;
   background: linear-gradient(90deg, #296359 0%, #41ab99 100%);
   box-shadow: 0 12px 10px rgba(255, 255, 255, 0.15);
   color: #fff;
   font-family: Sora, sans-serif;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.6px;
+  line-height: 30px;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: filter 0.2s ease, transform 0.2s ease;
+  transition: all 0.5s ease;
 }
 
-.g-book__continue:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
+/* Home-page hover: vertical gradient, colours reversed (+ white border, set with .g-btn above) */
+.g-book__continue:hover,
+.g-book__continue:focus-visible {
+  background: linear-gradient(180deg, #41ab99 0%, #296359 100%);
+  color: #fff;
 }
 
 .g-book__success {
@@ -2587,9 +2704,15 @@
     font-size: 12px;
   }
 
+  /* Same as the mobile Explore Gifts CTA */
   .g-book__continue {
-    width: 100%;
     min-width: 0;
+    padding: 9px 65px;
+    font-size: 16px;
+  }
+
+  .g-book__actions {
+    justify-content: center;
   }
 }
 
@@ -2662,6 +2785,47 @@
   pointer-events: none;
 }
 
+/*
+ * Seam with the site footer — the same treatment as the section 1/2 and 2/3 seams: Figma's
+ * 125px section-fade.png (856:10806). This section fades down into black (asset flipped, like
+ * .g-hero__fade) and the footer fades up out of black (asset as-is, like .g-pack__fade), so both
+ * meet in pure black — footer-bg.jpg's own top row is black too.
+ */
+.g-close::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 125px;
+  /* above the artwork, below the text (.g-close__inner is z-index 1) */
+  z-index: 0;
+  pointer-events: none;
+  background: url("../images/gifting/section-fade.png") center / 100% 100% no-repeat;
+  transform: scaleY(-1);
+}
+
+.gifting-page .bs-footer {
+  position: relative;
+}
+
+.gifting-page .bs-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 125px;
+  pointer-events: none;
+  background: url("../images/gifting/section-fade.png") center / 100% 100% no-repeat;
+}
+
+/* Footer content stays above its fade */
+.gifting-page .bs-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
 .g-close__inner {
   position: relative;
   z-index: 1;
@@ -2708,12 +2872,12 @@
   }
 
   .g-steps__title {
-    font-size: clamp(26px, 3.47vw, 50px);
+    font-size: clamp(22px, 3.06vw, 44px);
     line-height: 1.3;
   }
 
   .g-steps__desc {
-    font-size: clamp(15px, 1.67vw, 24px);
+    font-size: clamp(14px, 1.39vw, 20px);
     line-height: 1.45;
   }
 
@@ -2763,21 +2927,16 @@
   }
 
   .gifting-page .g-tab {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .g-tabs {
     gap: 40px;
   }
 
-  .g-tab img {
+  .g-tab__icon {
     width: 24px;
     height: 24px;
-  }
-
-  .g-tab.is-active::after {
-    left: 0;
-    width: 100%;
   }
 }
 
@@ -2896,10 +3055,9 @@
   }
 
   .g-steps__bg {
-    left: -8%;
-    top: -5%;
-    width: 120%;
-    height: 110%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
 
   /*
@@ -3000,7 +3158,7 @@
   }
 
   .g-steps__title {
-    font-size: 36px;
+    font-size: 30px;
     margin: 0 0 8px;
     padding: 0;
     line-height: 1.2;
@@ -3045,7 +3203,7 @@
     padding: 12px 2px;
   }
 
-  .g-tab img {
+  .g-tab__icon {
     display: none;
   }
 
@@ -3071,8 +3229,8 @@
   }
 
   .gifting-page .g-form-sec .g-field label {
-    font-size: 12px;
-    letter-spacing: 1.2px;
+    font-size: 11px;
+    letter-spacing: 1.1px;
     line-height: 20px;
   }
 
@@ -3670,19 +3828,12 @@
   .g-pack__bg,
   .g-steps__bg,
   .g-form-sec__bg {
-    left: -88px;
-    top: 0;
-    width: 1730px;
-    height: 1081px;
-    max-width: none;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: 30% center;
     transform: none;
-  }
-
-  .g-steps__bg {
-    width: 1763px;
-    height: 1170px;
   }
 
   .g-pack__shade,
@@ -3698,4 +3849,25 @@
   .g-pack__fade {
     display: none;
   }
+}
+
+/*
+ * CTAs that copy the hero "Explore Gifts" size exactly (--g-cta-* set by syncCtaSize in gifting.js).
+ * Placed last so it wins over the per-section sizing rules; text stays centred in the fixed box.
+ */
+.gifting-page .g-btn--sync {
+  box-sizing: border-box;
+  width: var(--g-cta-w, 336px);
+  min-width: 0;
+  max-width: 100%;
+  height: var(--g-cta-h, 64px);
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: var(--g-cta-fs, 20px);
+  line-height: 1;
+  white-space: nowrap;
+  /* Animate only the hover look (as on Home) — never the size, which is synced on load/resize */
+  transition-property: background, border-color, color, box-shadow;
 }

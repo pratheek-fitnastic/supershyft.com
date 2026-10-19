@@ -38,12 +38,12 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261019m">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261019z4">
   <link rel="preload" as="image" href="assets/images/gifting/gift-box-lid.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-box-base.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-card-ui.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-inner-scene.png">
-  <link rel="preload" as="image" href="assets/images/gifting/bg-teal.jpg">
+  <link rel="preload" as="image" href="assets/images/gifting/bg-sections.jpg">
   <link rel="preload" as="image" href="assets/images/gifting/mandala-with-diya.png">
   <link rel="preload" as="image" href="assets/images/gifting/diya-lamp.png">
 </head>
@@ -107,7 +107,7 @@
 
     <!-- 2. Gift pack — Figma 856:10808 / Gift Box 856:11751 -->
     <section class="g-pack" id="gift-pack">
-      <img class="g-pack__bg" src="assets/images/gifting/bg-teal-2x.jpg" width="3264" height="2321" alt="" decoding="async">
+      <img class="g-pack__bg" src="assets/images/gifting/bg-sections.jpg" srcset="assets/images/gifting/bg-sections.jpg 2048w, assets/images/gifting/bg-sections-2x.jpg 4096w" sizes="100vw" width="2048" height="1623" alt="" decoding="async">
       <img class="g-pack__fade" src="assets/images/gifting/section-fade.png" width="1440" height="125" alt="" decoding="async" aria-hidden="true">
       <div class="g-pack__shade" aria-hidden="true"></div>
       <div class="g-pack__inner">
@@ -308,7 +308,7 @@
         </div>
 
         <div class="g-pack__cta">
-          <button type="button" class="g-btn" id="book-the-gift">Book the Gift</button>
+          <button type="button" class="g-btn g-btn--sync" id="book-the-gift">Book the Gift</button>
         </div>
       </div>
     </section>
@@ -316,7 +316,7 @@
     <!-- 3. Four steps — Figma 856:10842 (variants 856:10815 / 10871 / 10897) -->
     <section class="g-steps" id="gift-steps">
       <div class="g-steps__pin" id="gift-steps-pin">
-        <img class="g-steps__bg" src="assets/images/gifting/bg-teal.jpg" alt="" decoding="async">
+        <img class="g-steps__bg" src="assets/images/gifting/bg-sections.jpg" srcset="assets/images/gifting/bg-sections.jpg 2048w, assets/images/gifting/bg-sections-2x.jpg 4096w" sizes="100vw" width="2048" height="1623" alt="" decoding="async">
         <div class="g-steps__shade" aria-hidden="true"></div>
 
         <div class="g-steps__visual" aria-hidden="true">
@@ -391,7 +391,7 @@
 
     <!-- 4. Personalize — Figma 862:11795 -->
     <section class="g-form-sec" id="gift-personalize">
-      <img class="g-form-sec__bg" src="assets/images/gifting/bg-teal-2x.jpg" width="3264" height="2321" alt="" decoding="async">
+      <img class="g-form-sec__bg" src="assets/images/gifting/bg-sections.jpg" srcset="assets/images/gifting/bg-sections.jpg 2048w, assets/images/gifting/bg-sections-2x.jpg 4096w" sizes="100vw" width="2048" height="1623" alt="" decoding="async">
       <div class="g-form-sec__shade" aria-hidden="true"></div>
       <div class="g-form-sec__inner">
         <div class="g-form-sec__header">
@@ -399,9 +399,9 @@
           <p>Choose an occasion, add your personal message, and create a thoughtful gift of health for someone special.</p>
         </div>
         <div class="g-tabs" role="tablist" aria-label="Gift occasion">
-          <button type="button" class="g-tab is-active" data-occasion="diwali" role="tab" aria-selected="true"><img src="assets/images/gifting/icon-diwali-figma.svg" width="32" height="32" alt=""> Diwali</button>
-          <button type="button" class="g-tab" data-occasion="birthday" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-birthday-figma.svg" width="32" height="32" alt=""> Birthdays &amp; Anniversaries</button>
-          <button type="button" class="g-tab" data-occasion="just-because" role="tab" aria-selected="false"><img src="assets/images/gifting/icon-sparkle-figma.svg" width="32" height="32" alt=""> Just Because</button>
+          <button type="button" class="g-tab is-active" data-occasion="diwali" role="tab" aria-selected="true"><span class="g-tab__icon g-tab__icon--diwali" aria-hidden="true"></span><span class="g-tab__label">Diwali</span></button>
+          <button type="button" class="g-tab" data-occasion="birthday" role="tab" aria-selected="false"><span class="g-tab__icon g-tab__icon--birthday" aria-hidden="true"></span><span class="g-tab__label">Birthdays &amp; Anniversaries</span></button>
+          <button type="button" class="g-tab" data-occasion="just-because" role="tab" aria-selected="false"><span class="g-tab__icon g-tab__icon--sparkle" aria-hidden="true"></span><span class="g-tab__label">Just Because</span></button>
         </div>
         <form class="g-form-grid" id="gift-form">
           <div class="g-form-fields">
@@ -491,7 +491,7 @@
                 </div>
               </div>
             </div>
-            <button type="submit" class="g-btn g-preview__submit">Gift It</button>
+            <button type="submit" class="g-btn g-btn--sync g-preview__submit">Gift It</button>
             <p class="g-preview__note" id="preview-note">Personalised Gift Card inside the envelope</p>
             <div class="g-success" id="gift-success" role="status">
               Thank you! Your gift details look beautiful. Our team will follow up to complete your booking.
@@ -567,7 +567,7 @@
 
           <p class="g-book__error" id="gift-book-error" role="alert" hidden></p>
           <div class="g-book__actions">
-            <button type="submit" class="g-book__continue">Continue</button>
+            <button type="submit" class="g-book__continue g-btn--sync">Continue</button>
           </div>
           <div class="g-success g-book__success" id="gift-book-success" role="status">
             Thank you! Your gift and blood collection slot are booked. Our team will confirm shortly.
@@ -624,7 +624,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261019m" defer></script>
+  <script src="assets/js/gifting.js?v=20261019z4" defer></script>
 </body>
 
 </html>

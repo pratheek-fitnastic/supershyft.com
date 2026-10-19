@@ -230,6 +230,24 @@
   window.addEventListener("resize", fitGiftBox);
 
   /*
+   * Every CTA on the page takes the hero "Explore Gifts" button's exact size (it scales with the
+   * hero), so Book the Gift, Gift It and Continue always match it — see .g-btn--sync in gifting.css.
+   */
+  function syncCtaSize() {
+    if (!exploreBtn) return;
+    var r = exploreBtn.getBoundingClientRect();
+    if (!r.width) return;
+    var root = document.documentElement.style;
+    root.setProperty("--g-cta-w", r.width.toFixed(2) + "px");
+    root.setProperty("--g-cta-h", r.height.toFixed(2) + "px");
+    root.setProperty("--g-cta-fs", getComputedStyle(exploreBtn).fontSize);
+  }
+  syncCtaSize();
+  window.addEventListener("resize", syncCtaSize);
+  window.addEventListener("load", syncCtaSize);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncCtaSize);
+
+  /*
    * Section 2's art is large (4096px background, 3072px open box). Decode it while the
    * visitor is still on the hero so reaching the section never stalls the opening animation.
    */
@@ -360,9 +378,9 @@
      * Rotate only the img — crop window (.g-steps__mandala) stays Figma-sized.
      */
     if (mandalaImg) {
-      /* Figma shows the mandala mirrored (rotate-180 inside a flipped group) */
+      /* Not mirrored: a mirrored rangoli turns every swastika the wrong way (rotation keeps it correct) */
       gsap.set(mandalaImg, {
-        scaleX: -1,
+        scaleX: 1,
         rotation: 0,
         transformOrigin: "50% 50%",
         force3D: true
@@ -541,7 +559,7 @@
     },
     birthday: {
       theme: "is-birthday",
-      festive: "CELEBRATE",
+      festive: "CELEBRATING YOU",
       messages: [
         "Because every milestone deserves a little love.",
         "A little gift to celebrate your special moments together.",
@@ -550,7 +568,7 @@
     },
     "just-because": {
       theme: "is-just-because",
-      festive: "JUST BECAUSE",
+      festive: "BECAUSE YOU'RE SPECIAL",
       messages: [
         "A little gift to make an ordinary day feel special.",
         "No special occasion, just a little love.",
