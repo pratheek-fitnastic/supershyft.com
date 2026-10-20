@@ -998,53 +998,101 @@
 }
 
 /*
- * Opening (5s, timing mirrored in gifting.js):
- *   0–0.6s    box rests, glow brightens
- *   0.4–0.9s  open box fades in *behind* the closed one (fully opaque before anything moves)
- *   0.9–2.2s  closed box (lid + base together — never split, so no gap) drifts up and dissolves into it
- *   2.2–4.6s  card slides up out of the box; clip-path hides whatever is still below the rim
+ * Opening (5s, timing mirrored in gifting.js).
+ * The closed and open box are two different renders with different perspective, so they must never
+ * be on screen together for long (that showed as a box "cut" into bands). Instead:
+ *   0–0.5s    box rests; glow gathers under it
+ *   0.5–1.6s  lid unseals: a gentle lift + slight backward tilt on its rear hinge (no gap opens);
+ *             warm light swells from the seam. The base never moves.
+ *   1.5–1.9s  at the light's peak the closed box changes to the open box in one quick crossfade
+ *   1.9–2.7s  light settles
+ *   2.0–4.6s  card fades in deep in the box, then rises and grows to full size (never clipped)
  */
 .g-box.is-opening .g-box__closed::after { animation: g-box-glow-out 5s linear forwards; }
-.g-box.is-opening .g-box__closed-part { animation: g-box-closed-out 5s linear forwards; }
+.g-box.is-opening .g-box__closed-lid { animation: g-box-lid-hinge 5s linear forwards; }
+.g-box.is-opening .g-box__closed-base { animation: g-box-base-out 5s linear forwards; }
 .g-box.is-opening .g-box__burst { animation: g-box-burst 5s linear forwards; }
 .g-box.is-opening .g-box__open-stage { animation: g-box-stage 5s linear forwards; }
 .g-box.is-opening .g-box__package { animation: g-box-card-rise 5s linear forwards; }
 
+/* Viewer slightly above the box so the lid's tilt foreshortens naturally */
+.g-box.is-opening .g-box__closed {
+  perspective: 1500px;
+  perspective-origin: 50% 0%;
+}
+
+/* Hinge = the lid's rear top edge (≈19% down the padded lid PNG) */
+.g-box.is-opening .g-box__closed-lid {
+  transform-origin: 50% 19%;
+}
+
 @keyframes g-box-glow-out {
   0% { opacity: 0.5; animation-timing-function: ease-in-out; }
-  12% { opacity: 1; animation-timing-function: ease-in-out; }
-  44%,
+  10% { opacity: 1; animation-timing-function: ease-in-out; }
+  38%,
   100% { opacity: 0; }
 }
 
-@keyframes g-box-closed-out {
+@keyframes g-box-lid-hinge {
   0%,
-  18% { opacity: 1; transform: translateY(0); animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1); }
-  44%,
-  100% { opacity: 0; transform: translateY(-24px); }
+  10% { opacity: 1; transform: translateY(0) rotateX(0deg); animation-timing-function: cubic-bezier(0.42, 0, 0.3, 1); }
+  32% { opacity: 1; transform: translateY(-22px) rotateX(-14deg); animation-timing-function: ease-in; }
+  38%,
+  100% { opacity: 0; transform: translateY(-26px) rotateX(-16deg); }
 }
 
+/* Base holds perfectly still; it leaves in the same quick crossfade as the lid */
+@keyframes g-box-base-out {
+  0%,
+  30% { opacity: 1; animation-timing-function: ease-in; }
+  38%,
+  100% { opacity: 0; }
+}
+
+/* Warm light swells from the seam and peaks over the crossfade, hiding the change of render */
 @keyframes g-box-burst {
   0%,
-  20% { opacity: 0.001; transform: scale(0.5, 0.3); animation-timing-function: ease-out; }
-  44% { opacity: 0.5; transform: scale(1, 0.8); animation-timing-function: ease-in-out; }
-  80%,
-  100% { opacity: 0.001; transform: scale(1.2, 1); }
+  12% { opacity: 0.001; transform: scale(0.45, 0.25); animation-timing-function: cubic-bezier(0.3, 0, 0.3, 1); }
+  34% { opacity: 0.9; transform: scale(1, 0.75); animation-timing-function: ease-in-out; }
+  54%,
+  100% { opacity: 0.001; transform: scale(1.15, 0.95); }
 }
 
 @keyframes g-box-stage {
   0%,
-  8% { opacity: 0.001; animation-timing-function: ease-in-out; }
-  18%,
+  30% { opacity: 0.001; animation-timing-function: ease-out; }
+  38%,
   100% { opacity: 1; }
 }
 
-/* Card moves up by its own height while the clip uncovers it from the rim — it emerges from inside */
+/*
+ * Card appears whole (no clipping): it fades in small and low, deep in the open box, then rises
+ * and grows to full size with a long soft ease-out — reads as being lifted out of the box.
+ */
 @keyframes g-box-card-rise {
   0%,
-  44% { translate: 0 100%; clip-path: inset(0 -60px 100% -60px); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+  40% { opacity: 0; translate: 0 18%; scale: 0.78; animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1); }
+  50% { opacity: 1; animation-timing-function: linear; }
   92%,
-  100% { translate: 0 0; clip-path: inset(-120px -60px 0 -60px); }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+/* Contact shadow: grounds the box so it reads as a solid object sitting on a surface */
+.g-box__closed::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 4%;
+  height: 9%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+}
+
+.g-box.is-opening .g-box__closed::before {
+  animation: g-box-base-out 5s linear forwards;
 }
 
 /* Final open state */
@@ -2601,6 +2649,21 @@
   font-size: 14px;
 }
 
+.g-book__status {
+  align-self: stretch;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: Sora, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.g-book__group--schedule.is-loading .g-book__dates,
+.g-book__group--schedule.is-loading .g-book__slots {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
 .g-book__actions {
   display: flex;
   justify-content: flex-end;
@@ -2638,6 +2701,311 @@
 .g-book__success {
   align-self: stretch;
   margin-top: -12px;
+}
+
+/* ===== OTP panel (Figma 864:12176) ===== */
+.g-book--otp,
+.g-book--result {
+  z-index: 6;
+}
+
+.g-book__close {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  border: 0;
+  background: none;
+  padding: 0;
+  line-height: 0;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.g-book__close:hover,
+.g-book__close:focus-visible {
+  opacity: 1;
+}
+
+.g-otp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.gifting-page .g-otp__heading {
+  margin: 0;
+  align-self: flex-start;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  color: #fff;
+}
+
+.g-otp__digits {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.gifting-page .g-otp__digit {
+  box-sizing: border-box;
+  width: 60px;
+  height: 69px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-family: Sora, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.gifting-page .g-otp__digit:focus {
+  border-color: #41ab99;
+}
+
+.gifting-page .g-otp__hint {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-size: 14px;
+  line-height: 30px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+}
+
+.g-otp__resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gifting-page .g-otp__timer {
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.gifting-page .g-otp__resend {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  color: #fff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gifting-page .g-otp__resend:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* ===== Payment result panels (Figma 864:13725 / 864:12994) ===== */
+.g-book--result {
+  gap: 40px;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+.g-pay-icon {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+}
+
+.g-pay-icon__ring {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.g-pay-icon__ring--outer {
+  inset: -80px;
+  opacity: 0.05;
+}
+
+.g-pay-icon__ring--mid {
+  inset: -48px;
+  opacity: 0.1;
+}
+
+.g-pay-icon__ring--inner {
+  inset: -16px;
+  opacity: 0.2;
+}
+
+.g-pay-icon--success .g-pay-icon__ring {
+  background: #22c55e;
+}
+
+.g-pay-icon--failed .g-pay-icon__ring {
+  background: #cc203b;
+}
+
+.g-pay-icon__badge {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+.g-pay-icon--success .g-pay-icon__badge {
+  background: #22c55e;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+}
+
+.g-pay-icon--failed .g-pay-icon__badge {
+  background: #cc203b;
+  box-shadow: 0 0 20px rgba(233, 93, 92, 0.5);
+}
+
+.g-pay-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.gifting-page .g-pay-copy__sub {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-size: 16px;
+  line-height: 16px;
+  color: #bfcab5;
+}
+
+.g-pay-details {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 384px;
+  padding: 17px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.g-pay-details__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+}
+
+.gifting-page .g-pay-details__title {
+  margin: 0;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: #fff;
+}
+
+.g-pay-details__download {
+  border: 0;
+  background: none;
+  padding: 0;
+  line-height: 0;
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.g-pay-details__download:hover,
+.g-pay-details__download:focus-visible {
+  opacity: 1;
+}
+
+.g-pay-details__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.g-pay-details__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.g-pay-details__row span {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.g-pay-details__row strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+.g-pay-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.g-pay-actions__retry {
+  width: 100%;
+  min-width: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: normal;
+}
+
+.gifting-page .g-pay-actions__change {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 24px;
+  border: 1px solid #969696;
+  border-radius: 36px;
+  background: transparent;
+  box-shadow: 0 12px 20px rgba(255, 255, 255, 0.15);
+  color: #9a9a9a;
+  font-family: Sora, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.32px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.gifting-page .g-pay-actions__change:hover,
+.gifting-page .g-pay-actions__change:focus-visible {
+  color: #fff;
+  border-color: #fff;
+}
+
+.g-book__continue:disabled {
+  opacity: 0.55;
+  cursor: wait;
+  pointer-events: none;
 }
 
 @media (max-width: 1279.98px) {
@@ -2713,6 +3081,41 @@
 
   .g-book__actions {
     justify-content: center;
+  }
+
+  .g-book__close {
+    right: 18px;
+    top: 18px;
+  }
+
+  .g-otp__digits {
+    gap: 6px;
+  }
+
+  .gifting-page .g-otp__digit {
+    width: 48px;
+    height: 56px;
+    font-size: 18px;
+  }
+
+  .gifting-page .g-otp__hint {
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .g-book--result {
+    gap: 28px;
+    padding-top: 56px;
+    padding-bottom: 40px;
+  }
+
+  .gifting-page .g-book--result .g-book__title {
+    font-size: 24px;
+  }
+
+  .g-pay-actions__retry {
+    padding: 12px 24px;
+    font-size: 16px;
   }
 }
 
@@ -3796,18 +4199,20 @@
   }
 
   @keyframes g-mbox-closed {
-    0%, 18% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(0.45, 0, 0.4, 1); }
-    44%, 100% { transform: translateY(-12px); opacity: 0; }
+    0%, 10% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(0.42, 0, 0.3, 1); }
+    30% { transform: translateY(-8px); opacity: 1; animation-timing-function: ease-in; }
+    38%, 100% { transform: translateY(-10px); opacity: 0; }
   }
 
   @keyframes g-mbox-open {
-    0%, 8% { opacity: 0.001; animation-timing-function: ease-in-out; }
-    18%, 100% { opacity: 1; }
+    0%, 30% { opacity: 0.001; animation-timing-function: ease-out; }
+    38%, 100% { opacity: 1; }
   }
 
   @keyframes g-mbox-card {
-    0%, 44% { opacity: 1; translate: 0 100%; clip-path: inset(0 -40px 100% -40px); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
-    92%, 100% { opacity: 1; translate: 0 0; clip-path: inset(-80px -40px 0 -40px); }
+    0%, 40% { opacity: 0; translate: 0 18%; scale: 0.78; animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1); }
+    50% { opacity: 1; animation-timing-function: linear; }
+    92%, 100% { opacity: 1; translate: 0 0; scale: 1; }
   }
 }
 
