@@ -230,6 +230,24 @@
   window.addEventListener("resize", fitGiftBox);
 
   /*
+   * Every CTA on the page takes the hero "Explore Gifts" button's exact size (it scales with the
+   * hero), so Book the Gift, Gift It and Continue always match it — see .g-btn--sync in gifting.css.
+   */
+  function syncCtaSize() {
+    if (!exploreBtn) return;
+    var r = exploreBtn.getBoundingClientRect();
+    if (!r.width) return;
+    var root = document.documentElement.style;
+    root.setProperty("--g-cta-w", r.width.toFixed(2) + "px");
+    root.setProperty("--g-cta-h", r.height.toFixed(2) + "px");
+    root.setProperty("--g-cta-fs", getComputedStyle(exploreBtn).fontSize);
+  }
+  syncCtaSize();
+  window.addEventListener("resize", syncCtaSize);
+  window.addEventListener("load", syncCtaSize);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncCtaSize);
+
+  /*
    * Section 2's art is large (4096px background, 3072px open box). Decode it while the
    * visitor is still on the hero so reaching the section never stalls the opening animation.
    */
@@ -250,12 +268,66 @@
     });
   }
 
-  /* Explore Gifts → scroll to section 2 and play box-open animation */
+  /*
+   * Premium glide to section 2: a custom ease-in-out scroll (soft start, soft landing) instead of the
+   * browser's fixed smooth-scroll curve. Duration grows gently with distance. Any wheel/touch/key
+   * input cancels it so the visitor is never fighting the page.
+   */
+  var glideRaf = null;
+  function glideTo(targetY, done) {
+    var startY = window.pageYOffset;
+    var dist = targetY - startY;
+    if (reducedMotion || Math.abs(dist) < 2) {
+      window.scrollTo(0, targetY);
+      if (done) done();
+      return;
+    }
+    var duration = Math.min(1600, Math.max(900, Math.abs(dist) * 0.9));
+    var t0 = null;
+    var ease = function (t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+    var stop = function (e) {
+      if (glideRaf) window.cancelAnimationFrame(glideRaf);
+      glideRaf = null;
+      /* Interrupted by the visitor: let the in-view observer open the box when they get there */
+      if (e && e.type) {
+        boxHasOpened = false;
+        if (packObserver && giftPack) {
+          packObserver.unobserve(giftPack);
+          packObserver.observe(giftPack);
+        }
+      }
+      ["wheel", "touchstart", "keydown"].forEach(function (ev) {
+        window.removeEventListener(ev, stop);
+      });
+    };
+    ["wheel", "touchstart", "keydown"].forEach(function (ev) {
+      window.addEventListener(ev, stop, { passive: true });
+    });
+    var step = function (now) {
+      if (t0 === null) t0 = now;
+      var p = Math.min(1, (now - t0) / duration);
+      window.scrollTo(0, startY + dist * ease(p));
+      if (p < 1) {
+        glideRaf = window.requestAnimationFrame(step);
+      } else {
+        stop();
+        if (done) done();
+      }
+    };
+    glideRaf = window.requestAnimationFrame(step);
+  }
+
+  /* Explore Gifts → glide to section 2 (box centred), then the box opens on its own */
   if (exploreBtn) {
     exploreBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      scrollToEl(giftPack, "center");
-      openGiftBox();
+      if (!giftPack) return;
+      var rect = giftPack.getBoundingClientRect();
+      var target = window.pageYOffset + rect.top - Math.max(0, (window.innerHeight - rect.height) / 2);
+      boxHasOpened = true; /* the glide drives the opening — keep the in-view observer from starting it mid-scroll */
+      glideTo(Math.max(0, target), openGiftBox);
     });
   }
 
@@ -360,9 +432,9 @@
      * Rotate only the img — crop window (.g-steps__mandala) stays Figma-sized.
      */
     if (mandalaImg) {
-      /* Figma shows the mandala mirrored (rotate-180 inside a flipped group) */
+      /* Not mirrored: a mirrored rangoli turns every swastika the wrong way (rotation keeps it correct) */
       gsap.set(mandalaImg, {
-        scaleX: -1,
+        scaleX: 1,
         rotation: 0,
         transformOrigin: "50% 50%",
         force3D: true
@@ -541,7 +613,7 @@
     },
     birthday: {
       theme: "is-birthday",
-      festive: "CELEBRATE",
+      festive: "CELEBRATING YOU",
       messages: [
         "Because every milestone deserves a little love.",
         "A little gift to celebrate your special moments together.",
@@ -550,7 +622,7 @@
     },
     "just-because": {
       theme: "is-just-because",
-      festive: "JUST BECAUSE",
+      festive: "BECAUSE YOU'RE SPECIAL",
       messages: [
         "A little gift to make an ordinary day feel special.",
         "No special occasion, just a little love.",
@@ -686,14 +758,208 @@
   updatePreview();
 
   /* ===== Gift It → Book Appointment panel (Figma 862:13205) ===== */
+  var API_BASE = "https://api.supershyft.com";
+  var PROVIDER = "healthians";
+  var PACKAGE_ID = 7;
+  var SERVICEABILITY_DEBOUNCE_MS = 400;
+
   var form = document.getElementById("gift-form");
   var book = document.getElementById("gift-book");
   var bookBack = document.getElementById("gift-book-back");
   var bookDates = document.getElementById("book-dates");
   var bookSlots = document.getElementById("book-slots");
   var bookError = document.getElementById("gift-book-error");
-  var bookSuccess = document.getElementById("gift-book-success");
+  var bookContinue = document.getElementById("gift-book-continue");
+  var bookAddress = document.getElementById("book-address");
+  var bookCity = document.getElementById("book-city");
+  var bookPincode = document.getElementById("book-pincode");
+  var bookAge = document.getElementById("book-age");
+  var otpPanel = document.getElementById("gift-otp");
+  var otpBack = document.getElementById("gift-otp-back");
+  var otpDigits = document.getElementById("gift-otp-digits");
+  var otpHint = document.getElementById("gift-otp-hint");
+  var otpTimerEl = document.getElementById("gift-otp-timer");
+  var otpResend = document.getElementById("gift-otp-resend");
+  var otpError = document.getElementById("gift-otp-error");
+  var otpVerify = document.getElementById("gift-otp-verify");
+  var paySuccess = document.getElementById("gift-pay-success");
+  var payFailed = document.getElementById("gift-pay-failed");
+  var paySuccessClose = document.getElementById("gift-pay-success-close");
+  var payFailedClose = document.getElementById("gift-pay-failed-close");
+  var payTxnId = document.getElementById("gift-pay-txn-id");
+  var payAmount = document.getElementById("gift-pay-amount");
+  var payDownload = document.getElementById("gift-pay-download");
+  var payRetry = document.getElementById("gift-pay-retry");
+  var payChange = document.getElementById("gift-pay-change");
   var formInner = form ? form.parentElement : null;
+  var scheduleGroup = book ? book.querySelector(".g-book__group--schedule") : null;
+  var scheduleStatus = null;
+  var otpDigitInputs = otpDigits
+    ? Array.prototype.slice.call(otpDigits.querySelectorAll(".g-otp__digit"))
+    : [];
+
+  var geoState = null;
+  var serviceabilityTimer = null;
+  var serviceabilityAbort = null;
+  var serviceabilityGen = 0;
+  var slotsAbort = null;
+  var slotsGen = 0;
+  var lastSlotPayload = null;
+  var OTP_RESEND_SECONDS = 30;
+  var onboardSession = {
+    family_onboard_id: null,
+    payload: null,
+    bookerPhone: "",
+    bookerEmail: "",
+    bookerName: "",
+    razorpay: null,
+    amount_rupees: null,
+    razorpay_payment_id: null,
+  };
+  var otpTimerId = null;
+  var otpSecondsLeft = 0;
+  var razorpayScriptPromise = null;
+
+  function ensureScheduleStatus() {
+    if (scheduleStatus || !scheduleGroup) return scheduleStatus;
+    scheduleStatus = document.createElement("p");
+    scheduleStatus.className = "g-book__status";
+    scheduleStatus.id = "book-schedule-status";
+    scheduleStatus.setAttribute("role", "status");
+    scheduleStatus.hidden = true;
+    scheduleGroup.appendChild(scheduleStatus);
+    return scheduleStatus;
+  }
+
+  function setBookError(msg) {
+    if (!bookError) return;
+    bookError.textContent = msg || "";
+    bookError.hidden = !msg;
+  }
+
+  function setScheduleStatus(msg) {
+    var el = ensureScheduleStatus();
+    if (!el) return;
+    el.textContent = msg || "";
+    el.hidden = !msg;
+  }
+
+  function setScheduleLoading(loading) {
+    if (scheduleGroup) scheduleGroup.classList.toggle("is-loading", !!loading);
+  }
+
+  function abortServiceability() {
+    if (serviceabilityTimer) {
+      clearTimeout(serviceabilityTimer);
+      serviceabilityTimer = null;
+    }
+    if (serviceabilityAbort) {
+      serviceabilityAbort.abort();
+      serviceabilityAbort = null;
+    }
+  }
+
+  function abortSlots() {
+    if (slotsAbort) {
+      slotsAbort.abort();
+      slotsAbort = null;
+    }
+  }
+
+  function apiLabel(path) {
+    var parts = String(path || "").split("/");
+    return parts[parts.length - 1] || path || "api";
+  }
+
+  function clearDatesAndSlots() {
+    if (bookDates) {
+      bookDates.innerHTML = "";
+      bookDates.removeAttribute("data-api");
+    }
+    if (bookSlots) {
+      bookSlots.innerHTML = "";
+      bookSlots.removeAttribute("data-api");
+    }
+    lastSlotPayload = null;
+  }
+
+  function resetOnboardSession() {
+    stopOtpTimer();
+    onboardSession.family_onboard_id = null;
+    onboardSession.payload = null;
+    onboardSession.bookerPhone = "";
+    onboardSession.bookerEmail = "";
+    onboardSession.bookerName = "";
+    onboardSession.razorpay = null;
+    onboardSession.amount_rupees = null;
+    onboardSession.razorpay_payment_id = null;
+    clearOtpInputs();
+    setOtpError("");
+  }
+
+  function resetBookingApiState() {
+    abortServiceability();
+    abortSlots();
+    serviceabilityGen += 1;
+    slotsGen += 1;
+    geoState = null;
+    lastSlotPayload = null;
+    clearDatesAndSlots();
+    setBookError("");
+    setScheduleStatus("");
+    setScheduleLoading(false);
+    setContinueLoading(false);
+    resetOnboardSession();
+  }
+
+  function apiErrorMessage(json, fallback) {
+    if (!json) return fallback;
+    if (typeof json.detail === "string") return json.detail;
+    if (typeof json.message === "string") return json.message;
+    if (typeof json.error === "string") return json.error;
+    if (json.detail && typeof json.detail === "object" && json.detail.message) {
+      return String(json.detail.message);
+    }
+    return fallback;
+  }
+
+  function apiPost(path, body, signal) {
+    var url = API_BASE + path;
+    var label = apiLabel(path);
+    console.info("[gifting] POST " + url, body);
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body),
+      signal: signal,
+    })
+      .then(function (res) {
+        return res
+          .json()
+          .catch(function () {
+            return null;
+          })
+          .then(function (json) {
+            if (!res.ok) {
+              console.error("[gifting] ← " + label + " " + res.status, json || res.statusText);
+              var err = new Error(
+                apiErrorMessage(json, "Request failed (" + res.status + ")")
+              );
+              err.status = res.status;
+              err.payload = json;
+              throw err;
+            }
+            console.info("[gifting] ← " + label + " " + res.status, json);
+            return json;
+          });
+      })
+      .catch(function (err) {
+        if (err && err.name !== "AbortError" && err.status == null) {
+          console.error("[gifting] ✕ " + label + " " + url, err);
+        }
+        throw err;
+      });
+  }
 
   function radio(name, value, inner, checked) {
     var label = document.createElement("label");
@@ -709,74 +975,804 @@
     return label;
   }
 
-  /* Next four days starting tomorrow; first one pre-selected like the design */
+  function toIsoDate(d) {
+    return (
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
+  }
+
+  /* Tomorrow through same weekday next week (7 days); none pre-selected */
   function renderBookDates() {
     if (!bookDates) return;
     var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     bookDates.innerHTML = "";
-    for (var i = 1; i <= 4; i++) {
+    bookDates.setAttribute("data-api", API_BASE + "/diagnostics/public/serviceability");
+    for (var i = 1; i <= 7; i++) {
       var d = new Date();
+      d.setHours(12, 0, 0, 0);
       d.setDate(d.getDate() + i);
-      var iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-      var el = radio("book-date", iso, "<small>" + DAYS[d.getDay()] + "</small><b>" + d.getDate() + "</b>", i === 1);
+      var el = radio(
+        "book-date",
+        toIsoDate(d),
+        "<small>" + DAYS[d.getDay()] + "</small><b>" + d.getDate() + "</b>",
+        false
+      );
       el.className = "g-book__date";
       bookDates.appendChild(el);
     }
   }
 
-  /* 06:00 AM – 01:30 PM in 30-minute steps (16 slots, 8 per row) */
-  function renderBookSlots() {
+  function formatClock(time) {
+    if (!time) return "";
+    var parts = String(time).split(":");
+    var h = parseInt(parts[0], 10);
+    var m = parts[1] || "00";
+    if (isNaN(h)) return String(time).slice(0, 5);
+    var suffix = h >= 12 ? " PM" : " AM";
+    var h12 = h % 12 || 12;
+    return String(h12).padStart(2, "0") + ":" + m + suffix;
+  }
+
+  function formatSlotLabel(slot) {
+    return formatClock(slot.slot_time) || "Slot";
+  }
+
+  function renderBookSlotsFromApi(slots) {
     if (!bookSlots) return;
     bookSlots.innerHTML = "";
-    for (var m = 6 * 60; m <= 13 * 60 + 30; m += 30) {
-      var h = Math.floor(m / 60);
-      var h12 = h % 12 || 12;
-      var text = String(h12).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0") + (h < 12 ? " AM" : " PM");
-      var el = radio("book-slot", text, text, false);
+    bookSlots.setAttribute("data-api", API_BASE + "/diagnostics/public/available-slots");
+    lastSlotPayload = null;
+    if (!slots || !slots.length) {
+      setScheduleStatus("No slots available for this date.");
+      return;
+    }
+    setScheduleStatus("");
+    slots.forEach(function (slot) {
+      var stmId = slot.stm_id != null ? String(slot.stm_id) : "";
+      var el = radio("book-slot", stmId || formatSlotLabel(slot), formatSlotLabel(slot), false);
       el.className = "g-book__slot";
+      var input = el.querySelector("input");
+      if (input && stmId) input.setAttribute("data-stm-id", stmId);
+      if (input) {
+        input.setAttribute("data-slot-time", slot.slot_time || "");
+        input.setAttribute("data-end-time", slot.end_time || "");
+        input.setAttribute("data-slot-date", slot.slot_date || "");
+      }
       bookSlots.appendChild(el);
+    });
+  }
+
+  function getSelectedGender() {
+    var checked = book ? book.querySelector("input[name='book-gender']:checked") : null;
+    return checked ? checked.value : "";
+  }
+
+  function hasFemalePatient() {
+    return getSelectedGender() === "Female";
+  }
+
+  function getSelectedDate() {
+    var checked = book ? book.querySelector("input[name='book-date']:checked") : null;
+    return checked ? checked.value : "";
+  }
+
+  function addressFieldsReady() {
+    var address = bookAddress ? bookAddress.value.trim() : "";
+    var city = bookCity ? bookCity.value.trim() : "";
+    var pincode = bookPincode ? bookPincode.value.trim() : "";
+    return !!(address && city && /^\d{6}$/.test(pincode));
+  }
+
+  function unwrapApiData(payload) {
+    if (payload && payload.data != null && typeof payload.data === "object") {
+      return payload.data;
+    }
+    return payload || {};
+  }
+
+  function pickProviderResult(payload) {
+    var data = unwrapApiData(payload);
+    var list = data.providers || [];
+    var match = null;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].provider === PROVIDER) {
+        match = list[i];
+        break;
+      }
+    }
+    return match || list[0] || null;
+  }
+
+  function checkServiceability() {
+    if (!addressFieldsReady()) return;
+
+    abortServiceability();
+    abortSlots();
+    slotsGen += 1;
+
+    var gen = (serviceabilityGen += 1);
+    var address = bookAddress.value.trim();
+    var city = bookCity.value.trim();
+    var pincode = bookPincode.value.trim();
+
+    geoState = null;
+    clearDatesAndSlots();
+    setBookError("");
+    setScheduleStatus("Checking availability…");
+    setScheduleLoading(true);
+
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    serviceabilityAbort = controller;
+
+    apiPost(
+      "/diagnostics/public/serviceability",
+      {
+        provider: PROVIDER,
+        address_line: address,
+        city: city,
+        pincode: pincode,
+        diagnostic_package_id: PACKAGE_ID,
+      },
+      controller ? controller.signal : undefined
+    )
+      .then(function (data) {
+        if (gen !== serviceabilityGen) return;
+        setScheduleLoading(false);
+        serviceabilityAbort = null;
+
+        var result = pickProviderResult(data);
+        if (!result || !result.serviceable) {
+          geoState = null;
+          clearDatesAndSlots();
+          setScheduleStatus("");
+          setBookError(
+            (result && result.message) || "This area is not serviceable."
+          );
+          placeBook();
+          return;
+        }
+
+        geoState = {
+          provider: result.provider || PROVIDER,
+          zone_id: result.zone_id,
+          latitude: result.latitude,
+          longitude: result.longitude,
+          pincode: pincode,
+          serviceable: true,
+        };
+        setBookError("");
+        setScheduleStatus("");
+        renderBookDates();
+        placeBook();
+      })
+      .catch(function (err) {
+        if (gen !== serviceabilityGen) return;
+        if (err && err.name === "AbortError") return;
+        setScheduleLoading(false);
+        serviceabilityAbort = null;
+        geoState = null;
+        clearDatesAndSlots();
+        setScheduleStatus("");
+        setBookError("Unable to check serviceability. Please try again.");
+        placeBook();
+      });
+  }
+
+  function scheduleServiceabilityCheck() {
+    if (serviceabilityTimer) clearTimeout(serviceabilityTimer);
+    if (!addressFieldsReady()) {
+      abortServiceability();
+      abortSlots();
+      serviceabilityGen += 1;
+      slotsGen += 1;
+      geoState = null;
+      clearDatesAndSlots();
+      setScheduleStatus("");
+      setScheduleLoading(false);
+      /* Keep validation errors from Continue; clear only availability-style copy */
+      if (bookError && /serviceable|availability|Unable to check/i.test(bookError.textContent || "")) {
+        setBookError("");
+      }
+      return;
+    }
+    serviceabilityTimer = setTimeout(function () {
+      serviceabilityTimer = null;
+      checkServiceability();
+    }, SERVICEABILITY_DEBOUNCE_MS);
+  }
+
+  function fetchAvailableSlots() {
+    var slotDate = getSelectedDate();
+    if (!slotDate || !geoState || !geoState.serviceable) return;
+
+    if (!getSelectedGender()) {
+      if (bookSlots) {
+        bookSlots.innerHTML = "";
+        bookSlots.removeAttribute("data-api");
+      }
+      lastSlotPayload = null;
+      setScheduleStatus("");
+      setBookError("Please select the recipient's gender.");
+      placeBook();
+      return;
+    }
+
+    abortSlots();
+    var gen = (slotsGen += 1);
+    setBookError("");
+    setScheduleStatus("Loading slots…");
+    if (bookSlots) {
+      bookSlots.innerHTML = "";
+      bookSlots.removeAttribute("data-api");
+    }
+    lastSlotPayload = null;
+
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    slotsAbort = controller;
+
+    apiPost(
+      "/diagnostics/public/available-slots",
+      {
+        provider: geoState.provider || PROVIDER,
+        slot_date: slotDate,
+        diagnostic_package_id: PACKAGE_ID,
+        zone_id: geoState.zone_id,
+        latitude: geoState.latitude,
+        longitude: geoState.longitude,
+        pincode: geoState.pincode,
+        has_female_patient: hasFemalePatient(),
+      },
+      controller ? controller.signal : undefined
+    )
+      .then(function (payload) {
+        if (gen !== slotsGen) return;
+        slotsAbort = null;
+        var data = unwrapApiData(payload);
+        renderBookSlotsFromApi(data.slots || []);
+        placeBook();
+      })
+      .catch(function (err) {
+        if (gen !== slotsGen) return;
+        if (err && err.name === "AbortError") return;
+        slotsAbort = null;
+        if (bookSlots) {
+          bookSlots.innerHTML = "";
+          bookSlots.removeAttribute("data-api");
+        }
+        lastSlotPayload = null;
+        setScheduleStatus("");
+        setBookError("Unable to load slots. Please try another date.");
+        placeBook();
+      });
+  }
+
+  function fieldValue(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function mapRelation(label) {
+    /* API allows: spouse | child | sibling | parent | grandparent | other */
+    var map = {
+      Mom: "parent",
+      Dad: "parent",
+      Spouse: "spouse",
+      Sibling: "sibling",
+      Friend: "other",
+      Others: "other",
+    };
+    return map[label] || "other";
+  }
+
+  function maskPhone(phone) {
+    var digits = String(phone || "").replace(/\D/g, "");
+    if (digits.length < 2) return "+91 ——————";
+    return "+91 xxxxxxxx" + digits.slice(-2);
+  }
+
+  function maskEmail(email) {
+    var parts = String(email || "").split("@");
+    if (parts.length < 2) return "———@———";
+    var local = parts[0];
+    var domain = parts.slice(1).join("@");
+    var head = local.slice(0, 2);
+    var tail = local.length > 2 ? local.slice(-2) : "";
+    return head + "xxxx" + tail + "@" + domain;
+  }
+
+  function setContinueLoading(loading) {
+    if (!bookContinue) return;
+    bookContinue.disabled = !!loading;
+    bookContinue.textContent = loading ? "Please wait…" : "Continue";
+  }
+
+  function setOtpError(msg) {
+    if (!otpError) return;
+    otpError.textContent = msg || "";
+    otpError.hidden = !msg;
+  }
+
+  function clearOtpInputs() {
+    otpDigitInputs.forEach(function (input) {
+      input.value = "";
+    });
+  }
+
+  function getOtpValue() {
+    return otpDigitInputs
+      .map(function (input) {
+        return String(input.value || "").replace(/\D/g, "");
+      })
+      .join("");
+  }
+
+  function stopOtpTimer() {
+    if (otpTimerId) {
+      clearInterval(otpTimerId);
+      otpTimerId = null;
     }
   }
 
-  /* Pin the panel to the form (15px above it, as in Figma) and make room if it is taller */
+  function formatOtpTimer(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function startOtpTimer() {
+    stopOtpTimer();
+    otpSecondsLeft = OTP_RESEND_SECONDS;
+    if (otpTimerEl) otpTimerEl.textContent = formatOtpTimer(otpSecondsLeft);
+    if (otpResend) otpResend.disabled = true;
+    otpTimerId = setInterval(function () {
+      otpSecondsLeft -= 1;
+      if (otpSecondsLeft <= 0) {
+        stopOtpTimer();
+        if (otpTimerEl) otpTimerEl.textContent = "00:00";
+        if (otpResend) otpResend.disabled = false;
+        return;
+      }
+      if (otpTimerEl) otpTimerEl.textContent = formatOtpTimer(otpSecondsLeft);
+    }, 1000);
+  }
+
+  function activeOverlay() {
+    if (paySuccess && !paySuccess.hidden) return paySuccess;
+    if (payFailed && !payFailed.hidden) return payFailed;
+    if (otpPanel && !otpPanel.hidden) return otpPanel;
+    if (book && !book.hidden) return book;
+    return null;
+  }
+
+  /* Pin the visible glass panel to the form (15px above it, as in Figma) */
   function placeBook() {
-    if (!book || book.hidden || !form || !formInner) return;
+    var panel = activeOverlay();
+    if (!panel || !form || !formInner) return;
     formInner.style.paddingBottom = "";
-    book.style.setProperty("--g-book-top", form.offsetTop - 15 + "px");
-    /* A small overhang sits in the section's bottom spacing (page height stays at Figma's 1256);
-       grow only when the panel would reach the next section (e.g. stacked mobile layout) */
+    panel.style.setProperty("--g-book-top", form.offsetTop - 15 + "px");
     var section = formInner.closest("section");
     var room = section ? parseFloat(getComputedStyle(section).paddingBottom) - 40 : 0;
-    var extra = book.offsetTop + book.offsetHeight - (form.offsetTop + form.offsetHeight) - Math.max(0, room);
+    var extra =
+      panel.offsetTop +
+      panel.offsetHeight -
+      (form.offsetTop + form.offsetHeight) -
+      Math.max(0, room);
     if (extra > 0) formInner.style.paddingBottom = extra + "px";
   }
 
-  function openBook() {
-    if (!book) return;
-    if (bookDates && !bookDates.children.length) renderBookDates();
-    if (bookSlots && !bookSlots.children.length) renderBookSlots();
-    book.hidden = false;
+  function hidePanel(panel) {
+    if (!panel) return;
+    panel.classList.remove("is-visible");
+    panel.hidden = true;
+  }
+
+  function showPanel(panel) {
+    if (!panel) return;
+    panel.hidden = false;
+    placeBook();
+    void panel.offsetWidth;
+    panel.classList.add("is-visible");
+    panel.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    placeBook();
+  }
+
+  function lockFormUnderOverlay() {
+    if (!form) return;
     form.classList.add("is-booking");
     form.setAttribute("aria-hidden", "true");
     form.inert = true;
-    placeBook();
-    void book.offsetWidth;
-    book.classList.add("is-visible");
-    book.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-    var first = book.querySelector("input[name='book-gender']");
-    if (first) first.focus({ preventScroll: true });
   }
 
-  function closeBook() {
-    if (!book) return;
-    book.classList.remove("is-visible");
-    book.hidden = true;
+  function unlockForm() {
+    if (!form) return;
     form.classList.remove("is-booking");
     form.removeAttribute("aria-hidden");
     form.inert = false;
     if (formInner) formInner.style.paddingBottom = "";
-    var submit = form.querySelector("[type='submit']");
+  }
+
+  function openBook() {
+    if (!book) return;
+    hidePanel(otpPanel);
+    hidePanel(paySuccess);
+    hidePanel(payFailed);
+    resetBookingApiState();
+    lockFormUnderOverlay();
+    showPanel(book);
+    var first = book.querySelector("input[name='book-gender']");
+    if (first) first.focus({ preventScroll: true });
+    if (addressFieldsReady()) scheduleServiceabilityCheck();
+  }
+
+  function closeBook() {
+    hidePanel(book);
+    hidePanel(otpPanel);
+    hidePanel(paySuccess);
+    hidePanel(payFailed);
+    resetBookingApiState();
+    unlockForm();
+    var submit = form ? form.querySelector("[type='submit']") : null;
     if (submit) submit.focus();
+  }
+
+  function openOtpPanel() {
+    hidePanel(book);
+    hidePanel(paySuccess);
+    hidePanel(payFailed);
+    lockFormUnderOverlay();
+    if (otpHint) {
+      otpHint.textContent =
+        "OTP sent on " +
+        maskPhone(onboardSession.bookerPhone) +
+        " and " +
+        maskEmail(onboardSession.bookerEmail);
+    }
+    clearOtpInputs();
+    setOtpError("");
+    showPanel(otpPanel);
+    startOtpTimer();
+    if (otpDigitInputs[0]) otpDigitInputs[0].focus({ preventScroll: true });
+  }
+
+  function openPaySuccess(paymentId, amountRupees) {
+    hidePanel(book);
+    hidePanel(otpPanel);
+    hidePanel(payFailed);
+    lockFormUnderOverlay();
+    if (payTxnId) payTxnId.textContent = paymentId || "—";
+    if (payAmount) {
+      var amt =
+        amountRupees != null && amountRupees !== ""
+          ? Number(amountRupees)
+          : NaN;
+      payAmount.textContent = isNaN(amt) ? "—" : "Rs. " + amt + "/-";
+    }
+    showPanel(paySuccess);
+  }
+
+  function openPayFailed() {
+    hidePanel(book);
+    hidePanel(otpPanel);
+    hidePanel(paySuccess);
+    lockFormUnderOverlay();
+    showPanel(payFailed);
+  }
+
+  function buildFamilyOnboardPayload() {
+    var bookerName = fieldValue("your-name");
+    var bookerPhone = fieldValue("your-phone");
+    var bookerEmail = fieldValue("your-email");
+    var relationEl = document.getElementById("relationship");
+    var relationLabel = relationEl ? relationEl.value : "Others";
+    var ageNum = bookAge ? parseInt(bookAge.value, 10) : NaN;
+    var slotTime = (lastSlotPayload && lastSlotPayload.slot_time) || "";
+    /* Prefer HH:MM for API (strip seconds if present) */
+    if (slotTime && slotTime.length >= 5) slotTime = slotTime.slice(0, 5);
+
+    return {
+      booker: {
+        name: bookerName,
+        phone: bookerPhone,
+        email: bookerEmail,
+      },
+      members: [
+        {
+          name: fieldValue("recipient-name"),
+          phone: fieldValue("recipient-phone"),
+          email: fieldValue("recipient-email"),
+          relation: mapRelation(relationLabel),
+          age: isNaN(ageNum) ? 0 : ageNum,
+          gender: getSelectedGender(),
+          engagement_type: "bio_ai",
+          diagnostic_package_id: PACKAGE_ID,
+          blood_collection_date: getSelectedDate(),
+          blood_collection_time_slot: slotTime,
+          blood_collection_time_slot_id:
+            (lastSlotPayload && lastSlotPayload.stm_id) || "",
+          address: bookAddress ? bookAddress.value.trim() : "",
+          pincode: bookPincode ? bookPincode.value.trim() : "",
+          city: bookCity ? bookCity.value.trim() : "",
+          booker_message: fieldValue("gift-message"),
+        },
+      ],
+      discount_code: null,
+    };
+  }
+
+  function submitFamilyOnboard(opts) {
+    opts = opts || {};
+    var isResend = !!opts.resend;
+    var payload = isResend && onboardSession.payload
+      ? onboardSession.payload
+      : buildFamilyOnboardPayload();
+
+    if (!isResend) {
+      setContinueLoading(true);
+      setBookError("");
+    } else {
+      if (otpResend) otpResend.disabled = true;
+      setOtpError("");
+    }
+
+    return apiPost("/users/public/family-onboard", payload)
+      .then(function (raw) {
+        var data = unwrapApiData(raw);
+        var familyId = data.family_onboard_id;
+        if (!familyId) {
+          throw new Error("Could not start booking. Please try again.");
+        }
+        onboardSession.payload = payload;
+        onboardSession.family_onboard_id = familyId;
+        onboardSession.bookerPhone = payload.booker.phone;
+        onboardSession.bookerEmail = payload.booker.email;
+        onboardSession.bookerName = payload.booker.name;
+        onboardSession.razorpay = null;
+        onboardSession.amount_rupees = null;
+        onboardSession.razorpay_payment_id = null;
+
+        if (isResend) {
+          clearOtpInputs();
+          startOtpTimer();
+          setOtpError("");
+          if (otpDigitInputs[0]) otpDigitInputs[0].focus({ preventScroll: true });
+        } else {
+          setContinueLoading(false);
+          openOtpPanel();
+        }
+      })
+      .catch(function (err) {
+        if (err && err.name === "AbortError") return;
+        var msg =
+          (err && err.message) || "Something went wrong. Please try again.";
+        if (isResend) {
+          setOtpError(msg);
+          if (otpResend && otpSecondsLeft <= 0) otpResend.disabled = false;
+        } else {
+          setContinueLoading(false);
+          setBookError(msg);
+          placeBook();
+        }
+      });
+  }
+
+  function loadRazorpayScript() {
+    if (window.Razorpay) return Promise.resolve();
+    if (razorpayScriptPromise) return razorpayScriptPromise;
+    razorpayScriptPromise = new Promise(function (resolve, reject) {
+      var script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = function () {
+        resolve();
+      };
+      script.onerror = function () {
+        razorpayScriptPromise = null;
+        reject(new Error("Could not load payment gateway."));
+      };
+      document.head.appendChild(script);
+    });
+    return razorpayScriptPromise;
+  }
+
+  function openRazorpayCheckout() {
+    var rz = onboardSession.razorpay;
+    if (!rz || !rz.key_id || !rz.razorpay_order_id) {
+      openPayFailed();
+      return Promise.resolve();
+    }
+
+    return loadRazorpayScript().then(function () {
+      return new Promise(function (resolve) {
+        var options = {
+          key: rz.key_id,
+          amount: rz.amount_paise,
+          currency: rz.currency || "INR",
+          name: "SuperShyft",
+          description: "Gift booking",
+          order_id: rz.razorpay_order_id,
+          prefill: {
+            name: onboardSession.bookerName || "",
+            email: onboardSession.bookerEmail || "",
+            contact: onboardSession.bookerPhone || "",
+          },
+          theme: { color: "#296359" },
+          handler: function (response) {
+            confirmFamilyPayment(response)
+              .then(resolve)
+              .catch(function () {
+                openPayFailed();
+                resolve();
+              });
+          },
+          modal: {
+            ondismiss: function () {
+              openPayFailed();
+              resolve();
+            },
+          },
+        };
+        try {
+          var checkout = new window.Razorpay(options);
+          checkout.on("payment.failed", function () {
+            openPayFailed();
+            resolve();
+          });
+          checkout.open();
+        } catch (err) {
+          console.error("[gifting] Razorpay open failed", err);
+          openPayFailed();
+          resolve();
+        }
+      });
+    });
+  }
+
+  function membersAllSuccess(members) {
+    if (!members || !members.length) return true;
+    for (var i = 0; i < members.length; i++) {
+      if (!members[i] || members[i].status !== "success") return false;
+    }
+    return true;
+  }
+
+  function confirmFamilyPayment(response) {
+    var body = {
+      family_onboard_id: onboardSession.family_onboard_id,
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_signature: response.razorpay_signature,
+    };
+    return apiPost("/users/public/family-onboard/confirm-payment", body).then(
+      function (raw) {
+        var data = unwrapApiData(raw);
+        var paymentId =
+          data.razorpay_payment_id || response.razorpay_payment_id || "";
+        onboardSession.razorpay_payment_id = paymentId;
+        if (data.payment_verified && membersAllSuccess(data.members)) {
+          openPaySuccess(paymentId, onboardSession.amount_rupees);
+        } else {
+          openPayFailed();
+        }
+      }
+    );
+  }
+
+  function verifyOtpAndPay() {
+    var otp = getOtpValue();
+    if (otp.length !== 6) {
+      setOtpError("Please enter the 6-digit OTP.");
+      return;
+    }
+    if (!onboardSession.family_onboard_id) {
+      setOtpError("Session expired. Please go back and continue again.");
+      return;
+    }
+
+    if (otpVerify) {
+      otpVerify.disabled = true;
+      otpVerify.textContent = "Please wait…";
+    }
+    setOtpError("");
+
+    apiPost("/users/public/family-onboard/verify-pay", {
+      family_onboard_id: onboardSession.family_onboard_id,
+      phone: onboardSession.bookerPhone,
+      otp: otp,
+      discount_code: null,
+    })
+      .then(function (raw) {
+        var data = unwrapApiData(raw);
+        onboardSession.razorpay = {
+          key_id: data.key_id,
+          razorpay_order_id: data.razorpay_order_id,
+          amount_paise: data.amount_paise,
+          currency: data.currency || "INR",
+        };
+        onboardSession.amount_rupees =
+          data.amount_rupees != null ? data.amount_rupees : null;
+        if (otpVerify) {
+          otpVerify.disabled = false;
+          otpVerify.textContent = "Verify OTP";
+        }
+        hidePanel(otpPanel);
+        return openRazorpayCheckout();
+      })
+      .catch(function (err) {
+        if (err && err.name === "AbortError") return;
+        if (otpVerify) {
+          otpVerify.disabled = false;
+          otpVerify.textContent = "Verify OTP";
+        }
+        setOtpError(
+          (err && err.message) || "OTP verification failed. Please try again."
+        );
+        placeBook();
+      });
+  }
+
+  function downloadReceipt() {
+    var id = onboardSession.razorpay_payment_id || (payTxnId && payTxnId.textContent) || "";
+    var amount = (payAmount && payAmount.textContent) || "";
+    var lines = [
+      "SuperShyft Gift Booking Receipt",
+      "--------------------------------",
+      "Transaction ID: " + id,
+      "Amount: " + amount,
+      "Family onboard ID: " + (onboardSession.family_onboard_id || ""),
+      "",
+      "Thank you for gifting with SuperShyft.",
+    ];
+    var blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "supershyft-receipt-" + (id || "gift") + ".txt";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function wireOtpDigits() {
+    otpDigitInputs.forEach(function (input, index) {
+      input.addEventListener("input", function () {
+        var digits = String(input.value || "").replace(/\D/g, "");
+        if (digits.length > 1) {
+          /* Paste / autofill into this box */
+          var chars = digits.slice(0, otpDigitInputs.length - index).split("");
+          chars.forEach(function (ch, i) {
+            if (otpDigitInputs[index + i]) otpDigitInputs[index + i].value = ch;
+          });
+          var next = otpDigitInputs[Math.min(index + chars.length, otpDigitInputs.length - 1)];
+          if (next) next.focus();
+          return;
+        }
+        input.value = digits.slice(0, 1);
+        if (digits && otpDigitInputs[index + 1]) otpDigitInputs[index + 1].focus();
+      });
+
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace" && !input.value && otpDigitInputs[index - 1]) {
+          otpDigitInputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener("paste", function (e) {
+        var text = (e.clipboardData || window.clipboardData).getData("text") || "";
+        var digits = text.replace(/\D/g, "").slice(0, 6);
+        if (!digits) return;
+        e.preventDefault();
+        otpDigitInputs.forEach(function (box, i) {
+          box.value = digits[i] || "";
+        });
+        var focusIdx = Math.min(digits.length, otpDigitInputs.length - 1);
+        otpDigitInputs[focusIdx].focus();
+      });
+    });
   }
 
   if (form) {
@@ -792,6 +1788,37 @@
   }
 
   if (bookBack) bookBack.addEventListener("click", closeBook);
+  if (otpBack) {
+    otpBack.addEventListener("click", function () {
+      hidePanel(otpPanel);
+      stopOtpTimer();
+      setOtpError("");
+      clearOtpInputs();
+      lockFormUnderOverlay();
+      showPanel(book);
+      placeBook();
+    });
+  }
+  if (otpVerify) otpVerify.addEventListener("click", verifyOtpAndPay);
+  if (otpResend) {
+    otpResend.addEventListener("click", function () {
+      if (otpResend.disabled) return;
+      submitFamilyOnboard({ resend: true });
+    });
+  }
+  if (paySuccessClose) paySuccessClose.addEventListener("click", closeBook);
+  if (payFailedClose) payFailedClose.addEventListener("click", closeBook);
+  if (payDownload) payDownload.addEventListener("click", downloadReceipt);
+  if (payRetry) payRetry.addEventListener("click", function () {
+    hidePanel(payFailed);
+    openRazorpayCheckout();
+  });
+  if (payChange) payChange.addEventListener("click", function () {
+    hidePanel(payFailed);
+    openRazorpayCheckout();
+  });
+
+  wireOtpDigits();
   window.addEventListener("resize", placeBook);
 
   if (book) {
@@ -800,7 +1827,37 @@
     });
 
     book.addEventListener("input", function (e) {
-      if (e.target.classList) e.target.classList.remove("is-invalid");
+      var t = e.target;
+      if (t && t.classList) t.classList.remove("is-invalid");
+      if (!t) return;
+      if (t.id === "book-address" || t.id === "book-city" || t.id === "book-pincode") {
+        scheduleServiceabilityCheck();
+      }
+    });
+
+    book.addEventListener("change", function (e) {
+      var t = e.target;
+      if (!t) return;
+      if (t.name === "book-date") {
+        fetchAvailableSlots();
+        return;
+      }
+      if (t.name === "book-gender") {
+        if (getSelectedDate() && geoState && geoState.serviceable) {
+          fetchAvailableSlots();
+        }
+        return;
+      }
+      if (t.name === "book-slot") {
+        lastSlotPayload = {
+          stm_id: t.getAttribute("data-stm-id") || t.value,
+          slot_time: t.getAttribute("data-slot-time") || "",
+          end_time: t.getAttribute("data-end-time") || "",
+          slot_date: t.getAttribute("data-slot-date") || getSelectedDate(),
+          provider: (geoState && geoState.provider) || PROVIDER,
+          zone_id: geoState ? geoState.zone_id : null,
+        };
+      }
     });
 
     book.addEventListener("submit", function (e) {
@@ -817,7 +1874,9 @@
       var msg = "";
       if (noGender) msg = "Please select the recipient's gender.";
       else if (missing.length) msg = "Please fill in the highlighted details.";
-      else if (noDate || noSlot) msg = "Please choose a date and a collection slot.";
+      else if (!geoState || !geoState.serviceable) {
+        msg = "Please enter a serviceable address before continuing.";
+      } else if (noDate || noSlot) msg = "Please choose a date and a collection slot.";
       if (bookError) {
         bookError.textContent = msg;
         bookError.hidden = !msg;
@@ -827,8 +1886,20 @@
         placeBook();
         return;
       }
-      if (bookSuccess) bookSuccess.classList.add("is-visible");
-      placeBook();
+      if (lastSlotPayload) {
+        book.dataset.selectedSlot = JSON.stringify(lastSlotPayload);
+      }
+      submitFamilyOnboard();
+    });
+  }
+
+  if (otpPanel) {
+    otpPanel.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && otpBack) otpBack.click();
+      if (e.key === "Enter") {
+        e.preventDefault();
+        verifyOtpAndPay();
+      }
     });
   }
 })();
