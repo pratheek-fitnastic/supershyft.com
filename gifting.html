@@ -38,9 +38,10 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261020a1">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-box-lid.png">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-box-base.png">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261021-pull">
+  <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-closed.png">
+  <link rel="preload" as="image" href="assets/images/gifting/box3d-tray.png">
+  <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-open.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-card-ui.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-inner-scene.png">
   <link rel="preload" as="image" href="assets/images/gifting/bg-sections.jpg">
@@ -203,103 +204,133 @@
           </div>
 
           <div class="g-box__canvas" id="gift-box-canvas">
+            <div class="g-box__ambient" aria-hidden="true"></div>
             <div class="g-box__burst" aria-hidden="true"></div>
+            <div class="g-box__dust" id="gift-box-dust" aria-hidden="true"></div>
             <div class="g-box__sparkles" id="gift-box-sparkles" aria-hidden="true"></div>
 
-            <!-- Closed box (856:11752), pre-split at the lid seam with Figma's pink glow baked in -->
-            <div class="g-box__closed" aria-hidden="true">
-              <img class="g-box__closed-part g-box__closed-base" src="assets/images/gifting/gift-box-base.png" width="1184" height="357" alt="">
-              <img class="g-box__closed-part g-box__closed-lid" src="assets/images/gifting/gift-box-lid.png" width="1184" height="486" alt="">
-            </div>
+            <!--
+              Figma 980:11214 (closed) / 980:11211 (open).
+              Tray stays fixed. Only the L-lid plate lifts, then settles to open pose.
+              Card rises from the tray well.
+            -->
+            <div class="g-box__stage" id="gift-box-open" aria-hidden="false">
+              <img
+                class="g-box__tray"
+                src="assets/images/gifting/box3d-tray.png"
+                width="3072"
+                height="2048"
+                alt=""
+                decoding="async"
+                aria-hidden="true"
+              >
 
-            <!-- Open box + flip card (856:11754 / 862:10880) -->
-            <div class="g-box__open-stage" id="gift-box-open" aria-hidden="true">
-              <img class="g-box__shell" src="assets/images/gifting/gift-card-ui.png" width="3072" height="2048" alt="Open SuperShyft gift box">
+              <div class="g-box__llid" id="gift-box-llid">
+                <img
+                  class="g-box__lid-closed"
+                  src="assets/images/gifting/box3d-lid-closed.png"
+                  width="2972"
+                  height="2116"
+                  alt="Closed SuperShyft gift box"
+                  decoding="async"
+                >
+                <img
+                  class="g-box__lid-open"
+                  src="assets/images/gifting/box3d-lid-open.png"
+                  width="3072"
+                  height="2048"
+                  alt=""
+                  decoding="async"
+                  aria-hidden="true"
+                >
+              </div>
 
-              <div class="g-box__package" id="gift-package">
-                <div class="g-box__card-flip">
-                  <!-- FRONT — 856:11756 -->
-                  <div class="g-box__card-face g-box__card-face--front">
-                    <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
-                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <p class="g-box__script">Wrapped in Love</p>
+              <div class="g-box__well" id="gift-box-well">
+                <div class="g-box__package" id="gift-package">
+                  <div class="g-box__card-flip">
+                    <!-- FRONT — 856:11756 -->
+                    <div class="g-box__card-face g-box__card-face--front">
+                      <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
+                      <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <p class="g-box__script">Wrapped in Love</p>
 
-                    <div class="g-box__package-panel">
-                      <div class="g-box__badge">Men &amp; Women</div>
-                      <div class="g-box__pkg-head">
-                        <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
-                        <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
-                        <div class="g-box__price-row">
-                          <span class="g-box__price">₹ 3,499/-</span>
-                          <span class="g-box__price-old">₹4,499</span>
+                      <div class="g-box__package-panel">
+                        <div class="g-box__badge">Men &amp; Women</div>
+                        <div class="g-box__pkg-head">
+                          <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
+                          <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
+                          <div class="g-box__price-row">
+                            <span class="g-box__price">₹ 3,499/-</span>
+                            <span class="g-box__price-old">₹4,499</span>
+                          </div>
+                        </div>
+                        <ul class="g-box__features">
+                          <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 test parameters</li>
+                          <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt=""></span>Doctor consultation included</li>
+                          <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation included</li>
+                        </ul>
+                        <div class="g-box__explore-wrap">
+                          <button type="button" class="g-box__explore" id="flip-package-card">Explore Package</button>
                         </div>
                       </div>
-                      <ul class="g-box__features">
-                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 test parameters</li>
-                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt=""></span>Doctor consultation included</li>
-                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation included</li>
-                      </ul>
-                      <div class="g-box__explore-wrap">
-                        <button type="button" class="g-box__explore" id="flip-package-card">Explore Package</button>
-                      </div>
                     </div>
-                  </div>
 
-                  <!-- BACK — Profiles Included (860:10630) -->
-                  <div class="g-box__card-face g-box__card-face--back">
-                    <div class="g-box__wire" aria-hidden="true"></div>
-                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <div class="g-box__profiles">
-                      <div class="g-box__profiles-head">
-                        <h3 class="g-box__profiles-title">Profiles Included</h3>
-                        <div class="g-box__profiles-badge" aria-label="8 tests, 69 parameters">
-                          <span>8 Tests</span>
-                          <span class="g-box__profiles-badge-div" aria-hidden="true"></span>
-                          <span>69 Parameters</span>
+                    <!-- BACK — Profiles Included (860:10630) -->
+                    <div class="g-box__card-face g-box__card-face--back">
+                      <div class="g-box__wire" aria-hidden="true"></div>
+                      <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
+                      <div class="g-box__profiles">
+                        <div class="g-box__profiles-head">
+                          <h3 class="g-box__profiles-title">Profiles Included</h3>
+                          <div class="g-box__profiles-badge" aria-label="8 tests, 69 parameters">
+                            <span>8 Tests</span>
+                            <span class="g-box__profiles-badge-div" aria-hidden="true"></span>
+                            <span>69 Parameters</span>
+                          </div>
+                        </div>
+                        <div class="g-box__profiles-grid">
+                          <article class="g-box__profile">
+                            <h4>Complete Haemogram <span>(25)</span></h4>
+                            <p>CBC with 25 parameters including RBC, <br class="g-br-d">WBC, platelets, differential count, ESR, etc.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Diabetes Profile <span>(2)</span></h4>
+                            <p>Fasting sugar, Hba1c.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Thyroid Profile <span>(3)</span></h4>
+                            <p>T3 Free free iodothyronine, T4free free <br class="g-br-d">thyroxine, TSH ultra- Sensitive.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Liver Function Tests <span>(12)</span></h4>
+                            <p>Albumin, alkaline phosphatase, bilirubin <br class="g-br-d">direct, bilirubin total, ggpt, proteins serum, <br class="g-br-d">sgot/ast, sgpt/alt, bilirubin indirect, <br class="g-br-d">globulin, A/G ratio, SGOT/SGPT ratio.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Kidney Function Tests <span>(12)</span></h4>
+                            <p>BUN urea nitrogen, calcium total, <br class="g-br-d">chlorides, creatinine, sodium, urea, uric <br class="g-br-d">acid, BUN/Creatinine ratio, Urea/Creatinine <br class="g-br-d">Ratio, EGFR .Phosphorus-Inorganic, <br class="g-br-d">Potassium.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Lipid Profile <span>(9)</span></h4>
+                            <p>Cholestrol total, HDL cholestrol direct, <br class="g-br-d">Triglycerides, Non-HDL cholestrol, <br class="g-br-d">CHOL/HDL Ratio, LDL cholestrol, VLDL <br class="g-br-d">cholestrol, LDL/HDL cholesterol, HDL / LDL <br class="g-br-d">cholestrol ratio.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Iron Profile <span>(4)</span></h4>
+                            <p>Iron serum, TIBC, UBIC, Transferrin <br class="g-br-d">Saturation.</p>
+                          </article>
+                          <article class="g-box__profile">
+                            <h4>Vitamins <span>(2)</span></h4>
+                            <p>Vit B12 (Cyanocobalamin), vit d total-25 <br class="g-br-d">hydroxy.</p>
+                          </article>
                         </div>
                       </div>
-                      <div class="g-box__profiles-grid">
-                        <article class="g-box__profile">
-                          <h4>Complete Haemogram <span>(25)</span></h4>
-                          <p>CBC with 25 parameters including RBC, <br class="g-br-d">WBC, platelets, differential count, ESR, etc.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Diabetes Profile <span>(2)</span></h4>
-                          <p>Fasting sugar, Hba1c.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Thyroid Profile <span>(3)</span></h4>
-                          <p>T3 Free free iodothyronine, T4free free <br class="g-br-d">thyroxine, TSH ultra- Sensitive.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Liver Function Tests <span>(12)</span></h4>
-                          <p>Albumin, alkaline phosphatase, bilirubin <br class="g-br-d">direct, bilirubin total, ggpt, proteins serum, <br class="g-br-d">sgot/ast, sgpt/alt, bilirubin indirect, <br class="g-br-d">globulin, A/G ratio, SGOT/SGPT ratio.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Kidney Function Tests <span>(12)</span></h4>
-                          <p>BUN urea nitrogen, calcium total, <br class="g-br-d">chlorides, creatinine, sodium, urea, uric <br class="g-br-d">acid, BUN/Creatinine ratio, Urea/Creatinine <br class="g-br-d">Ratio, EGFR .Phosphorus-Inorganic, <br class="g-br-d">Potassium.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Lipid Profile <span>(9)</span></h4>
-                          <p>Cholestrol total, HDL cholestrol direct, <br class="g-br-d">Triglycerides, Non-HDL cholestrol, <br class="g-br-d">CHOL/HDL Ratio, LDL cholestrol, VLDL <br class="g-br-d">cholestrol, LDL/HDL cholesterol, HDL / LDL <br class="g-br-d">cholestrol ratio.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Iron Profile <span>(4)</span></h4>
-                          <p>Iron serum, TIBC, UBIC, Transferrin <br class="g-br-d">Saturation.</p>
-                        </article>
-                        <article class="g-box__profile">
-                          <h4>Vitamins <span>(2)</span></h4>
-                          <p>Vit B12 (Cyanocobalamin), vit d total-25 <br class="g-br-d">hydroxy.</p>
-                        </article>
-                      </div>
+                      <button type="button" class="g-box__flip-back" id="flip-package-card-back" aria-label="Flip package card back">Show package</button>
                     </div>
-                    <button type="button" class="g-box__flip-back" id="flip-package-card-back" aria-label="Flip package card back">Show package</button>
                   </div>
                 </div>
               </div>
@@ -703,11 +734,17 @@
   </footer>
   <!-- footer end -->
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+    if (typeof gsap === "undefined") {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"><\/script>');
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"><\/script>');
+    }
+  </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261020b3" defer></script>
+  <script src="assets/js/gifting.js?v=20261021-pull" defer></script>
 </body>
 
 </html>

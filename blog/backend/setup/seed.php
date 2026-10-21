@@ -44,6 +44,7 @@ if (is_file($envFile)) {
 }
 
 $DB_HOST = $_ENV['DB_HOST'] ?? 'localhost';
+$DB_PORT = $_ENV['DB_PORT'] ?? '3306';
 $DB_NAME = $_ENV['DB_NAME'] ?? 'supershyft_blog';
 $DB_USER = $_ENV['DB_USER'] ?? 'root';
 $DB_PASS = $_ENV['DB_PASS'] ?? '';
@@ -55,7 +56,7 @@ $pdo     = null;
 /* ── Step 1: Create database if missing ─────────────────── */
 try {
     $root = new PDO(
-        "mysql:host=$DB_HOST;charset=utf8mb4",
+        "mysql:host=$DB_HOST;port=$DB_PORT;charset=utf8mb4",
         $DB_USER, $DB_PASS,
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
@@ -70,7 +71,7 @@ try {
 if ($success) {
     try {
         $pdo = new PDO(
-            "mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4",
+            "mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_NAME;charset=utf8mb4",
             $DB_USER, $DB_PASS,
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
         );

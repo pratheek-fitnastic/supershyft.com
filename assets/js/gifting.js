@@ -36,14 +36,14 @@
   var mandalaImg = document.getElementById("steps-mandala");
   var mandalaWrap = document.getElementById("steps-mandala-wrap");
   var stepPanels = document.querySelectorAll(".g-steps__panel");
-  var boxHasOpened = false;
-  var openAnimTimer = null;
-  /* Must match the 5s keyframes on .g-box.is-opening in gifting.css */
-  var OPEN_SEQUENCE_MS = 5000;
-  var SPARKS_AT_MS = 850;
   var boxCanvas = document.getElementById("gift-box-canvas");
   var sparkLayer = document.getElementById("gift-box-sparkles");
+  var dustLayer = document.getElementById("gift-box-dust");
   var giftPackage = document.getElementById("gift-package");
+  var boxOpenTl = null;
+  var boxOpenST = null;
+  var boxFullyOpen = false;
+  var boxScrubActive = false;
 
   /* Scale the 1302 × 868 Figma canvas to the box width; on small screens pad for the taller card */
   var lastDocH = 0;
@@ -73,141 +73,313 @@
       var overflow = giftPackage.getBoundingClientRect().bottom - giftBox.getBoundingClientRect().bottom;
       if (overflow > 0) giftBox.style.marginBottom = Math.ceil(overflow + 16) + "px";
     }
-    /* The box changes the page height (open state, card flip) — re-measure the pinned steps
-       below so their scroll start stays correct and nothing overlaps. */
+    /* Never refresh ScrollTrigger mid-scrub — it resets the box pose and kills the animation */
+    if (boxScrubActive) return;
     var newH = document.documentElement.scrollHeight;
     if (window.ScrollTrigger && newH !== lastDocH) {
       lastDocH = newH;
       window.requestAnimationFrame(function () {
-        ScrollTrigger.refresh();
+        if (!boxScrubActive) ScrollTrigger.refresh();
       });
     }
-  }
-
-  function burstSparkles() {
-    if (!sparkLayer || reducedMotion) return;
-    sparkLayer.innerHTML = "";
-    for (var i = 0; i < 46; i++) {
-      var spark = document.createElement("span");
-      var angle = Math.random() * Math.PI * 2;
-      var dist = 180 + Math.random() * 420;
-      spark.className = "g-box__spark";
-      spark.style.setProperty("--dx", Math.cos(angle) * dist * 1.3 + "px");
-      spark.style.setProperty("--dy", Math.sin(angle) * dist * 0.75 - 120 + "px");
-      spark.style.setProperty("--sz", 6 + Math.random() * 16 + "px");
-      spark.style.setProperty("--dur", 1.1 + Math.random() * 0.9 + "s");
-      spark.style.setProperty("--delay", Math.random() * 0.25 + "s");
-      sparkLayer.appendChild(spark);
-    }
-    window.setTimeout(function () {
-      sparkLayer.innerHTML = "";
-    }, 2600);
-  }
-
-  function clearOpenTimers() {
-    if (openAnimTimer) {
-      window.clearTimeout(openAnimTimer);
-      openAnimTimer = null;
-    }
-  }
-
-  function finishOpen() {
-    giftBox.classList.remove("is-opening");
-    giftBox.classList.add("is-open");
-    giftBox.setAttribute("aria-expanded", "true");
-    giftBox.setAttribute("aria-label", "Gift box opened — explore the package");
-    giftBox.removeAttribute("role");
-    giftBox.removeAttribute("tabindex");
-    var flipBtnEl = document.getElementById("flip-package-card");
-    if (flipBtnEl) flipBtnEl.setAttribute("tabindex", "0");
-    document.querySelectorAll(".js-gift-flip").forEach(function (b) {
-      b.setAttribute("tabindex", "0");
-    });
-    openAnimTimer = null;
-    fitGiftBox();
-  }
-
-  /* Closed → shake → lid lifts → light burst + sparkles → open box, card rises (2.8s) */
-  function openGiftBox() {
-    if (!giftBox || giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) {
-      return;
-    }
-    boxHasOpened = true;
-    clearOpenTimers();
-    giftBox.classList.remove("is-flipped");
-    var openStage = document.getElementById("gift-box-open");
-    if (openStage) openStage.setAttribute("aria-hidden", "false");
-
-    if (reducedMotion) {
-      finishOpen();
-      return;
-    }
-    /* Decode the big open-box art first so the first frames never hitch on image decoding */
-    /*
-     * Start only once scrolling has settled and the art is decoded, then after two painted
-     * frames — opening mid-scroll is what made the first half-second stutter.
-     */
-    Promise.all([decodeBoxImages(), waitForScrollIdle()]).then(function () {
-      window.requestAnimationFrame(function () {
-        window.requestAnimationFrame(function () {
-          giftBox.classList.add("is-opening");
-          /* No sparkles: the reference opening is calm */
-          openAnimTimer = window.setTimeout(finishOpen, OPEN_SEQUENCE_MS);
-        });
-      });
-    });
-  }
-
-  /*
-   * Resolves once scrolling has really finished: the browser's `scrollend` event where
-   * supported, otherwise 250ms with no scroll. A smooth scroll can pause mid-way, so a short
-   * idle window alone is not enough. Never waits longer than 2s.
-   */
-  function waitForScrollIdle() {
-    return new Promise(function (resolve) {
-      var done = false;
-      var idleTimer = null;
-      var hasScrollEnd = "onscrollend" in window;
-      function finish() {
-        if (done) return;
-        done = true;
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("scrollend", onScrollEnd);
-        window.clearTimeout(idleTimer);
-        resolve();
-      }
-      function onScroll() {
-        window.clearTimeout(idleTimer);
-        idleTimer = window.setTimeout(finish, hasScrollEnd ? 600 : 250);
-      }
-      function onScrollEnd() {
-        window.clearTimeout(idleTimer);
-        idleTimer = window.setTimeout(finish, 80);
-      }
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("scrollend", onScrollEnd);
-      idleTimer = window.setTimeout(finish, 250);
-      window.setTimeout(finish, 2000);
-    });
   }
 
   function decodeBoxImages() {
-    if (!giftBox) return Promise.resolve();
+    if (!giftPack) return Promise.resolve();
     var imgs = giftPack.querySelectorAll("img");
     var jobs = Array.prototype.map.call(imgs, function (img) {
       if (!img.decode) return Promise.resolve();
       return img.decode().catch(function () {});
     });
-    /* Never wait more than 1.2s — start anyway on very slow connections */
     var cap = new Promise(function (resolve) {
       window.setTimeout(resolve, 1200);
     });
     return Promise.race([Promise.all(jobs), cap]);
   }
 
+  function setBoxInteractive(open) {
+    if (!giftBox) return;
+    boxFullyOpen = !!open;
+    giftBox.classList.toggle("is-open", boxFullyOpen);
+    giftBox.setAttribute("aria-expanded", boxFullyOpen ? "true" : "false");
+    giftBox.setAttribute(
+      "aria-label",
+      boxFullyOpen ? "Gift box opened — explore the package" : "Open gift box — keep scrolling"
+    );
+    if (boxFullyOpen) {
+      giftBox.removeAttribute("role");
+      giftBox.removeAttribute("tabindex");
+      giftBox.classList.remove("is-scrubbing");
+    } else {
+      giftBox.setAttribute("role", "button");
+      giftBox.setAttribute("tabindex", "0");
+      giftBox.classList.remove("is-flipped", "is-turning", "is-3d");
+      giftBox.classList.add("is-scrubbing");
+    }
+    var flipBtnEl = document.getElementById("flip-package-card");
+    if (flipBtnEl) flipBtnEl.setAttribute("tabindex", boxFullyOpen ? "0" : "-1");
+    document.querySelectorAll(".js-gift-flip").forEach(function (b) {
+      b.setAttribute("tabindex", boxFullyOpen ? "0" : "-1");
+    });
+    if (giftPack) giftPack.classList.toggle("is-box-open", boxFullyOpen);
+    var openStage = document.getElementById("gift-box-open");
+    if (openStage) openStage.setAttribute("aria-hidden", boxFullyOpen ? "false" : "true");
+  }
+
+  function snapBoxOpen() {
+    if (!boxOpenST) return;
+    window.scrollTo({
+      top: boxOpenST.end,
+      behavior: reducedMotion ? "auto" : "smooth"
+    });
+  }
+
+  /*
+   * Scroll-pinned unboxing:
+   *   Tray stays fixed. Only the L-lid lifts off, dissolves into open lid pose,
+   *   then the card rises from inside the tray well.
+   */
+  function buildBoxOpenTimeline() {
+    if (!giftBox || !window.gsap) return null;
+
+    var llid = giftBox.querySelector(".g-box__llid") || document.getElementById("gift-box-llid");
+    var lidClosed = giftBox.querySelector(".g-box__lid-closed");
+    var lidOpen = giftBox.querySelector(".g-box__lid-open");
+    var tray = giftBox.querySelector(".g-box__tray");
+    var well = document.getElementById("gift-box-well");
+    var pkg = giftPackage;
+    var ambient = giftBox.querySelector(".g-box__ambient");
+    var burst = giftBox.querySelector(".g-box__burst");
+    var mClosed = giftBox.querySelector(".g-mbox__closed");
+    var mOpen = giftBox.querySelector(".g-mbox__open");
+    var mCard = giftBox.querySelector(".g-mbox__card");
+    var isMobile = window.matchMedia("(max-width: 767.98px)").matches;
+
+    if (dustLayer && !reducedMotion) {
+      dustLayer.innerHTML = "";
+      for (var d = 0; d < 14; d++) {
+        var mote = document.createElement("span");
+        mote.className = "g-box__mote";
+        mote.style.setProperty("--mw", 1.5 + Math.random() * 2.5 + "px");
+        mote.style.setProperty("--mh", 7 + Math.random() * 12 + "px");
+        dustLayer.appendChild(mote);
+      }
+    }
+    var motes = dustLayer ? dustLayer.querySelectorAll(".g-box__mote") : [];
+
+    var tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+
+    if (llid) {
+      gsap.set(llid, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        rotation: 0,
+        opacity: 1,
+        transformOrigin: "50% 28%",
+        force3D: true
+      });
+    }
+    if (lidClosed) gsap.set(lidClosed, { opacity: 1, force3D: true });
+    if (lidOpen) gsap.set(lidOpen, { opacity: 0, force3D: true });
+    if (tray) gsap.set(tray, { opacity: 0.001, force3D: true });
+    if (well) gsap.set(well, { autoAlpha: 0 });
+    if (pkg) gsap.set(pkg, { yPercent: 110, autoAlpha: 1, force3D: true });
+    if (ambient) gsap.set(ambient, { opacity: 0, scale: 0.85 });
+    if (burst) gsap.set(burst, { opacity: 0, scale: 0.5 });
+    if (mClosed) gsap.set(mClosed, { opacity: 1, y: 0, scale: 1, visibility: "visible" });
+    if (mOpen) gsap.set(mOpen, { opacity: 0 });
+    if (mCard) gsap.set(mCard, { yPercent: 110, autoAlpha: 1 });
+    if (motes.length) gsap.set(motes, { opacity: 0, x: 0, y: 0, scale: 0.3 });
+
+    if (ambient) tl.to(ambient, { opacity: 0.55, scale: 1, duration: 0.1 }, 0);
+
+    /* Reveal tray under the lid as soon as lid starts to clear */
+    if (!isMobile && tray) {
+      tl.to(tray, { opacity: 1, duration: 0.18 }, 0.12);
+    }
+
+    /* Only the L-lid lifts — tray never moves */
+    if (!isMobile && llid) {
+      tl.to(
+        llid,
+        {
+          y: -90,
+          scale: 1.04,
+          duration: 0.36,
+          ease: "power2.inOut",
+          force3D: true
+        },
+        0.06
+      );
+    }
+
+    /* Hand off closed lid → open lid pose */
+    if (!isMobile && lidOpen) {
+      tl.to(lidOpen, { opacity: 1, duration: 0.22 }, 0.28);
+    }
+    if (!isMobile && lidClosed) {
+      tl.to(lidClosed, { opacity: 0, duration: 0.2 }, 0.3);
+    }
+    if (!isMobile && llid) {
+      tl.to(
+        llid,
+        {
+          y: -40,
+          scale: 1,
+          duration: 0.28,
+          ease: "power2.out",
+          force3D: true
+        },
+        0.32
+      );
+    }
+
+    if (burst) {
+      tl.to(burst, { opacity: 0.75, scale: 1.05, duration: 0.12 }, 0.3);
+      tl.to(burst, { opacity: 0, scale: 1.22, duration: 0.22 }, 0.46);
+    }
+
+    if (isMobile && mClosed) {
+      tl.to(mClosed, { y: -22, scale: 1.03, duration: 0.3 }, 0.08);
+      tl.to(mClosed, { opacity: 0, duration: 0.16 }, 0.32);
+    }
+    if (isMobile && mOpen) {
+      tl.to(mOpen, { opacity: 1, duration: 0.22 }, 0.2);
+    }
+
+    if (ambient) {
+      tl.to(ambient, { opacity: 0.9, scale: 1.1, duration: 0.16 }, 0.28);
+      tl.to(ambient, { opacity: 0, duration: 0.18 }, 0.72);
+    }
+
+    if (motes.length) {
+      Array.prototype.forEach.call(motes, function (mote, i) {
+        var ang = (i / motes.length) * Math.PI * 2;
+        var dist = 100 + (i % 5) * 36;
+        tl.to(
+          mote,
+          {
+            opacity: 0.85,
+            x: Math.cos(ang) * dist,
+            y: Math.sin(ang) * dist * 0.5 - 50,
+            scale: 1,
+            duration: 0.2
+          },
+          0.34 + (i % 4) * 0.02
+        );
+        tl.to(mote, { opacity: 0, y: "-=30", duration: 0.28 }, 0.58 + (i % 4) * 0.02);
+      });
+    }
+
+    if (well) tl.to(well, { autoAlpha: 1, duration: 0.08 }, 0.42);
+    if (!isMobile && pkg) {
+      tl.fromTo(
+        pkg,
+        { yPercent: 110 },
+        { yPercent: 0, duration: 0.38, ease: "power3.out" },
+        0.48
+      );
+    }
+    if (isMobile && mCard) {
+      tl.fromTo(
+        mCard,
+        { yPercent: 110 },
+        { yPercent: 0, duration: 0.38, ease: "power3.out" },
+        0.48
+      );
+    }
+
+    tl.to({}, { duration: 0.06 }, 0.96);
+    return tl;
+  }
+
+  function killBoxOpenScroll() {
+    boxScrubActive = false;
+    if (boxOpenST) {
+      boxOpenST.kill(true);
+      boxOpenST = null;
+    }
+    if (boxOpenTl) {
+      boxOpenTl.kill();
+      boxOpenTl = null;
+    }
+    if (giftPack) giftPack.classList.remove("is-box-pinning");
+  }
+
+  function initBoxOpenScroll() {
+    if (!giftPack || !giftBox) return;
+    if (!window.gsap || !window.ScrollTrigger) {
+      console.warn("[gifting] GSAP missing — box will open on click only");
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    killBoxOpenScroll();
+
+    giftBox.classList.remove("is-open", "is-flipped");
+    if (giftPack) {
+      giftPack.classList.remove("is-box-open");
+      giftPack.classList.add("is-box-pinning");
+    }
+    boxFullyOpen = false;
+    giftBox.classList.add("is-scrubbing");
+    setBoxInteractive(false);
+
+    /*
+     * Always use scroll-scrub for the box open — even when prefers-reduced-motion is on.
+     * Instant-snap was making the box look "already open with no animation" on Windows
+     * machines that ship with animation effects reduced. Scroll-linked motion is user-driven.
+     */
+    boxOpenTl = buildBoxOpenTimeline();
+    if (!boxOpenTl) return;
+
+    var travel = Math.round(Math.max(window.innerHeight * 1.75, 1100));
+
+    boxOpenST = ScrollTrigger.create({
+      id: "gifting-box-open",
+      trigger: giftPack,
+      start: "top top",
+      end: "+=" + travel,
+      pin: true,
+      pinSpacing: true,
+      scrub: reducedMotion ? 0.35 : 0.75,
+      anticipatePin: 1,
+      animation: boxOpenTl,
+      onEnter: function () {
+        boxScrubActive = true;
+      },
+      onEnterBack: function () {
+        boxScrubActive = true;
+        setBoxInteractive(false);
+        giftBox.classList.add("is-scrubbing");
+      },
+      onLeave: function () {
+        boxScrubActive = false;
+        setBoxInteractive(true);
+      },
+      onLeaveBack: function () {
+        boxScrubActive = false;
+        setBoxInteractive(false);
+        giftBox.classList.add("is-scrubbing");
+      },
+      onUpdate: function (self) {
+        boxScrubActive = self.isActive;
+        if (self.progress >= 0.995) {
+          if (!boxFullyOpen) setBoxInteractive(true);
+        } else if (boxFullyOpen) {
+          setBoxInteractive(false);
+          giftBox.classList.add("is-scrubbing");
+        }
+      }
+    });
+
+    decodeBoxImages();
+  }
+
   var flipTimer = null;
   function flipPackageCard() {
-    if (!giftBox || !giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) {
+    if (!giftBox || !giftBox.classList.contains("is-open")) {
       return;
     }
     if (window.matchMedia("(max-width: 767.98px)").matches && !reducedMotion) {
@@ -268,99 +440,36 @@
     });
   }
 
-  /*
-   * Premium glide to section 2: a custom ease-in-out scroll (soft start, soft landing) instead of the
-   * browser's fixed smooth-scroll curve. Duration grows gently with distance. Any wheel/touch/key
-   * input cancels it so the visitor is never fighting the page.
-   */
-  var glideRaf = null;
-  function glideTo(targetY, done) {
-    var startY = window.pageYOffset;
-    var dist = targetY - startY;
-    if (reducedMotion || Math.abs(dist) < 2) {
-      window.scrollTo(0, targetY);
-      if (done) done();
-      return;
-    }
-    var duration = Math.min(1600, Math.max(900, Math.abs(dist) * 0.9));
-    var t0 = null;
-    var ease = function (t) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    };
-    var stop = function (e) {
-      if (glideRaf) window.cancelAnimationFrame(glideRaf);
-      glideRaf = null;
-      /* Interrupted by the visitor: let the in-view observer open the box when they get there */
-      if (e && e.type) {
-        boxHasOpened = false;
-        if (packObserver && giftPack) {
-          packObserver.unobserve(giftPack);
-          packObserver.observe(giftPack);
-        }
-      }
-      ["wheel", "touchstart", "keydown"].forEach(function (ev) {
-        window.removeEventListener(ev, stop);
-      });
-    };
-    ["wheel", "touchstart", "keydown"].forEach(function (ev) {
-      window.addEventListener(ev, stop, { passive: true });
-    });
-    var step = function (now) {
-      if (t0 === null) t0 = now;
-      var p = Math.min(1, (now - t0) / duration);
-      window.scrollTo(0, startY + dist * ease(p));
-      if (p < 1) {
-        glideRaf = window.requestAnimationFrame(step);
-      } else {
-        stop();
-        if (done) done();
-      }
-    };
-    glideRaf = window.requestAnimationFrame(step);
-  }
-
-  /* Explore Gifts → glide to section 2 (box centred), then the box opens on its own */
+  /* Explore Gifts → land at the start of the pinned unboxing, then scroll to open */
   if (exploreBtn) {
     exploreBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      if (!giftPack) return;
-      var rect = giftPack.getBoundingClientRect();
-      var target = window.pageYOffset + rect.top - Math.max(0, (window.innerHeight - rect.height) / 2);
-      boxHasOpened = true; /* the glide drives the opening — keep the in-view observer from starting it mid-scroll */
-      glideTo(Math.max(0, target), openGiftBox);
+      if (boxOpenST) {
+        window.scrollTo({
+          top: boxOpenST.start,
+          behavior: reducedMotion ? "auto" : "smooth"
+        });
+      } else {
+        scrollToEl(giftPack, "start");
+      }
     });
   }
 
-  /* Section in view → play opening animation once */
-  if (giftPack && giftBox && "IntersectionObserver" in window) {
-    var packObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting && !boxHasOpened) {
-            openGiftBox();
-          }
-        });
-      },
-      { threshold: 0.42, rootMargin: "0px 0px -8% 0px" }
-    );
-    packObserver.observe(giftPack);
-  }
-
-  /* Click closed box → open */
+  /* Click / keyboard on closed box → scrub to fully open (same position) */
   if (giftBox) {
     giftBox.addEventListener("click", function (e) {
-      if (e.target.closest && (e.target.closest("#flip-package-card") || e.target.closest("#flip-package-card-back") || e.target.closest(".js-gift-flip"))) {
+      if (e.target.closest && (e.target.closest("#flip-package-card") || e.target.closest("#flip-package-card-back") || e.target.closest(".js-gift-flip") || e.target.closest(".g-mbox__card"))) {
         return;
       }
-      if (giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) return;
-      openGiftBox();
+      if (giftBox.classList.contains("is-open")) return;
+      snapBoxOpen();
     });
 
     giftBox.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") {
-        if (giftBox.classList.contains("is-open") || giftBox.classList.contains("is-opening")) return;
+        if (giftBox.classList.contains("is-open")) return;
         e.preventDefault();
-        openGiftBox();
+        snapBoxOpen();
       }
     });
   }
@@ -472,10 +581,18 @@
     });
   }
 
-  function bootSteps() {
-    if (window.gsap && window.ScrollTrigger) {
+  function bootGiftingMotion() {
+    function start() {
+      initBoxOpenScroll();
       initStepsScroll();
       forceHeroTop();
+      window.requestAnimationFrame(function () {
+        forceHeroTop();
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      });
+    }
+    if (window.gsap && window.ScrollTrigger) {
+      start();
       return;
     }
     var tries = 0;
@@ -483,18 +600,18 @@
       tries += 1;
       if (window.gsap && window.ScrollTrigger) {
         window.clearInterval(timer);
-        initStepsScroll();
-        forceHeroTop();
-      } else if (tries > 40) {
+        start();
+      } else if (tries > 100) {
         window.clearInterval(timer);
+        console.warn("[gifting] GSAP/ScrollTrigger not available");
       }
-    }, 50);
+    }, 40);
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bootSteps);
+    document.addEventListener("DOMContentLoaded", bootGiftingMotion);
   } else {
-    bootSteps();
+    bootGiftingMotion();
   }
 
   window.addEventListener("load", function () {
@@ -506,10 +623,11 @@
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
       if (window.ScrollTrigger) {
+        initBoxOpenScroll();
         initStepsScroll();
         ScrollTrigger.refresh();
       }
-    }, 200);
+    }, 220);
   });
 
   /* Occasion tabs → swap preview card art + message chips */
