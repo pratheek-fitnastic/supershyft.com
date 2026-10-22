@@ -29,6 +29,9 @@
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var giftPack = document.getElementById("gift-pack");
   var giftBox = document.getElementById("gift-box");
+  var lidClosed = document.getElementById("gift-lid-closed");
+  var lidOpen = document.getElementById("gift-lid-open");
+  var giftPackage = document.getElementById("gift-package");
   var exploreBtn = document.getElementById("explore-gifts");
   var bookBtn = document.getElementById("book-the-gift");
   var stepsRoot = document.getElementById("gift-steps");
@@ -36,366 +39,32 @@
   var mandalaImg = document.getElementById("steps-mandala");
   var mandalaWrap = document.getElementById("steps-mandala-wrap");
   var stepPanels = document.querySelectorAll(".g-steps__panel");
-  var boxCanvas = document.getElementById("gift-box-canvas");
-  var sparkLayer = document.getElementById("gift-box-sparkles");
-  var dustLayer = document.getElementById("gift-box-dust");
-  var giftPackage = document.getElementById("gift-package");
-  var boxOpenTl = null;
-  var boxOpenST = null;
-  var boxFullyOpen = false;
-  var boxScrubActive = false;
 
-  /* Scale the 1302 × 868 Figma canvas to the box width; on small screens pad for the taller card */
+  /* Scale pack title/CTA to the 1440 × 1010 Figma frame. */
   var lastDocH = 0;
   function fitGiftBox() {
-    if (!giftBox || !boxCanvas) return;
-    var avail = giftBox.parentElement ? giftBox.parentElement.clientWidth : giftBox.clientWidth;
-    var s = Math.min(1, avail / 1302);
-    /*
-     * Desktop: Figma's 1440 × 1010 frame shows the whole section on one screen. Text, spacing,
-     * button and box all scale by s (CSS uses --g-pack-s), keeping Figma's proportions.
-     */
+    if (!giftPack) return;
+    var inner = giftPack.querySelector(".g-pack__inner");
+    var avail = inner ? inner.clientWidth : giftPack.clientWidth;
+    var s = Math.min(1, avail / 1344);
     if (window.matchMedia("(min-width: 992px)").matches) {
-      /* Everything in the section scales by s, so the full 1010px Figma frame fits the window height */
-      s = Math.max(0.45, Math.min(s, window.innerHeight / 1010));
+      var header = document.getElementById("header");
+      var headerH = header ? header.getBoundingClientRect().height : 80;
+      var frame = window.innerHeight - headerH - window.innerHeight * 0.04 - 12;
+      s = Math.max(0.45, Math.min(s, frame / 1000));
     }
-    var w = Math.round(1302 * s);
-    giftBox.style.width = window.matchMedia("(max-width: 767.98px)").matches ? "" : w + "px";
-    giftBox.style.setProperty("--g-box-s", s.toFixed(5));
-    if (giftPack) giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
-    giftBox.style.setProperty("--g-box-w", w + "px");
-    /* Mobile box (< 768px): 552 × 637 Figma canvas, scaled to the 440px design phone width */
-    /* Phones narrower than the 440px design get a slightly larger box (scale by width / 400) so the card text stays readable */
-    var vw = window.innerWidth;
-    giftBox.style.setProperty("--g-mbox-s", Math.min(1, vw >= 440 ? vw / 440 : vw / 400).toFixed(4));
-    giftBox.style.marginBottom = "";
-    if (giftPackage && window.matchMedia("(max-width: 991.98px)").matches && giftBox.classList.contains("is-open")) {
-      var overflow = giftPackage.getBoundingClientRect().bottom - giftBox.getBoundingClientRect().bottom;
-      if (overflow > 0) giftBox.style.marginBottom = Math.ceil(overflow + 16) + "px";
+    giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
+    if (giftPackage) {
+      var backS = Math.min(giftPackage.clientWidth / 889, giftPackage.clientHeight / 391);
+      giftPackage.style.setProperty("--g-back-s", backS > 0 ? backS.toFixed(5) : "1");
     }
-    /* Never refresh ScrollTrigger mid-scrub — it resets the box pose and kills the animation */
-    if (boxScrubActive) return;
     var newH = document.documentElement.scrollHeight;
     if (window.ScrollTrigger && newH !== lastDocH) {
       lastDocH = newH;
       window.requestAnimationFrame(function () {
-        if (!boxScrubActive) ScrollTrigger.refresh();
+        ScrollTrigger.refresh();
       });
     }
-  }
-
-  function decodeBoxImages() {
-    if (!giftPack) return Promise.resolve();
-    var imgs = giftPack.querySelectorAll("img");
-    var jobs = Array.prototype.map.call(imgs, function (img) {
-      if (!img.decode) return Promise.resolve();
-      return img.decode().catch(function () {});
-    });
-    var cap = new Promise(function (resolve) {
-      window.setTimeout(resolve, 1200);
-    });
-    return Promise.race([Promise.all(jobs), cap]);
-  }
-
-  function setBoxInteractive(open) {
-    if (!giftBox) return;
-    boxFullyOpen = !!open;
-    giftBox.classList.toggle("is-open", boxFullyOpen);
-    giftBox.setAttribute("aria-expanded", boxFullyOpen ? "true" : "false");
-    giftBox.setAttribute(
-      "aria-label",
-      boxFullyOpen ? "Gift box opened — explore the package" : "Open gift box — keep scrolling"
-    );
-    if (boxFullyOpen) {
-      giftBox.removeAttribute("role");
-      giftBox.removeAttribute("tabindex");
-      giftBox.classList.remove("is-scrubbing");
-    } else {
-      giftBox.setAttribute("role", "button");
-      giftBox.setAttribute("tabindex", "0");
-      giftBox.classList.remove("is-flipped", "is-turning", "is-3d");
-      giftBox.classList.add("is-scrubbing");
-    }
-    var flipBtnEl = document.getElementById("flip-package-card");
-    if (flipBtnEl) flipBtnEl.setAttribute("tabindex", boxFullyOpen ? "0" : "-1");
-    document.querySelectorAll(".js-gift-flip").forEach(function (b) {
-      b.setAttribute("tabindex", boxFullyOpen ? "0" : "-1");
-    });
-    if (giftPack) giftPack.classList.toggle("is-box-open", boxFullyOpen);
-    var openStage = document.getElementById("gift-box-open");
-    if (openStage) openStage.setAttribute("aria-hidden", boxFullyOpen ? "false" : "true");
-  }
-
-  function snapBoxOpen() {
-    if (!boxOpenST) return;
-    window.scrollTo({
-      top: boxOpenST.end,
-      behavior: reducedMotion ? "auto" : "smooth"
-    });
-  }
-
-  /*
-   * Scroll-pinned unboxing:
-   *   Tray stays fixed. Only the L-lid lifts off, dissolves into open lid pose,
-   *   then the card rises from inside the tray well.
-   */
-  function buildBoxOpenTimeline() {
-    if (!giftBox || !window.gsap) return null;
-
-    var llid = giftBox.querySelector(".g-box__llid") || document.getElementById("gift-box-llid");
-    var lidClosed = giftBox.querySelector(".g-box__lid-closed");
-    var lidOpen = giftBox.querySelector(".g-box__lid-open");
-    var tray = giftBox.querySelector(".g-box__tray");
-    var well = document.getElementById("gift-box-well");
-    var pkg = giftPackage;
-    var ambient = giftBox.querySelector(".g-box__ambient");
-    var burst = giftBox.querySelector(".g-box__burst");
-    var mClosed = giftBox.querySelector(".g-mbox__closed");
-    var mOpen = giftBox.querySelector(".g-mbox__open");
-    var mCard = giftBox.querySelector(".g-mbox__card");
-    var isMobile = window.matchMedia("(max-width: 767.98px)").matches;
-
-    if (dustLayer && !reducedMotion) {
-      dustLayer.innerHTML = "";
-      for (var d = 0; d < 14; d++) {
-        var mote = document.createElement("span");
-        mote.className = "g-box__mote";
-        mote.style.setProperty("--mw", 1.5 + Math.random() * 2.5 + "px");
-        mote.style.setProperty("--mh", 7 + Math.random() * 12 + "px");
-        dustLayer.appendChild(mote);
-      }
-    }
-    var motes = dustLayer ? dustLayer.querySelectorAll(".g-box__mote") : [];
-
-    var tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
-
-    if (llid) {
-      gsap.set(llid, {
-        x: 0,
-        y: 0,
-        scale: 1,
-        rotation: 0,
-        opacity: 1,
-        transformOrigin: "50% 28%",
-        force3D: true
-      });
-    }
-    if (lidClosed) gsap.set(lidClosed, { opacity: 1, force3D: true });
-    if (lidOpen) gsap.set(lidOpen, { opacity: 0, force3D: true });
-    if (tray) gsap.set(tray, { opacity: 0.001, force3D: true });
-    if (well) gsap.set(well, { autoAlpha: 0 });
-    if (pkg) gsap.set(pkg, { yPercent: 110, autoAlpha: 1, force3D: true });
-    if (ambient) gsap.set(ambient, { opacity: 0, scale: 0.85 });
-    if (burst) gsap.set(burst, { opacity: 0, scale: 0.5 });
-    if (mClosed) gsap.set(mClosed, { opacity: 1, y: 0, scale: 1, visibility: "visible" });
-    if (mOpen) gsap.set(mOpen, { opacity: 0 });
-    if (mCard) gsap.set(mCard, { yPercent: 110, autoAlpha: 1 });
-    if (motes.length) gsap.set(motes, { opacity: 0, x: 0, y: 0, scale: 0.3 });
-
-    if (ambient) tl.to(ambient, { opacity: 0.55, scale: 1, duration: 0.1 }, 0);
-
-    /* Reveal tray under the lid as soon as lid starts to clear */
-    if (!isMobile && tray) {
-      tl.to(tray, { opacity: 1, duration: 0.18 }, 0.12);
-    }
-
-    /* Only the L-lid lifts — tray never moves */
-    if (!isMobile && llid) {
-      tl.to(
-        llid,
-        {
-          y: -90,
-          scale: 1.04,
-          duration: 0.36,
-          ease: "power2.inOut",
-          force3D: true
-        },
-        0.06
-      );
-    }
-
-    /* Hand off closed lid → open lid pose */
-    if (!isMobile && lidOpen) {
-      tl.to(lidOpen, { opacity: 1, duration: 0.22 }, 0.28);
-    }
-    if (!isMobile && lidClosed) {
-      tl.to(lidClosed, { opacity: 0, duration: 0.2 }, 0.3);
-    }
-    if (!isMobile && llid) {
-      tl.to(
-        llid,
-        {
-          y: -40,
-          scale: 1,
-          duration: 0.28,
-          ease: "power2.out",
-          force3D: true
-        },
-        0.32
-      );
-    }
-
-    if (burst) {
-      tl.to(burst, { opacity: 0.75, scale: 1.05, duration: 0.12 }, 0.3);
-      tl.to(burst, { opacity: 0, scale: 1.22, duration: 0.22 }, 0.46);
-    }
-
-    if (isMobile && mClosed) {
-      tl.to(mClosed, { y: -22, scale: 1.03, duration: 0.3 }, 0.08);
-      tl.to(mClosed, { opacity: 0, duration: 0.16 }, 0.32);
-    }
-    if (isMobile && mOpen) {
-      tl.to(mOpen, { opacity: 1, duration: 0.22 }, 0.2);
-    }
-
-    if (ambient) {
-      tl.to(ambient, { opacity: 0.9, scale: 1.1, duration: 0.16 }, 0.28);
-      tl.to(ambient, { opacity: 0, duration: 0.18 }, 0.72);
-    }
-
-    if (motes.length) {
-      Array.prototype.forEach.call(motes, function (mote, i) {
-        var ang = (i / motes.length) * Math.PI * 2;
-        var dist = 100 + (i % 5) * 36;
-        tl.to(
-          mote,
-          {
-            opacity: 0.85,
-            x: Math.cos(ang) * dist,
-            y: Math.sin(ang) * dist * 0.5 - 50,
-            scale: 1,
-            duration: 0.2
-          },
-          0.34 + (i % 4) * 0.02
-        );
-        tl.to(mote, { opacity: 0, y: "-=30", duration: 0.28 }, 0.58 + (i % 4) * 0.02);
-      });
-    }
-
-    if (well) tl.to(well, { autoAlpha: 1, duration: 0.08 }, 0.42);
-    if (!isMobile && pkg) {
-      tl.fromTo(
-        pkg,
-        { yPercent: 110 },
-        { yPercent: 0, duration: 0.38, ease: "power3.out" },
-        0.48
-      );
-    }
-    if (isMobile && mCard) {
-      tl.fromTo(
-        mCard,
-        { yPercent: 110 },
-        { yPercent: 0, duration: 0.38, ease: "power3.out" },
-        0.48
-      );
-    }
-
-    tl.to({}, { duration: 0.06 }, 0.96);
-    return tl;
-  }
-
-  function killBoxOpenScroll() {
-    boxScrubActive = false;
-    if (boxOpenST) {
-      boxOpenST.kill(true);
-      boxOpenST = null;
-    }
-    if (boxOpenTl) {
-      boxOpenTl.kill();
-      boxOpenTl = null;
-    }
-    if (giftPack) giftPack.classList.remove("is-box-pinning");
-  }
-
-  function initBoxOpenScroll() {
-    if (!giftPack || !giftBox) return;
-    if (!window.gsap || !window.ScrollTrigger) {
-      console.warn("[gifting] GSAP missing — box will open on click only");
-      return;
-    }
-
-    gsap.registerPlugin(ScrollTrigger);
-    killBoxOpenScroll();
-
-    giftBox.classList.remove("is-open", "is-flipped");
-    if (giftPack) {
-      giftPack.classList.remove("is-box-open");
-      giftPack.classList.add("is-box-pinning");
-    }
-    boxFullyOpen = false;
-    giftBox.classList.add("is-scrubbing");
-    setBoxInteractive(false);
-
-    /*
-     * Always use scroll-scrub for the box open — even when prefers-reduced-motion is on.
-     * Instant-snap was making the box look "already open with no animation" on Windows
-     * machines that ship with animation effects reduced. Scroll-linked motion is user-driven.
-     */
-    boxOpenTl = buildBoxOpenTimeline();
-    if (!boxOpenTl) return;
-
-    var travel = Math.round(Math.max(window.innerHeight * 1.75, 1100));
-
-    boxOpenST = ScrollTrigger.create({
-      id: "gifting-box-open",
-      trigger: giftPack,
-      start: "top top",
-      end: "+=" + travel,
-      pin: true,
-      pinSpacing: true,
-      scrub: reducedMotion ? 0.35 : 0.75,
-      anticipatePin: 1,
-      animation: boxOpenTl,
-      onEnter: function () {
-        boxScrubActive = true;
-      },
-      onEnterBack: function () {
-        boxScrubActive = true;
-        setBoxInteractive(false);
-        giftBox.classList.add("is-scrubbing");
-      },
-      onLeave: function () {
-        boxScrubActive = false;
-        setBoxInteractive(true);
-      },
-      onLeaveBack: function () {
-        boxScrubActive = false;
-        setBoxInteractive(false);
-        giftBox.classList.add("is-scrubbing");
-      },
-      onUpdate: function (self) {
-        boxScrubActive = self.isActive;
-        if (self.progress >= 0.995) {
-          if (!boxFullyOpen) setBoxInteractive(true);
-        } else if (boxFullyOpen) {
-          setBoxInteractive(false);
-          giftBox.classList.add("is-scrubbing");
-        }
-      }
-    });
-
-    decodeBoxImages();
-  }
-
-  var flipTimer = null;
-  function flipPackageCard() {
-    if (!giftBox || !giftBox.classList.contains("is-open")) {
-      return;
-    }
-    if (window.matchMedia("(max-width: 767.98px)").matches && !reducedMotion) {
-      /* Mobile: switch 3D on from the current side, turn, then lay the new face flat again */
-      giftBox.classList.add("is-3d");
-      void giftBox.offsetWidth;
-      giftBox.classList.add("is-turning");
-      giftBox.classList.toggle("is-flipped");
-      window.clearTimeout(flipTimer);
-      flipTimer = window.setTimeout(function () {
-        giftBox.classList.remove("is-turning", "is-3d");
-      }, 800);
-    } else {
-      giftBox.classList.toggle("is-flipped");
-    }
-    fitGiftBox();
   }
 
   fitGiftBox();
@@ -419,17 +88,6 @@
   window.addEventListener("load", syncCtaSize);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncCtaSize);
 
-  /*
-   * Section 2's art is large (4096px background, 3072px open box). Decode it while the
-   * visitor is still on the hero so reaching the section never stalls the opening animation.
-   */
-  window.addEventListener("load", function () {
-    var warm = function () {
-      decodeBoxImages();
-    };
-    if ("requestIdleCallback" in window) window.requestIdleCallback(warm, { timeout: 1500 });
-    else window.setTimeout(warm, 300);
-  });
   window.addEventListener("load", fitGiftBox);
 
   function scrollToEl(el, block) {
@@ -440,74 +98,115 @@
     });
   }
 
-  /* Explore Gifts → land at the start of the pinned unboxing, then scroll to open */
+  /* Lid hinge: 2D scaleY only — no perspective, so the lid cannot grow. */
+  var boxLidTl = null;
+
+  function killBoxLidScroll() {
+    if (window.ScrollTrigger) {
+      ScrollTrigger.getAll().forEach(function (t) {
+        if (t.vars && t.vars.id === "gifting-box") t.kill();
+      });
+    }
+    if (boxLidTl) {
+      boxLidTl.kill();
+      boxLidTl = null;
+    }
+  }
+
+  function initBoxLidScroll() {
+    if (!giftPack || !lidClosed || !lidOpen) return;
+    if (!window.gsap || !window.ScrollTrigger) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+    killBoxLidScroll();
+
+    function cardHiddenY() {
+      return giftPackage ? giftPackage.offsetHeight * 1.12 : 0;
+    }
+    function cardShownY() {
+      return 0;
+    }
+
+    gsap.set(lidClosed, { scaleY: 1, transformOrigin: "50% 0%", force3D: false });
+    gsap.set(lidOpen, { scaleY: 0, transformOrigin: "50% 100%", force3D: false });
+    if (giftPackage) {
+      gsap.set(giftPackage, { y: cardHiddenY, yPercent: 0, force3D: false });
+    }
+
+    if (reducedMotion) {
+      gsap.set(lidClosed, { scaleY: 0 });
+      gsap.set(lidOpen, { scaleY: 1 });
+      if (giftPackage) gsap.set(giftPackage, { y: cardShownY, yPercent: 0 });
+      if (giftBox) giftBox.classList.add("is-open");
+      return;
+    }
+
+    boxLidTl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+    boxLidTl.to(lidClosed, { scaleY: 0, duration: 1 }, 0);
+    boxLidTl.to(lidOpen, { scaleY: 1, duration: 1 }, 1);
+    if (giftPackage) {
+      boxLidTl.fromTo(
+        giftPackage,
+        { y: cardHiddenY, yPercent: 0 },
+        { y: cardShownY, yPercent: 0, duration: 1.35 },
+        2
+      );
+    }
+
+    ScrollTrigger.create({
+      id: "gifting-box",
+      trigger: giftPack,
+      animation: boxLidTl,
+      /* Pin while the block is still in the middle of the screen, below the header */
+      start: function () {
+        var header = document.getElementById("header");
+        var headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 80;
+        var air = Math.round(window.innerHeight * 0.04);
+        return "top " + (headerH + air) + "px";
+      },
+      end: function () {
+        return "+=" + Math.round(window.innerHeight * 2.4);
+      },
+      pin: giftPack,
+      pinSpacing: true,
+      scrub: 0.55,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: function (self) {
+        if (!giftBox) return;
+        var opened = self.progress > 0.97;
+        giftBox.classList.toggle("is-open", opened);
+        if (!opened) giftBox.classList.remove("is-flipped");
+      }
+    });
+  }
+
+  function bindPackageFlip(id) {
+    var el = document.getElementById(id);
+    if (!el || !giftBox) return;
+    el.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!giftBox.classList.contains("is-open")) return;
+      giftBox.classList.toggle("is-flipped");
+    });
+  }
+  bindPackageFlip("flip-package-card");
+  bindPackageFlip("flip-package-card-back");
+
+  /* Explore Gifts → the framed start pose (lid still closed) */
   if (exploreBtn) {
     exploreBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      if (boxOpenST) {
+      var st = window.ScrollTrigger && ScrollTrigger.getById("gifting-box");
+      if (st) {
         window.scrollTo({
-          top: boxOpenST.start,
+          top: st.start,
           behavior: reducedMotion ? "auto" : "smooth"
         });
-      } else {
-        scrollToEl(giftPack, "start");
-      }
-    });
-  }
-
-  /* Click / keyboard on closed box → scrub to fully open (same position) */
-  if (giftBox) {
-    giftBox.addEventListener("click", function (e) {
-      if (e.target.closest && (e.target.closest("#flip-package-card") || e.target.closest("#flip-package-card-back") || e.target.closest(".js-gift-flip") || e.target.closest(".g-mbox__card"))) {
         return;
       }
-      if (giftBox.classList.contains("is-open")) return;
-      snapBoxOpen();
-    });
-
-    giftBox.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") {
-        if (giftBox.classList.contains("is-open")) return;
-        e.preventDefault();
-        snapBoxOpen();
-      }
-    });
-  }
-
-  /* Explore Package → flip card (profiles back); click back to flip again */
-  /* Mobile: tapping anywhere on the open card flips it */
-  var mCard = document.querySelector(".g-mbox__card");
-  if (mCard) {
-    mCard.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      flipPackageCard();
-    });
-  }
-
-  document.querySelectorAll(".js-gift-flip").forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      flipPackageCard();
-    });
-  });
-
-  var flipBtn = document.getElementById("flip-package-card");
-  var flipBackBtn = document.getElementById("flip-package-card-back");
-  if (flipBtn) {
-    flipBtn.setAttribute("tabindex", "-1");
-    flipBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      flipPackageCard();
-    });
-  }
-  if (flipBackBtn) {
-    flipBackBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      flipPackageCard();
+      scrollToEl(giftPack, "center");
     });
   }
 
@@ -583,7 +282,7 @@
 
   function bootGiftingMotion() {
     function start() {
-      initBoxOpenScroll();
+      initBoxLidScroll();
       initStepsScroll();
       forceHeroTop();
       window.requestAnimationFrame(function () {
@@ -623,7 +322,7 @@
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
       if (window.ScrollTrigger) {
-        initBoxOpenScroll();
+        initBoxLidScroll();
         initStepsScroll();
         ScrollTrigger.refresh();
       }

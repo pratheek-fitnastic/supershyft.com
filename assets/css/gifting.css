@@ -252,13 +252,8 @@
   position: relative;
   padding: 72px 24px 88px;
   text-align: center;
-  /* overflow must stay visible — ScrollTrigger pin breaks with overflow:hidden */
   overflow: visible;
   background: #041614;
-}
-
-.g-pack.is-box-pinning {
-  z-index: 5;
 }
 
 /* Figma fill: stretched (no crop) and mirrored horizontally (measured against the Figma render) */
@@ -361,162 +356,112 @@
 }
 
 /*
- * Gift box — Figma Gift Box 1 (856:11751).
- * .g-box__canvas is laid out at Figma's exact 1302 × 868 px; gifting.js sets --g-box-s
- * (box width / 1302) so the whole design scales as one piece and stays pixel-true.
+ * Gift box — one tray + one lid. The lid hinges at the back rim with 2D scaleY
+ * (no perspective) so it opens out, stays attached, and never grows.
+ * Open pose: Figma 1369:11304.
+ *
+ * Stage is 1600 × 861: open lid 155, 8px overlap onto the tray, tray 714.
  */
 .g-box {
-  --g-box-s: 1;
+  --g-stage-w: 1600;
+  --g-stage-h: 861;
+  --g-lid-open-h: 155;
+  --g-lid-overlap: 8;
+  --g-tray-h: 714;
   position: relative;
   display: block;
   width: 100%;
-  max-width: 1302px;
+  max-width: 1100px;
   margin: 0 auto;
-  aspect-ratio: 1302 / 868;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.g-box:focus,
-.g-box:focus-visible {
-  outline: none;
+.g-box__stage {
+  position: relative;
+  width: 100%;
+  /* Layout height is the tray only. The lid opens upward into the space above. */
+  aspect-ratio: 1600 / 714;
+  overflow: visible;
 }
 
-.g-box.is-open {
-  cursor: default;
+.g-box__lid-open img,
+.g-box__lid-closed img,
+.g-box__tray img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
 }
 
-.g-box__canvas {
+.g-box__lid-open {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: 100%;
+  height: calc(155 / 714 * 100%);
+  margin-bottom: calc(-8 / 714 * 100%);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  z-index: 2;
+  will-change: transform;
+}
+
+.g-box__lid-closed {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1302px;
-  height: 868px;
-  transform: scale(var(--g-box-s));
-  transform-origin: 0 0;
-}
-
-/*
- * Gift box — Figma 980:11214 (closed) / 980:11211 (open).
- * Tray image stays fixed. Only .g-box__llid lifts, then settles to open lid.
- */
-.g-box__stage {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+  width: 100%;
+  /* Cover the 3-well opening; leave the tray's front wall visible */
+  height: calc(548 / 714 * 100%);
+  transform: scaleY(1);
+  transform-origin: 50% 0;
+  z-index: 3;
+  will-change: transform;
 }
 
 .g-box__tray {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1302px;
-  height: 868px;
-  max-width: none;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
   z-index: 1;
-  /* Hidden under closed lid until lid starts to lift */
-  opacity: 0.001;
-  will-change: opacity;
-}
-
-.g-box__llid {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1302px;
-  height: 868px;
-  z-index: 5;
-  transform-origin: 50% 28%;
-  will-change: transform, opacity;
-  pointer-events: none;
-}
-
-.g-box__lid-closed,
-.g-box__lid-open {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  max-width: none;
-  display: block;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.g-box__lid-closed {
-  width: 1352px;
-  height: auto;
-  z-index: 2;
-}
-
-.g-box__lid-open {
-  width: 1302px;
-  height: 868px;
-  object-fit: contain;
-  z-index: 1;
-  opacity: 0;
-}
-
-/* Soft under-box glow */
-.g-box__stage::after {
-  content: "";
-  position: absolute;
-  left: 16%;
-  right: 16%;
-  bottom: 22%;
-  height: 18%;
-  z-index: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 214, 140, 0.38), rgba(255, 214, 140, 0) 70%);
-  animation: g-box-breathe 3.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes g-box-breathe {
-  0%,
-  100% { opacity: 0.35; }
-  50% { opacity: 0.9; }
 }
 
 /*
- * Interior well — card rises from inside the tray opening.
+ * Well clip is the velvet opening only. The card rises from below the front
+ * lip and stays inside the box — it must not travel up over the lid.
  */
 .g-box__well {
   position: absolute;
-  left: 205.85px;
-  top: 284.01px;
-  width: 889px;
-  height: 390.96px;
-  z-index: 4;
+  left: 2.6%;
+  width: 94.8%;
+  top: 0;
+  height: 76%;
   overflow: hidden;
-  border-radius: 10px;
-  transform: translateZ(0);
-  perspective: 2000px;
+  z-index: 4;
   pointer-events: none;
-  opacity: 0;
 }
 
 .g-box.is-open .g-box__well,
-.g-box.is-scrubbing .g-box__well {
+.g-box.is-flipped .g-box__well {
   pointer-events: auto;
+  /* Seated card is taller than the well — show the top edge, do not lift it */
+  overflow: visible;
 }
 
 .g-box__package {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  perspective: 2000px;
+  left: 8%;
+  width: 84%;
+  bottom: 0;
+  /* Figma 860:10630 card = 889 × 391 */
+  aspect-ratio: 889 / 391;
+  transform: translateY(110%);
   transform-origin: 50% 100%;
-  will-change: transform, opacity;
+  perspective: 1600px;
+  will-change: transform;
 }
 
 .g-box__card-flip {
@@ -524,7 +469,7 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.25, 1);
 }
 
 .g-box.is-flipped .g-box__card-flip {
@@ -535,31 +480,41 @@
   position: absolute;
   inset: 0;
   box-sizing: border-box;
-  padding: 28px;
-  border: 4px solid #dfb76c;
-  border-radius: 12px;
   overflow: hidden;
+  border: 3px solid #dfb76c;
+  border-radius: 12px;
   background: linear-gradient(180deg, #001e20 0%, #001115 100%);
-  box-shadow: 0 -4px 100px rgba(255, 255, 128, 0.5);
+  box-shadow: 0 -8px 48px rgba(255, 214, 128, 0.28);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .g-box__card-face--back {
   transform: rotateY(180deg);
+  padding: 0;
+  border-width: 4px;
+  box-shadow: 0 -4px 100px rgba(255, 255, 128, 0.5);
 }
 
-/* Scene photo 856:11757 — 838 × 475 at (-117.83, -6), mirrored */
+/* Figma 860:10630 laid out at 889 × 391, then scaled to the card */
+.g-box__back-art {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 889px;
+  height: 391px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%) scale(var(--g-back-s, 1));
+  transform-origin: center center;
+  pointer-events: none;
+}
+
 .g-box__scene {
   position: absolute;
-  left: -117.83px;
-  top: -6px;
-  width: 838px;
-  height: 475px;
-  max-width: none;
+  left: -10%;
+  top: -6%;
+  width: 96%;
+  height: 116%;
   object-fit: cover;
   transform: scaleX(-1);
   pointer-events: none;
@@ -567,47 +522,27 @@
 
 .g-box__filigree {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   z-index: 3;
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
-.g-box__filigree--tl {
-  left: 5px;
-  top: 5px;
-  opacity: 1;
-}
+.g-box__filigree--tl { left: 6px; top: 6px; }
+.g-box__filigree--tr { right: 6px; top: 6px; transform: rotate(90deg); }
+.g-box__filigree--bl { left: 6px; bottom: 6px; transform: rotate(-90deg); }
+.g-box__filigree--br { right: 6px; bottom: 6px; transform: rotate(180deg); }
 
-.g-box__filigree--tr {
-  right: 5.33px;
-  top: 5px;
-  transform: rotate(90deg);
-}
-
-.g-box__filigree--bl {
-  left: 5px;
-  bottom: 5.5px;
-  transform: rotate(-90deg);
-}
-
-.g-box__filigree--br {
-  right: 5.33px;
-  bottom: 5.5px;
-  transform: rotate(180deg);
-}
-
-/* "Wrapped in Love" 856:11815 */
 .g-box__script {
   position: relative;
   z-index: 1;
-  width: 365px;
-  margin: -3px 0 0;
-  padding: 14px 0;
+  width: 44%;
+  margin: 3% 0 0;
+  padding: 2% 0;
   font-family: "Alex Brush", cursive;
-  font-size: 40px;
-  line-height: 56px;
+  font-size: clamp(22px, 2.5vw, 36px);
+  line-height: 1.35;
   text-align: center;
   white-space: nowrap;
   background: linear-gradient(90deg, #ffe5a3 0%, #ffeed0 50%, #f3cb79 100%);
@@ -617,24 +552,21 @@
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
 }
 
-/* Parchment panel 856:11773 — 449 × 346 at left 413, vertically centred */
 .g-box__package-panel {
   position: absolute;
-  left: 413px;
-  top: calc(50% - 0.5px);
+  right: 3.4%;
+  top: 50%;
   z-index: 2;
-  width: 449px;
-  height: 368px;
+  width: 50%;
+  height: 88%;
   box-sizing: border-box;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   justify-content: space-between;
-  /* Figma py-21; nudged to match the rendered Figma glyph positions in Chrome */
-  padding: 18px 25px 26px;
+  padding: 4.4% 5.2% 4.8%;
   border: 1px solid #eddcc0;
-  border-radius: 16px;
+  border-radius: 14px;
   background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
   text-align: left;
 }
@@ -642,36 +574,33 @@
 .g-box__badge {
   display: inline-flex;
   align-items: center;
-  padding: 5px 13px;
+  align-self: flex-start;
+  padding: 4px 12px;
   border-radius: 9999px;
   border: 1px solid rgba(217, 119, 6, 0.4);
   background: rgba(254, 243, 199, 0.4);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: 15px;
-  line-height: 18.5px;
+  font-size: clamp(9px, 0.75vw, 11px);
+  line-height: 1.4;
   letter-spacing: 0.55px;
   text-transform: uppercase;
-  white-space: nowrap;
   color: #451a03;
 }
 
 .g-box__pkg-head {
-  width: 100%;
-  padding: 12px 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.35em;
 }
 
 .g-box__pkg-title {
   margin: 0;
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: 28px;
-  line-height: 40px;
+  font-size: clamp(16px, 1.55vw, 22px);
+  line-height: 1.25;
   color: #0f172a;
 }
 
@@ -680,32 +609,27 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 18px;
-  letter-spacing: 1px;
+  font-size: clamp(9px, 0.8vw, 11px);
+  line-height: 1.3;
+  letter-spacing: 0.9px;
   text-transform: uppercase;
   color: rgba(6, 53, 51, 0.8);
-}
-
-/* Title + tag sit together; price row is 12px below */
-.g-box__pkg-title + .g-box__pkg-tag {
-  margin-top: -12px;
 }
 
 .g-box__price-row {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  gap: 10px;
+  margin-top: 0.2em;
 }
 
 .g-box__price {
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 700;
-  font-size: 32px;
-  line-height: 42px;
-  letter-spacing: -0.9px;
-  white-space: nowrap;
+  font-size: clamp(18px, 1.7vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.8px;
   color: #0f172a;
 }
 
@@ -713,36 +637,34 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: 22px;
-  line-height: 30px;
-  white-space: nowrap;
+  font-size: clamp(12px, 1.1vw, 16px);
+  line-height: 1.3;
   color: #9a9a9a;
   text-decoration: line-through;
 }
 
 .g-box__features {
   list-style: none;
-  margin: 0.5px 0;
-  padding: 13px 8px;
+  margin: 0;
+  padding: 0.55em 0.4em;
   width: 100%;
   box-sizing: border-box;
   border-top: 1px solid rgba(223, 202, 162, 0.6);
   border-bottom: 1px solid rgba(223, 202, 162, 0.6);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.35em;
 }
 
 .g-box__features li {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: 17px;
-  line-height: 18.25px;
-  white-space: nowrap;
+  font-size: clamp(11px, 0.95vw, 13px);
+  line-height: 1.25;
   color: #2f241a;
 }
 
@@ -750,19 +672,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
 }
 
 .g-box__feat-icon img {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .g-box__explore-wrap {
   width: 100%;
-  padding: 6px 0 4px;
+  padding-top: 0.2em;
 }
 
 .g-box__explore {
@@ -771,23 +693,22 @@
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
-  padding: 11px 17px;
+  padding: 0.7em 1em;
   border-radius: 9999px;
   border: 1px solid #c49b49;
   background: linear-gradient(90deg, #e7d2ad 0%, #dfb76c 50%, #d6a958 100%);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 18px;
+  font-size: clamp(10px, 0.85vw, 12px);
+  line-height: 1.3;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: #2c1d0c;
   cursor: pointer;
-  transition: all 0.5s ease;
+  transition: all 0.4s ease;
 }
 
-/* Home-page CTA hover; size stays card-scale because the button is part of the gift-box art */
 .gifting-page .g-box__explore {
   border: 1px solid #c49b49 !important;
 }
@@ -799,24 +720,52 @@
   outline: none;
 }
 
-/* ---------- Card back — Profiles Included (860:10630) ---------- */
+.g-box__card-face--back .g-box__filigree {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+}
+
+.g-box__card-face--back .g-box__filigree--tl {
+  left: 9px;
+  top: 9px;
+  opacity: 1;
+}
+
+.g-box__card-face--back .g-box__filigree--tr {
+  right: 9.33px;
+  top: 9px;
+}
+
+.g-box__card-face--back .g-box__filigree--bl {
+  left: 9px;
+  bottom: 9.5px;
+}
+
+.g-box__card-face--back .g-box__filigree--br {
+  right: 9.33px;
+  bottom: 9.5px;
+}
+
 .g-box__wire {
   position: absolute;
-  left: calc(50% + 0.5px);
-  top: calc(50% + 0.5px);
+  left: 12px;
+  top: 12px;
   width: 866px;
   height: 368px;
   box-sizing: border-box;
-  transform: translate(-50%, -50%);
   border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 8px;
   pointer-events: none;
 }
 
 .g-box__profiles {
-  position: relative;
+  position: absolute;
+  left: 28px;
+  top: 28px;
   z-index: 1;
-  width: 100%;
+  width: 833px;
+  height: 314px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -828,13 +777,13 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 24px;
+  width: 100%;
 }
 
 .g-box__profiles-title {
   margin: 0;
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
-  /* Figma says Medium; Chrome on Windows draws DM Sans heavier — 400 matches the Figma render */
   font-weight: 400;
   font-size: 24px;
   line-height: 30px;
@@ -855,7 +804,6 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
-  /* Figma says SemiBold; Chrome on Windows draws DM Sans heavier — 500 matches the Figma render */
   font-weight: 500;
   font-size: 16px;
   line-height: 18px;
@@ -873,15 +821,17 @@
 
 .g-box__profiles-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, 267px);
   gap: 16px;
   align-items: start;
+  width: 833px;
 }
 
 .g-box__profile {
   position: relative;
+  width: 267px;
   padding-left: 24px;
-  min-width: 0;
+  box-sizing: border-box;
 }
 
 .g-box__profile::before {
@@ -900,7 +850,6 @@
   margin: 0 0 4px;
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
-  /* Figma says Medium; Chrome on Windows draws DM Sans heavier — 400 matches the Figma render */
   font-weight: 400;
   font-size: 20px;
   line-height: 26px;
@@ -927,7 +876,6 @@
   color: #9ab3a3;
 }
 
-/* Figma's fixed line breaks — desktop only; narrower layouts wrap naturally */
 .g-br-d {
   display: none;
 }
@@ -942,7 +890,6 @@
   }
 }
 
-/* Back face is fully clickable to flip back */
 .g-box__flip-back {
   position: absolute;
   inset: 0;
@@ -954,161 +901,11 @@
   font-size: 0;
 }
 
-/* ---------- Scroll-scrubbed open: ambient light, dust, bloom, card rise ---------- */
-.g-box__ambient {
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  z-index: 1;
-  width: 780px;
-  height: 420px;
-  margin: -210px 0 0 -390px;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse at center, rgba(255, 214, 140, 0.28) 0%, rgba(255, 180, 90, 0.1) 38%, rgba(255, 180, 90, 0) 72%);
-  opacity: 0;
-  pointer-events: none;
-  will-change: opacity, transform;
-  mix-blend-mode: screen;
-}
-
-.g-box__burst {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  z-index: 4;
-  width: 720px;
-  height: 480px;
-  margin: -240px 0 0 -360px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 245, 210, 0.85) 0%,
-    rgba(255, 214, 140, 0.35) 28%,
-    rgba(255, 190, 90, 0.1) 52%,
-    rgba(255, 190, 90, 0) 74%
-  );
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform, opacity;
-  mix-blend-mode: screen;
-}
-
-.g-box__dust {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.g-box__mote {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  width: var(--mw, 3px);
-  height: var(--mh, 10px);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 248, 220, 0.95), rgba(223, 183, 108, 0.15));
-  opacity: 0;
-  will-change: transform, opacity;
-  box-shadow: 0 0 6px rgba(255, 220, 150, 0.45);
-  pointer-events: none;
-}
-
-.g-box__sparkles {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.g-box__spark {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  width: var(--sz, 6px);
-  height: var(--sz, 6px);
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff9e0 0%, #ffd77a 45%, rgba(255, 200, 90, 0) 72%);
-  box-shadow: 0 0 10px rgba(255, 214, 120, 0.85);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* GSAP owns package/lid transforms during scrub — do not set translate here */
-.g-box.is-scrubbing {
-  cursor: default;
-}
-
-.g-box.is-scrubbing:not(.is-open) .g-box__llid {
-  visibility: visible;
-  z-index: 5;
-}
-
-/* Keep the card under the lid until it has cleared */
-.g-box.is-scrubbing:not(.is-open) .g-box__well {
-  z-index: 1;
-}
-
-.g-box.is-scrubbing:not(.is-open) .g-box__stage {
-  z-index: 1;
-}
-
-.g-box.is-scrubbing .g-box__stage::after {
-  animation: none;
-}
-
-
 .g-pack__cta {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 4px;
-  opacity: 0.35;
-  transform: translateY(10px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-  pointer-events: none;
-}
-
-.g-pack.is-box-open .g-pack__cta,
-.g-box.is-open ~ .g-pack__cta {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* Final open state */
-.g-box.is-open .g-box__lid-closed {
-  opacity: 0 !important;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.g-box.is-open .g-box__lid-open,
-.g-box.is-open .g-box__tray {
-  opacity: 1 !important;
-}
-
-.g-box.is-open .g-box__ambient,
-.g-box.is-open .g-box__burst,
-.g-box.is-open .g-box__dust {
-  opacity: 0 !important;
-  visibility: hidden;
-}
-
-.g-box.is-open .g-box__stage {
-  pointer-events: auto;
-}
-
-.g-box.is-open .g-box__well {
-  /* Let the seated card cast its glow outside the tray once fully open */
-  overflow: visible;
-}
-
-.g-box.is-open .g-box__package {
-  transform: none;
 }
 
 /*
@@ -1131,10 +928,12 @@
     max-width: none;
     font-size: calc(20px * var(--g-pack-s, 1));
     line-height: calc(30px * var(--g-pack-s, 1));
+    /* Lid sits in this gap (~155/1600 of the box). Extra air keeps the title off it. */
+    margin-bottom: calc(148px * var(--g-pack-s, 1));
   }
 
   .g-pack__cta {
-    margin-top: calc(-48px * var(--g-pack-s, 1));
+    margin-top: calc(64px * var(--g-pack-s, 1));
     position: relative;
     z-index: 3;
   }
@@ -3626,7 +3425,37 @@
   }
 
   .g-pack__cta {
-    margin-top: 32px;
+    margin-top: 40px;
+  }
+
+  .g-pack__sub {
+    margin-bottom: 28px;
+  }
+
+  .g-box__well {
+    top: 0;
+    height: 76%;
+  }
+
+  .g-box__package {
+    left: 4%;
+    width: 92%;
+    aspect-ratio: 320 / 430;
+  }
+
+  .g-box__scene,
+  .g-box__script {
+    display: none;
+  }
+
+  .g-box__package-panel {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px 14px;
   }
 
   /* Mobile design: two lines — "A Gift of Health," / "Wrapped in Love." */
@@ -3896,567 +3725,6 @@
   }
 }
 
-
-/*
- * Gift box below 992px — the box art keeps scaling with the canvas, but the card is
- * counter-scaled back to 1:1 and re-flowed so every line stays readable (≥ 11px).
- * gifting.js sets --g-box-w (box width in px) and pads the box for the taller card.
- */
-@media (max-width: 991.98px) {
-  .g-box__well {
-    left: calc(12px / var(--g-box-s));
-    top: 250px;
-    width: calc(var(--g-box-w, 340px) - 24px);
-    height: auto;
-    overflow: visible;
-  }
-
-  .g-box__package {
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    transform: scale(calc(1 / var(--g-box-s)));
-    transform-origin: 0 0;
-  }
-
-  .g-box__card-flip {
-    height: auto;
-    display: grid;
-  }
-
-  .g-box__card-face {
-    position: relative;
-    inset: auto;
-    grid-area: 1 / 1;
-    padding: 16px;
-    align-self: start;
-  }
-
-  .g-box__scene,
-  .g-box__script {
-    display: none;
-  }
-
-  .g-box__package-panel {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
-    width: 100%;
-    height: auto;
-    gap: 6px;
-    padding: 18px 18px 16px;
-  }
-
-  .g-box__pkg-title {
-    font-size: 24px;
-    line-height: 32px;
-  }
-
-  .g-box__features li {
-    white-space: normal;
-  }
-
-  .g-box__wire {
-    width: calc(100% - 22px);
-    height: calc(100% - 22px);
-  }
-
-  .g-box__profiles {
-    gap: 16px;
-  }
-
-  .g-box__profiles-title {
-    font-size: 18px;
-    letter-spacing: 2.4px;
-  }
-
-  .g-box__profiles-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px 12px;
-  }
-
-  .g-box__profile h4 {
-    white-space: normal;
-    font-size: 16px;
-    line-height: 20px;
-  }
-}
-
-@media (max-width: 559.98px) {
-  .g-box__profiles-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .g-box__card-flip,
-  .g-steps__panel {
-    transition-duration: 0.2s !important;
-    transition-delay: 0s !important;
-  }
-
-  /* No lid / burst / rise — gifting.js jumps straight to the open state */
-  .g-box__closed,
-  .g-box__closed::after,
-  .g-box__closed-part,
-  .g-box__lid,
-  .g-box__interior-glow,
-  .g-box__burst,
-  .g-box__open-stage,
-  .g-box__package,
-  .g-box__open-clip,
-  .g-box__spark {
-    animation: none !important;
-  }
-
-  .g-box__open-clip,
-  .g-mbox__open-clip {
-    display: none !important;
-  }
-}
-
-/* ===== Mobile gift box (< 768px only) — Figma "box 1 mobile" 856:11817 ===== */
-.g-mbox {
-  display: none;
-}
-
-@media (max-width: 767.98px) {
-  .g-box {
-    --g-mbox-s: 1;
-    aspect-ratio: auto;
-    max-width: none;
-    height: calc(637px * var(--g-mbox-s));
-    overflow: visible;
-  }
-
-  .g-box__canvas {
-    display: none;
-  }
-
-  .g-mbox {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* 552 × 637 design canvas, centred and scaled to the phone (gifting.js sets --g-mbox-s) */
-  .g-mbox__stage {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 552px;
-    height: 637px;
-    /* zoom (not transform: scale) so text is laid out at its real size and stays sharp */
-    zoom: var(--g-mbox-s);
-    transform: translateX(-50%);
-  }
-
-  /* Closed box 856:11818 — 495 × 427, centred over the open box */
-  .g-mbox__closed {
-    position: absolute;
-    left: 28.5px;
-    top: 160px;
-    width: 495px;
-    height: 427px;
-    overflow: hidden;
-    z-index: 3;
-    filter: drop-shadow(0 0 50px rgba(255, 154, 174, 0.25));
-    will-change: transform, opacity;
-  }
-
-  /* New closed art 980:11214 (box spans 116–908 × 207–486 of 1024 × 683), fitted to the slot */
-  .g-mbox__closed img {
-    position: absolute;
-    left: -72.5px;
-    top: -3px;
-    width: 640px;
-    height: 427px;
-    max-width: none;
-  }
-
-  .g-mbox__open-clip {
-    position: absolute;
-    left: 12px;
-    top: 80px;
-    width: 528px;
-    height: 480px;
-    z-index: 4;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    object-fit: cover;
-    object-position: center 55%;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    background: transparent;
-  }
-
-  .g-box.is-opening.g-box--clip-open .g-mbox__open-clip {
-    opacity: 1;
-    visibility: visible;
-    animation: g-mbox-clip-out 5.2s linear forwards;
-  }
-
-  .g-box.is-opening.g-box--clip-open .g-mbox__closed {
-    opacity: 0 !important;
-    animation: none !important;
-    visibility: hidden;
-  }
-
-  .g-box.is-open .g-mbox__open-clip {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  @keyframes g-mbox-clip-out {
-    0%,
-    46% { opacity: 1; animation-timing-function: ease-in; }
-    54%,
-    100% { opacity: 0; }
-  }
-
-  /* Open box 856:11820 — sheet crop inside 498 × 425.6 at (27, 161) */
-  .g-mbox__open {
-    position: absolute;
-    left: 27px;
-    top: 161px;
-    width: 498px;
-    height: 425.6px;
-    overflow: visible;
-    z-index: 1;
-    opacity: 0.001;
-    will-change: opacity;
-  }
-
-  /* New open art 1371:11307 (box spans 170–1321 × 101–935 of 1488 × 1057), same box width */
-  .g-mbox__open img {
-    position: absolute;
-    left: -73.6px;
-    top: -11.4px;
-    width: 644px;
-    height: 457px;
-    max-width: none;
-  }
-
-  /* Card — inset 10.05% 20.83% 24.65% 20.83% of 552 × 637 */
-  .g-mbox__card {
-    position: absolute;
-    left: 115px;
-    top: 64px;
-    width: 322px;
-    height: 416px;
-    z-index: 2;
-    perspective: 1200px;
-    opacity: 0.001;
-    pointer-events: none;
-    will-change: translate, scale, opacity;
-  }
-
-  /*
-   * 3D only while the card turns (.is-3d / .is-turning, set by gifting.js). At rest the
-   * visible face is drawn flat — a resting 3D-rotated layer is rasterised soft on phones.
-   */
-  .g-mbox__flip {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  .g-box.is-3d .g-mbox__flip {
-    transform-style: preserve-3d;
-  }
-
-  .g-box.is-3d.is-flipped .g-mbox__flip {
-    transform: rotateY(180deg);
-  }
-
-  .g-box.is-3d.is-turning .g-mbox__flip {
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .g-mbox__face {
-    position: absolute;
-    inset: 0;
-    box-sizing: border-box;
-    padding: 28px;
-    border: 4px solid #dfb76c;
-    border-radius: 12px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #001e20 0%, #001115 100%);
-    box-shadow: 0 -4px 50px rgba(255, 255, 128, 0.5);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  .g-mbox__face--back {
-    padding: 24px;
-    visibility: hidden;
-  }
-
-  .g-box.is-3d .g-mbox__face--back {
-    transform: rotateY(180deg);
-    visibility: visible;
-  }
-
-  /* Resting on the back: flat, front hidden */
-  .g-box.is-flipped:not(.is-3d) .g-mbox__face--back {
-    visibility: visible;
-  }
-
-  .g-box.is-flipped:not(.is-3d) .g-mbox__face--front {
-    visibility: hidden;
-  }
-
-  .g-mbox__scene {
-    position: absolute;
-    left: -134px;
-    top: 0;
-    width: 854px;
-    height: 484px;
-    max-width: none;
-    object-fit: cover;
-    transform: scaleX(-1);
-    pointer-events: none;
-  }
-
-  /* Parchment panel — 275 × 364, centred */
-  .g-mbox__panel {
-    position: absolute;
-    left: calc(50% - 0.5px);
-    top: 50%;
-    z-index: 2;
-    width: 275px;
-    height: 364px;
-    box-sizing: border-box;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 21px 25px 20px;
-    border: 1px solid #eddcc0;
-    border-bottom: 0;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
-    box-shadow: 0 -4px 25px rgba(255, 255, 128, 0.25);
-    text-align: center;
-  }
-
-  .g-mbox__panel-fil {
-    position: absolute;
-    top: 8px;
-    width: 16px;
-    height: 16px;
-  }
-
-  .g-mbox__panel-fil--tl {
-    left: 8px;
-  }
-
-  .g-mbox__panel-fil--tr {
-    right: 8.34px;
-    opacity: 0.7;
-    transform: rotate(90deg);
-  }
-
-  .g-mbox__meta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 0 7px;
-  }
-
-  .g-mbox__meta img {
-    width: 24px;
-    height: 24px;
-  }
-
-  .g-mbox__pill {
-    padding: 2px 12px;
-    border-radius: 9999px;
-    background: #1f2824;
-    font-family: "DM Sans", sans-serif;
-    font-variation-settings: "opsz" 14;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 17px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #dfb76c;
-  }
-
-  .g-mbox__head {
-    padding-bottom: 6px;
-  }
-
-  .g-mbox__title {
-    margin: 0 0 -2px;
-    font-family: Sora, sans-serif;
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 24px;
-    color: #1e1713;
-  }
-
-  .g-mbox__price {
-    margin: 0 0 -2px;
-    padding-top: 6px;
-    font-family: "DM Sans", sans-serif;
-    font-variation-settings: "opsz" 14;
-    font-weight: 700;
-    font-size: 28px;
-    line-height: 32px;
-    color: #1f1915;
-  }
-
-  .g-mbox__price-old {
-    margin: 0;
-    font-family: "DM Sans", sans-serif;
-    font-variation-settings: "opsz" 14;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 18px;
-    color: #8c7e6e;
-    text-decoration: line-through;
-  }
-
-  .g-mbox__features {
-    list-style: none;
-    margin: 2.25px 0;
-    padding: 13px 8px;
-    border-top: 1px solid rgba(223, 202, 162, 0.6);
-    border-bottom: 1px solid rgba(223, 202, 162, 0.6);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    text-align: left;
-  }
-
-  .g-mbox__features li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: "DM Sans", sans-serif;
-    font-variation-settings: "opsz" 14;
-    font-weight: 500;
-    font-size: 17px;
-    line-height: 18.25px;
-    color: #2f241a;
-  }
-
-  /* Back — Profiles Included (862:11473) */
-  .g-mbox__wire {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 298px;
-    height: 392px;
-    box-sizing: border-box;
-    transform: translate(-50%, -50%);
-    border: 1px solid rgba(212, 175, 55, 0.35);
-    border-radius: 8px;
-    pointer-events: none;
-  }
-
-  .g-mbox__profiles {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 4px 0 0 4px;
-    text-align: left;
-  }
-
-  .g-mbox__profiles-title {
-    margin: 0;
-    font-family: Sora, sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 28px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #e8c872;
-  }
-
-  .g-mbox__badge {
-    font-size: 14px;
-  }
-
-  .g-mbox__list {
-    list-style: none;
-    margin: 18px 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .g-mbox__list li {
-    position: relative;
-    padding-left: 24px;
-    font-family: "DM Sans", sans-serif;
-    font-variation-settings: "opsz" 14;
-    font-weight: 500;
-    font-size: 17px;
-    line-height: 24px;
-    letter-spacing: 0.4px;
-    color: #f1f5f9;
-    white-space: nowrap;
-  }
-
-  .g-mbox__list li::before {
-    content: "";
-    position: absolute;
-    left: 2px;
-    top: 8px;
-    width: 8px;
-    height: 8px;
-    border-radius: 9999px;
-    background: linear-gradient(180deg, #dac15a, #967901);
-  }
-
-  .g-mbox__list li span {
-    margin-left: 8px;
-    font-weight: 400;
-    font-size: 14px;
-    color: rgba(230, 202, 101, 0.9);
-  }
-
-  .g-box.is-open .g-mbox__closed {
-    visibility: hidden;
-  }
-
-  .g-box.is-open .g-mbox__open,
-  .g-box.is-open .g-mbox__card {
-    opacity: 1;
-  }
-
-  .g-box.is-open .g-mbox__card {
-    pointer-events: auto;
-    cursor: pointer;
-    will-change: auto;
-    clip-path: inset(-80px -40px 0 -40px);
-  }
-
-  .g-box.is-open .g-mbox__open,
-  .g-box.is-open .g-mbox__closed {
-    will-change: auto;
-  }
-}
-
-@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
-  .g-mbox__closed,
-  .g-mbox__open,
-  .g-mbox__card {
-    animation: none !important;
-  }
-}
 
 /*
  * Mobile backgrounds (Figma mobile frames 856:11047 / 11057 / 11153): the same teal fill,
