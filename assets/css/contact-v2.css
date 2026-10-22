@@ -640,7 +640,7 @@ body {
 @media screen and (max-width: 991px) {
   .bs-footer-contact .top-footer .list {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     width: 100% !important;
     flex: 1 1 100% !important;
     align-items: start !important;
@@ -648,11 +648,6 @@ body {
     justify-content: unset !important;
     grid-gap: 8px !important;
     gap: 8px !important;
-  }
-
-  .bs-footer-contact .top-footer .list li:last-child {
-    grid-column: 1 / -1 !important;
-    justify-self: center !important;
   }
 
   footer.bs-footer-contact .container > .top-footer > .social-media {

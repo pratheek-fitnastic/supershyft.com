@@ -11,7 +11,8 @@
       ".vscode/**",
       ".git/**",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "pincodes.csv"
     ],
     "cleanUrls": true,
     "trailingSlash": false

@@ -60,14 +60,19 @@ async function fillBookAndWaitSlots(page) {
 async function installMocks(page, { confirmOk = true } = {}) {
   const captured = {
     onboardBody: null,
+    onboardCount: 0,
     verifyBody: null,
     confirmBody: null,
+    confirmAuth: null,
+    resendBody: null,
+    resendCount: 0,
     razorpayOpened: false,
   };
 
   await page.route("**/users/public/family-onboard/confirm-payment", async (route) => {
     const post = route.request().postDataJSON();
     captured.confirmBody = post;
+    captured.confirmAuth = route.request().headers().authorization || "";
     if (confirmOk) {
       await route.fulfill({
         status: 200,
@@ -78,7 +83,6 @@ async function installMocks(page, { confirmOk = true } = {}) {
           razorpay_payment_id: post.razorpay_payment_id,
           booking_ids: [10001],
           members: [{ user_id: 43, engagement_id: 501, status: "success", message: "Payment recorded" }],
-          family_onboard_id: post.family_onboard_id,
           booker_user_id: 42,
         }),
       });
@@ -89,7 +93,6 @@ async function installMocks(page, { confirmOk = true } = {}) {
         body: JSON.stringify({
           payment_verified: false,
           members: [{ user_id: 43, engagement_id: 501, status: "failed" }],
-          family_onboard_id: post.family_onboard_id,
         }),
       });
     }
@@ -110,8 +113,9 @@ async function installMocks(page, { confirmOk = true } = {}) {
         booking_ids: [10001],
         booking_id: 10001,
         members: [{ user_id: 43, engagement_id: 501, status: "success" }],
-        family_onboard_id: post.family_onboard_id,
-        tokens: { access_token: "eyJ...", "refresh token": "eyJ..." },
+        engagement_ids: [501],
+        booker_user_id: 42,
+        tokens: { access_token: "eyJ...", refresh_token: "eyJ..." },
       }),
     });
   });
@@ -124,11 +128,11 @@ async function installMocks(page, { confirmOk = true } = {}) {
     }
     const post = route.request().postDataJSON();
     captured.onboardBody = post;
+    captured.onboardCount += 1;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        family_onboard_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         booker_user_id: 42,
         otp_session_id: 1001,
         payment_required: true,
@@ -141,6 +145,25 @@ async function installMocks(page, { confirmOk = true } = {}) {
             sub_profile_created: true,
           },
         ],
+      }),
+    });
+  });
+
+  await page.route("**/auth/resend-otp", async (route) => {
+    const post = route.request().postDataJSON();
+    captured.resendBody = post;
+    captured.resendCount += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          session_id: 42,
+          channels: ["phone", "email"],
+          phone: post.phone || "9876543210",
+          email: post.email || "adi@example.com",
+        },
+        meta: {},
       }),
     });
   });
@@ -162,6 +185,11 @@ async function installMocks(page, { confirmOk = true } = {}) {
               razorpay_order_id: opts.order_id,
               razorpay_signature: "sig_e2e_test_hex",
             });
+          }
+          /* Live Razorpay also closes the modal after success. ondismiss must not
+             overwrite the success panel. */
+          if (opts.modal && typeof opts.modal.ondismiss === "function") {
+            opts.modal.ondismiss();
           }
         }, 50);
       }
@@ -239,6 +267,10 @@ async function runSuccessPath(browser) {
   await page.waitForSelector("#gift-pay-success:not([hidden])", { timeout: 15000 });
   pass("Verify OTP → Razorpay mock → confirm → success panel");
 
+  const failedAfterSuccess = await page.locator("#gift-pay-failed").isHidden();
+  if (failedAfterSuccess) pass("Success path ignores Razorpay ondismiss");
+  else fail("Success path leaked Payment Failed after ondismiss");
+
   const txn = await page.locator("#gift-pay-txn-id").innerText();
   const amt = await page.locator("#gift-pay-amount").innerText();
   if (txn === "pay_E2E_TEST_001") pass("Success shows payment id", txn);
@@ -246,12 +278,17 @@ async function runSuccessPath(browser) {
   if (amt.includes("1220")) pass("Success shows amount", amt);
   else fail("Success amount", amt);
 
+  const verifyIds = captured.verifyBody?.engagement_ids;
   if (
     captured.verifyBody?.otp === "123456" &&
     captured.verifyBody?.phone === "9876543210" &&
-    captured.verifyBody?.family_onboard_id === "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    Array.isArray(verifyIds) &&
+    verifyIds.length === 1 &&
+    Number(verifyIds[0]) === 501 &&
+    captured.verifyBody?.discount_code === "SUPERDIWALI" &&
+    captured.verifyBody?.family_onboard_id == null
   ) {
-    pass("verify-pay payload");
+    pass("verify-pay payload (Diwali SUPERDIWALI + engagement_ids)");
   } else {
     fail("verify-pay payload", JSON.stringify(captured.verifyBody));
   }
@@ -259,11 +296,18 @@ async function runSuccessPath(browser) {
   if (
     captured.confirmBody?.razorpay_payment_id === "pay_E2E_TEST_001" &&
     captured.confirmBody?.razorpay_order_id === "order_E2E_TEST_001" &&
-    captured.confirmBody?.razorpay_signature === "sig_e2e_test_hex"
+    captured.confirmBody?.razorpay_signature === "sig_e2e_test_hex" &&
+    captured.confirmBody?.family_onboard_id == null
   ) {
-    pass("confirm-payment payload");
+    pass("confirm-payment payload (Razorpay fields only)");
   } else {
     fail("confirm-payment payload", JSON.stringify(captured.confirmBody));
+  }
+
+  if (captured.confirmAuth === "Bearer eyJ...") {
+    pass("confirm-payment Authorization Bearer from verify-pay");
+  } else {
+    fail("confirm-payment Authorization", captured.confirmAuth);
   }
 
   const rzCalls = await page.evaluate(() => window.__e2eRazorpayCalls || []);
@@ -271,6 +315,126 @@ async function runSuccessPath(browser) {
     pass("Razorpay opened with verify-pay order");
   } else {
     fail("Razorpay options", JSON.stringify(rzCalls));
+  }
+
+  await page.close();
+}
+
+async function runResendOtpPath(browser) {
+  const page = await browser.newPage();
+  const captured = await installMocks(page, { confirmOk: true });
+
+  await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await scrollToForm(page);
+  await fillGiftForm(page);
+  await page.locator(".g-preview__submit").click();
+  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+  await fillBookAndWaitSlots(page);
+  await page.locator("#gift-book-continue").click();
+  await page.waitForSelector("#gift-otp:not([hidden])", { timeout: 15000 });
+
+  const digits = page.locator(".g-otp__digit");
+  await digits.nth(0).fill("9");
+
+  await page.evaluate(() => {
+    const btn = document.getElementById("gift-otp-resend");
+    if (btn) btn.disabled = false;
+  });
+  await page.locator("#gift-otp-resend").click({ force: true });
+
+  await page.waitForFunction(
+    () => {
+      const btn = document.getElementById("gift-otp-resend");
+      const first = document.querySelector(".g-otp__digit");
+      return btn && btn.disabled && first && first.value === "";
+    },
+    null,
+    { timeout: 10000 }
+  );
+
+  if (captured.resendCount === 1) pass("Resend OTP called /auth/resend-otp once");
+  else fail("Resend OTP call count", String(captured.resendCount));
+
+  if (
+    captured.resendBody?.phone === "9876543210" &&
+    captured.resendBody?.email === "adi@example.com" &&
+    captured.resendBody?.via == null
+  ) {
+    pass("Resend OTP payload phone+email, no via");
+  } else {
+    fail("Resend OTP payload", JSON.stringify(captured.resendBody));
+  }
+
+  if (captured.onboardCount === 1) {
+    pass("Resend OTP did not re-call family-onboard");
+  } else {
+    fail("family-onboard count after resend", String(captured.onboardCount));
+  }
+
+  const firstDigit = await digits.nth(0).inputValue();
+  if (firstDigit === "") pass("Resend OTP cleared digits");
+  else fail("Resend OTP cleared digits", firstDigit);
+
+  const resendDisabled = await page.locator("#gift-otp-resend").isDisabled();
+  if (resendDisabled) pass("Resend OTP restarts cooldown");
+  else fail("Resend OTP cooldown", "button still enabled");
+
+  await page.close();
+}
+
+async function selectOccasion(page, occasion) {
+  const tab = page.locator(`.g-tab[data-occasion="${occasion}"]`);
+  await tab.scrollIntoViewIfNeeded();
+  await tab.click({ force: true });
+  await page.waitForFunction(
+    (key) => {
+      const active = document.querySelector(".g-tab.is-active");
+      return active && active.getAttribute("data-occasion") === key;
+    },
+    occasion,
+    { timeout: 10000 }
+  );
+}
+
+async function runOccasionDiscountPath(browser, occasion, expectedCode) {
+  const page = await browser.newPage();
+  const captured = await installMocks(page, { confirmOk: true });
+
+  await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await scrollToForm(page);
+  await selectOccasion(page, occasion);
+  await fillGiftForm(page);
+  await page.locator(".g-preview__submit").click();
+  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+  await fillBookAndWaitSlots(page);
+  await page.locator("#gift-book-continue").click();
+  await page.waitForSelector("#gift-otp:not([hidden])", { timeout: 15000 });
+
+  const digits = page.locator(".g-otp__digit");
+  const otp = "123456";
+  for (let i = 0; i < 6; i++) {
+    await digits.nth(i).fill(otp[i]);
+  }
+  await page.locator("#gift-otp-verify").click();
+  await page.waitForSelector("#gift-pay-success:not([hidden])", { timeout: 15000 });
+  const failedHidden = await page.locator("#gift-pay-failed").isHidden();
+  if (!failedHidden) fail(`Tab ${occasion} leaked Payment Failed after ondismiss`);
+
+  const code = captured.verifyBody?.discount_code;
+  const ids = captured.verifyBody?.engagement_ids;
+  const label = expectedCode || "null";
+  if (
+    captured.onboardBody?.discount_code === null &&
+    Array.isArray(ids) &&
+    Number(ids[0]) === 501 &&
+    (expectedCode ? code === expectedCode : code == null)
+  ) {
+    pass(`Tab ${occasion} verify-pay discount_code`, String(code));
+  } else {
+    fail(
+      `Tab ${occasion} verify-pay discount_code (expected ${label})`,
+      JSON.stringify({ onboard: captured.onboardBody?.discount_code, verify: captured.verifyBody })
+    );
   }
 
   await page.close();
@@ -295,6 +459,9 @@ async function runFailPath(browser) {
 
   await page.waitForSelector("#gift-pay-failed:not([hidden])", { timeout: 15000 });
   pass("Failed confirm shows Payment Failed panel");
+  const successHidden = await page.locator("#gift-pay-success").isHidden();
+  if (successHidden) pass("Failed confirm does not show success panel");
+  else fail("Failed confirm leaked Payment Successful");
 
   const title = await page.locator("#gift-pay-failed-title").innerText();
   if (title.includes("Payment Failed")) pass("Failed panel title", title);
@@ -303,6 +470,33 @@ async function runFailPath(browser) {
   await page.locator("#gift-pay-retry").isVisible();
   await page.locator("#gift-pay-change").isVisible();
   pass("Failed panel has Retry + Change Payment Method");
+
+  await page.close();
+}
+
+async function runPincodeCityAutofillPath(browser) {
+  const page = await browser.newPage();
+  await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await scrollToForm(page);
+  await fillGiftForm(page);
+  await page.locator(".g-preview__submit").click();
+  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+
+  await page.locator("#book-pincode").fill("122001");
+  await page.waitForFunction(
+    () => document.querySelector("#book-city")?.value === "Gurgaon",
+    null,
+    { timeout: 8000 }
+  );
+  pass("Pincode 122001 autofills city Gurgaon");
+
+  await page.locator("#book-city").fill("Noida");
+  await page.locator("#book-pincode").fill("");
+  await page.locator("#book-pincode").fill("122001");
+  await page.waitForTimeout(400);
+  const kept = await page.locator("#book-city").inputValue();
+  if (kept === "Noida") pass("Edited city is not overwritten by the same pincode");
+  else fail("Edited city overwritten", kept);
 
   await page.close();
 }
@@ -377,7 +571,11 @@ async function main() {
     }
   }
   try {
+    await runPincodeCityAutofillPath(browser);
     await runSuccessPath(browser);
+    await runResendOtpPath(browser);
+    await runOccasionDiscountPath(browser, "birthday", null);
+    await runOccasionDiscountPath(browser, "just-because", null);
     await runFailPath(browser);
   } finally {
     await browser.close();

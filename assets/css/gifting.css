@@ -27,10 +27,6 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
-.gifting-page .bs-header.hide {
-  transform: translateY(-100%);
-}
-
 /* Gold CTA */
 .g-btn {
   display: inline-flex;
@@ -334,7 +330,7 @@
   font-size: clamp(30px, 3.75vw, 54px);
   font-variation-settings: "opsz" 14;
   color: #fff;
-  margin: 0 0 4px;
+  margin: 0;
   line-height: 1.25;
 }
 
@@ -360,7 +356,7 @@
   font-size: clamp(14px, 1.39vw, 20px);
   line-height: 30px;
   color: rgba(252, 252, 252, 0.95);
-  margin: 0 auto 8px;
+  margin: 15px auto 0;
   max-width: 900px;
 }
 
@@ -528,7 +524,7 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .g-box.is-flipped .g-box__card-flip {
@@ -610,8 +606,8 @@
   margin: -3px 0 0;
   padding: 14px 0;
   font-family: "Alex Brush", cursive;
-  font-size: 38px;
-  line-height: 54px;
+  font-size: 40px;
+  line-height: 56px;
   text-align: center;
   white-space: nowrap;
   background: linear-gradient(90deg, #ffe5a3 0%, #ffeed0 50%, #f3cb79 100%);
@@ -628,7 +624,7 @@
   top: calc(50% - 0.5px);
   z-index: 2;
   width: 449px;
-  height: 346px;
+  height: 368px;
   box-sizing: border-box;
   transform: translateY(-50%);
   display: flex;
@@ -654,8 +650,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: 11px;
-  line-height: 16.5px;
+  font-size: 15px;
+  line-height: 18.5px;
   letter-spacing: 0.55px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -674,8 +670,8 @@
   margin: 0;
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: 24px;
-  line-height: 38px;
+  font-size: 28px;
+  line-height: 40px;
   color: #0f172a;
 }
 
@@ -684,8 +680,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 16px;
+  line-height: 18px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(6, 53, 51, 0.8);
@@ -706,8 +702,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 700;
-  font-size: 28px;
-  line-height: 40px;
+  font-size: 32px;
+  line-height: 42px;
   letter-spacing: -0.9px;
   white-space: nowrap;
   color: #0f172a;
@@ -717,8 +713,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: 18px;
-  line-height: 28px;
+  font-size: 22px;
+  line-height: 30px;
   white-space: nowrap;
   color: #9a9a9a;
   text-decoration: line-through;
@@ -744,8 +740,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: 13px;
-  line-height: 16.25px;
+  font-size: 17px;
+  line-height: 18.25px;
   white-space: nowrap;
   color: #2f241a;
 }
@@ -782,8 +778,8 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 16px;
+  line-height: 18px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: #2c1d0c;
@@ -840,8 +836,8 @@
   font-variation-settings: "opsz" 14;
   /* Figma says Medium; Chrome on Windows draws DM Sans heavier — 400 matches the Figma render */
   font-weight: 400;
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 24px;
+  line-height: 30px;
   letter-spacing: 4.4px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -861,8 +857,8 @@
   font-variation-settings: "opsz" 14;
   /* Figma says SemiBold; Chrome on Windows draws DM Sans heavier — 500 matches the Figma render */
   font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 16px;
+  line-height: 18px;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -906,8 +902,8 @@
   font-variation-settings: "opsz" 14;
   /* Figma says Medium; Chrome on Windows draws DM Sans heavier — 400 matches the Figma render */
   font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 20px;
+  line-height: 26px;
   letter-spacing: 0.4px;
   white-space: nowrap;
   color: #f1f5f9;
@@ -916,8 +912,8 @@
 .g-box__profile h4 span {
   margin-left: 4px;
   font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 16px;
+  line-height: 18px;
   color: rgba(230, 202, 101, 0.9);
 }
 
@@ -926,8 +922,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 300;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 16px;
+  line-height: 18px;
   color: #9ab3a3;
 }
 
@@ -1036,6 +1032,7 @@
   height: var(--sz, 6px);
   border-radius: 50%;
   background: radial-gradient(circle, #fff9e0 0%, #ffd77a 45%, rgba(255, 200, 90, 0) 72%);
+  box-shadow: 0 0 10px rgba(255, 214, 120, 0.85);
   opacity: 0;
   will-change: transform, opacity;
 }
@@ -1115,8 +1112,8 @@
 }
 
 /*
- * Desktop rhythm measured from Figma 856:10808 (1440 × 1010): the box overlaps the
- * subtitle by 48px and the button overlaps the box by 48px (Figma mb-[-48px]).
+ * Desktop rhythm: title-to-subtitle gap matches section 4 (15px). The CTA still
+ * overlaps the box by 48px (Figma mb-[-48px]); the subtitle no longer sits under the box.
  */
 @media (min-width: 992px) {
   /* Whole section scales as one piece by --g-pack-s (set in gifting.js) so Figma's proportions hold */
@@ -1127,14 +1124,13 @@
   .g-pack__title {
     font-size: calc(54px * var(--g-pack-s, 1));
     line-height: calc(80px * var(--g-pack-s, 1));
-    margin-bottom: calc(-6px * var(--g-pack-s, 1));
+    margin-bottom: 0;
   }
 
   .g-pack__sub {
     max-width: none;
     font-size: calc(20px * var(--g-pack-s, 1));
     line-height: calc(30px * var(--g-pack-s, 1));
-    margin-bottom: calc(-48px * var(--g-pack-s, 1));
   }
 
   .g-pack__cta {
@@ -1338,7 +1334,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 10px;
+  padding: 10px 10px 10px 12px;
   flex-shrink: 0;
   max-width: 100%;
   min-width: 0;
@@ -1389,7 +1385,7 @@
   top: 0;
   z-index: 0;
   box-sizing: border-box;
-  padding: 0 0 43.94px 65px;
+  padding: 0 0 43.94px 12px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1779,6 +1775,23 @@
   letter-spacing: 0.32px;
   line-height: 32px;
   outline: none;
+}
+
+/* Keep browser autofill; cancel Chrome/Edge's opaque white/blue paint so glass stays */
+.gifting-page .g-form-sec .g-field input:-webkit-autofill,
+.gifting-page .g-form-sec .g-field input:-webkit-autofill:hover,
+.gifting-page .g-form-sec .g-field input:-webkit-autofill:focus,
+.gifting-page .g-form-sec .g-field textarea:-webkit-autofill,
+.gifting-page .g-book__input:-webkit-autofill,
+.gifting-page .g-book__input:-webkit-autofill:hover,
+.gifting-page .g-book__input:-webkit-autofill:focus,
+.gifting-page .g-otp__digit:-webkit-autofill,
+.gifting-page .g-otp__digit:-webkit-autofill:hover,
+.gifting-page .g-otp__digit:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  transition: background-color 99999s ease-out;
+  box-shadow: inset 0 0 0 1000px rgba(255, 255, 255, 0.05);
 }
 
 .gifting-page .g-form-sec .g-field input::placeholder,
@@ -2256,10 +2269,9 @@
 
 /* ===== Book Appointment — Figma 862:13205 (opens over the form after "Gift It") ===== */
 /*
- * Glass panel: Figma uses rgba(0,0,0,0.25) over a 250px backdrop blur of a grey artboard, which
- * renders as neutral grey (#3b3b3b) warming to olive (#6e6a50) at the top-right. Our section behind is
- * dark teal, so the blur alone comes out teal — the gradient below paints the design's colours
- * (sampled from the Figma render) over the blur.
+ * Glass panel exactly as Figma 862:13205: rgba(0,0,0,0.25) + 250px backdrop blur + 25% white
+ * border — transparent, so the section background shows through softly.
+ * (OTP panel 874:11213 uses the same glass with a 150px blur — see .g-book--otp below.)
  */
 .g-book {
   position: absolute;
@@ -2278,9 +2290,8 @@
   border-radius: 32px;
   overflow: hidden;
   scroll-margin-top: 110px;
-  background:
-    radial-gradient(70% 75% at 96% 6%, rgba(118, 112, 80, 0.95) 0%, rgba(118, 112, 80, 0) 100%),
-    linear-gradient(115deg, #3a3a3a 0%, #3e3e3c 45%, #4a4838 100%);
+  /* no backdrop-filter support: a little more tint keeps text readable */
+  background: rgba(0, 0, 0, 0.55);
   color: #fcfcfc;
   opacity: 0;
   transform: translateY(16px);
@@ -2289,11 +2300,15 @@
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .g-book {
-    background:
-      radial-gradient(70% 75% at 96% 6%, rgba(118, 112, 80, 0.9) 0%, rgba(118, 112, 80, 0) 100%),
-      linear-gradient(115deg, rgba(58, 58, 58, 0.9) 0%, rgba(62, 62, 60, 0.9) 45%, rgba(74, 72, 56, 0.9) 100%);
+    background: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(250px);
     -webkit-backdrop-filter: blur(250px);
+  }
+
+  /* Figma 874:11213 — OTP step: same glass, 150px blur */
+  .g-book--otp {
+    backdrop-filter: blur(150px);
+    -webkit-backdrop-filter: blur(150px);
   }
 }
 
@@ -2728,6 +2743,40 @@
   max-width: 420px;
 }
 
+/* Desktop: keep heading → digits → hint even though hint lives with the heading in markup */
+.g-otp__copy {
+  display: contents;
+}
+
+.g-otp__heading {
+  order: 1;
+}
+
+.g-otp__digits {
+  order: 2;
+}
+
+.g-otp__hint {
+  order: 3;
+}
+
+.g-book--otp .g-otp {
+  order: 1;
+}
+
+.g-book--otp .g-otp__resend-row {
+  order: 2;
+  margin-top: -20px;
+}
+
+.g-book--otp > .g-book__error {
+  order: 3;
+}
+
+.g-book--otp > .g-book__actions {
+  order: 4;
+}
+
 .gifting-page .g-otp__heading {
   margin: 0;
   align-self: flex-start;
@@ -2750,13 +2799,14 @@
   width: 60px;
   height: 69px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.35);
+  /* Figma 874:11224 — 5% white glass tile, 8% white border, Lato Medium 16 */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
-  font-family: Sora, sans-serif;
-  font-size: 20px;
-  font-weight: 600;
+  font-family: Lato, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
   text-align: center;
   outline: none;
   transition: border-color 0.2s ease;
@@ -3016,63 +3066,143 @@
 }
 
 @media (max-width: 767.98px) {
-  .g-book {
-    padding: 64px 18px 28px;
+  /* Book + OTP overlays — Figma 862:14438 / 864:13393. Payment results stay on the older mobile scale. */
+  .g-book:not(.g-book--result) {
+    padding: 25px;
     gap: 24px;
-    border-radius: 24px;
+    border-radius: 32px;
+  }
+
+  .g-book.g-book--otp {
+    gap: 84px;
   }
 
   .g-book__back {
-    left: 18px;
-    top: 18px;
+    left: 16px;
+    top: 16px;
+    padding: 4px 2px;
+    font-size: 12px;
   }
 
-  .gifting-page .g-book__title {
+  .gifting-page .g-book:not(.g-book--result) .g-book__title {
     font-size: 24px;
+    letter-spacing: 1px;
   }
 
   .gifting-page .g-book__heading {
-    font-size: 18px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 0.16px;
+  }
+
+  .g-book__group--schedule .g-book__heading {
+    margin-bottom: 12px;
   }
 
   .g-book__body {
-    gap: 28px;
+    gap: 24px;
+    width: 100%;
+    max-width: 363px;
+  }
+
+  .g-book__details {
+    gap: 2px;
+  }
+
+  .g-book__col {
+    gap: 2px;
+    width: 100%;
   }
 
   .g-book__pair {
+    gap: 24px;
+  }
+
+  .gifting-page .g-book__label {
+    padding: 10px;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: 1.2px;
+  }
+
+  .gifting-page .g-book__field--slots .g-book__label {
+    padding: 0 10px;
+  }
+
+  .gifting-page .g-book__input {
+    height: 43px;
+    padding: 13px 25px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-size: 12px;
+  }
+
+  .g-book__opt span {
+    gap: 10px;
+    height: 43px;
+    font-size: 12px;
+    letter-spacing: 0.24px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .g-book__opt input:checked + span {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .g-book__schedule {
     gap: 12px;
   }
 
   .g-book__dates {
-    height: auto;
-    gap: 8px;
+    width: 100%;
+    height: 79px;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .g-book__dates::-webkit-scrollbar {
+    display: none;
   }
 
   .g-book__date {
-    flex: 1 1 0;
+    flex: 0 0 70px;
   }
 
   .g-book__date span {
-    width: 100%;
+    width: 70px;
+    height: 65px;
+  }
+
+  .gifting-page .g-book__hint {
+    margin-bottom: 12px;
+    font-size: 11px;
+    line-height: 16px;
   }
 
   .g-book__slots {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
   }
 
   .g-book__slot span {
-    font-size: 12px;
+    height: 39px;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-size: 11px;
   }
 
-  /* Same as the mobile Explore Gifts CTA */
-  .g-book__continue {
-    min-width: 0;
-    padding: 9px 65px;
-    font-size: 16px;
-  }
-
-  .g-book__actions {
+  .g-book:not(.g-book--result) .g-book__actions {
     justify-content: center;
+    width: 100%;
+    max-width: 363px;
+  }
+
+  .g-book.g-book--otp > .g-book__actions {
+    max-width: 300px;
+    margin-bottom: -68px;
   }
 
   .g-book__close {
@@ -3080,19 +3210,85 @@
     top: 18px;
   }
 
-  .g-otp__digits {
-    gap: 6px;
+  /* OTP — Figma 864:13393; reset desktop source-order compensation */
+  .g-otp__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
   }
 
-  .gifting-page .g-otp__digit {
-    width: 48px;
-    height: 56px;
-    font-size: 18px;
+  .g-otp__heading,
+  .g-otp__digits,
+  .g-otp__hint,
+  .g-book--otp .g-otp,
+  .g-book--otp .g-otp__resend-row,
+  .g-book--otp > .g-book__error,
+  .g-book--otp > .g-book__actions {
+    order: 0;
+  }
+
+  .g-book.g-book--otp .g-otp__resend-row {
+    margin-top: 0;
+  }
+
+  .g-otp {
+    max-width: 300px;
+    gap: 32px;
+  }
+
+  .gifting-page .g-otp__heading {
+    align-self: stretch;
+    font-family: "DM Sans", sans-serif;
+    font-variation-settings: "opsz" 14;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
   }
 
   .gifting-page .g-otp__hint {
+    font-size: 11px;
+    line-height: 24px;
+    color: #9a9a9a;
+  }
+
+  .g-otp__digits {
+    height: 60px;
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  .gifting-page .g-otp__digit {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .gifting-page .g-otp__digit:focus {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(144, 223, 158, 0.3);
+  }
+
+  .gifting-page .g-otp__timer {
+    font-weight: 500;
+    font-size: 10px;
+    line-height: normal;
+    letter-spacing: 0.05px;
+    color: #fff;
+    opacity: 0.8;
+  }
+
+  .gifting-page .g-otp__resend {
+    font-weight: 500;
     font-size: 12px;
-    line-height: 20px;
+    line-height: normal;
+    letter-spacing: 0.06px;
+    color: #fff;
+    opacity: 0.8;
   }
 
   .g-book--result {
@@ -3108,6 +3304,15 @@
   .g-pay-actions__retry {
     padding: 12px 24px;
     font-size: 16px;
+  }
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  @media (max-width: 767.98px) {
+    .g-book:not(.g-book--result) {
+      backdrop-filter: blur(150px);
+      -webkit-backdrop-filter: blur(150px);
+    }
   }
 }
 
@@ -3301,7 +3506,7 @@
   }
 
   .g-steps__panel {
-    padding-left: 24px;
+    padding-left: 12px;
   }
 
 
@@ -3475,12 +3680,18 @@
     height: calc(var(--g-mandala-d) * 1.1145);
   }
 
-  /* Mobile design: the diya is cut through its middle — flame just inside the left edge, right half of the bowl visible */
+  /*
+   * Mobile 856:11081 — same crop as desktop: hide the left half of the flipped
+   * bowl so the on-screen half reads as a side-profile lamp (flame at the left
+   * edge, bowl sitting on the mandala). Sized up so the visible lamp matches Figma.
+   */
   .g-steps__diya {
-    left: calc(2.5vw - var(--g-mandala-d) * 0.1585);
-    top: calc(72.5% - var(--g-mandala-d) * 0.1254);
-    width: calc(var(--g-mandala-d) * 0.317);
-    height: calc(var(--g-mandala-d) * 0.2507);
+    left: calc(var(--g-mandala-d) * -0.22);
+    top: calc(69% - var(--g-mandala-d) * 0.1254);
+    width: calc(var(--g-mandala-d) * 0.45);
+    height: calc(var(--g-mandala-d) * 0.355);
+    object-fit: cover;
+    object-position: center center;
   }
 
   .g-steps__line {
@@ -3739,7 +3950,7 @@
   }
 
   .g-box__pkg-title {
-    font-size: 22px;
+    font-size: 24px;
     line-height: 32px;
   }
 
@@ -3757,7 +3968,7 @@
   }
 
   .g-box__profiles-title {
-    font-size: 16px;
+    font-size: 18px;
     letter-spacing: 2.4px;
   }
 
@@ -3768,7 +3979,7 @@
 
   .g-box__profile h4 {
     white-space: normal;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 20px;
   }
 }
@@ -3790,11 +4001,19 @@
   .g-box__closed,
   .g-box__closed::after,
   .g-box__closed-part,
+  .g-box__lid,
+  .g-box__interior-glow,
   .g-box__burst,
   .g-box__open-stage,
   .g-box__package,
+  .g-box__open-clip,
   .g-box__spark {
     animation: none !important;
+  }
+
+  .g-box__open-clip,
+  .g-mbox__open-clip {
+    display: none !important;
   }
 }
 
@@ -3848,13 +4067,56 @@
     will-change: transform, opacity;
   }
 
+  /* New closed art 980:11214 (box spans 116–908 × 207–486 of 1024 × 683), fitted to the slot */
   .g-mbox__closed img {
     position: absolute;
-    left: -4.96%;
-    top: -24.96%;
-    width: 205.9%;
-    height: 158.76%;
+    left: -72.5px;
+    top: -3px;
+    width: 640px;
+    height: 427px;
     max-width: none;
+  }
+
+  .g-mbox__open-clip {
+    position: absolute;
+    left: 12px;
+    top: 80px;
+    width: 528px;
+    height: 480px;
+    z-index: 4;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    object-fit: cover;
+    object-position: center 55%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .g-box.is-opening.g-box--clip-open .g-mbox__open-clip {
+    opacity: 1;
+    visibility: visible;
+    animation: g-mbox-clip-out 5.2s linear forwards;
+  }
+
+  .g-box.is-opening.g-box--clip-open .g-mbox__closed {
+    opacity: 0 !important;
+    animation: none !important;
+    visibility: hidden;
+  }
+
+  .g-box.is-open .g-mbox__open-clip {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  @keyframes g-mbox-clip-out {
+    0%,
+    46% { opacity: 1; animation-timing-function: ease-in; }
+    54%,
+    100% { opacity: 0; }
   }
 
   /* Open box 856:11820 — sheet crop inside 498 × 425.6 at (27, 161) */
@@ -3864,18 +4126,19 @@
     top: 161px;
     width: 498px;
     height: 425.6px;
-    overflow: hidden;
+    overflow: visible;
     z-index: 1;
     opacity: 0.001;
     will-change: opacity;
   }
 
+  /* New open art 1371:11307 (box spans 170–1321 × 101–935 of 1488 × 1057), same box width */
   .g-mbox__open img {
     position: absolute;
-    left: -103.98%;
-    top: -27.93%;
-    width: 210.7%;
-    height: 164.37%;
+    left: -73.6px;
+    top: -11.4px;
+    width: 644px;
+    height: 457px;
     max-width: none;
   }
 
@@ -3887,7 +4150,7 @@
     width: 322px;
     height: 416px;
     z-index: 2;
-    perspective: 1600px;
+    perspective: 1200px;
     opacity: 0.001;
     pointer-events: none;
     will-change: translate, scale, opacity;
@@ -3912,7 +4175,7 @@
   }
 
   .g-box.is-3d.is-turning .g-mbox__flip {
-    transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .g-mbox__face {
@@ -4019,8 +4282,8 @@
     font-family: "DM Sans", sans-serif;
     font-variation-settings: "opsz" 14;
     font-weight: 600;
-    font-size: 10px;
-    line-height: 15px;
+    font-size: 14px;
+    line-height: 17px;
     letter-spacing: 1px;
     text-transform: uppercase;
     color: #dfb76c;
@@ -4034,8 +4297,8 @@
     margin: 0 0 -2px;
     font-family: Sora, sans-serif;
     font-weight: 600;
-    font-size: 20px;
-    line-height: 22px;
+    font-size: 24px;
+    line-height: 24px;
     color: #1e1713;
   }
 
@@ -4045,8 +4308,8 @@
     font-family: "DM Sans", sans-serif;
     font-variation-settings: "opsz" 14;
     font-weight: 700;
-    font-size: 24px;
-    line-height: 30px;
+    font-size: 28px;
+    line-height: 32px;
     color: #1f1915;
   }
 
@@ -4055,8 +4318,8 @@
     font-family: "DM Sans", sans-serif;
     font-variation-settings: "opsz" 14;
     font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 16px;
+    line-height: 18px;
     color: #8c7e6e;
     text-decoration: line-through;
   }
@@ -4080,8 +4343,8 @@
     font-family: "DM Sans", sans-serif;
     font-variation-settings: "opsz" 14;
     font-weight: 500;
-    font-size: 13px;
-    line-height: 16.25px;
+    font-size: 17px;
+    line-height: 18.25px;
     color: #2f241a;
   }
 
@@ -4114,7 +4377,7 @@
     margin: 0;
     font-family: Sora, sans-serif;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 28px;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -4122,7 +4385,7 @@
   }
 
   .g-mbox__badge {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .g-mbox__list {
@@ -4140,7 +4403,7 @@
     font-family: "DM Sans", sans-serif;
     font-variation-settings: "opsz" 14;
     font-weight: 500;
-    font-size: 13px;
+    font-size: 17px;
     line-height: 24px;
     letter-spacing: 0.4px;
     color: #f1f5f9;
@@ -4161,7 +4424,7 @@
   .g-mbox__list li span {
     margin-left: 8px;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 14px;
     color: rgba(230, 202, 101, 0.9);
   }
 
@@ -4246,4 +4509,505 @@
   white-space: nowrap;
   /* Animate only the hover look (as on Home) — never the size, which is synced on load/resize */
   transition-property: background, border-color, color, box-shadow;
+}
+
+/* Mobile Book / OTP CTAs — Figma 862:14095 / 864:13410. Wins over .g-btn--sync size tokens. */
+@media (max-width: 767.98px) {
+  .gifting-page .g-book:not(.g-book--result) .g-book__continue.g-btn--sync {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 40px;
+    padding: 10px 24px;
+    border-radius: 36px;
+    border: 1px solid #969696 !important;
+    box-shadow: 0 12px 10px rgba(255, 255, 255, 0.15);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.28px;
+    line-height: normal;
+    text-transform: none;
+  }
+
+  .gifting-page .g-book.g-book--otp .g-book__continue.g-btn--sync {
+    font-weight: 600;
+    border-radius: 24px;
+  }
+}
+
+/* =====================================================================================
+ * Section 2 opening — frame sequence (desktop canvas). Replaces the CSS lid/clip attempts.
+ * Rendered in the camera of the Figma open box (980:11211), so every frame is one consistent
+ * object: closed still → hinge animation (2.8s, plays once) → open shell (identical to the last
+ * frame, so the hand-off is invisible) → card rises out softly → final 856:11754 state.
+ * States on .g-box: (none) closed · .is-playing · .is-revealed · .is-open
+ * ===================================================================================== */
+.g-box--seq .g-box__closed,
+.g-box--seq .g-box__open-clip,
+.g-box--seq .g-box__burst,
+.g-box--seq .g-box__sparkles {
+  display: none !important;
+}
+
+.g-box__seq-closed,
+.g-box__seq-anim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1302px;
+  height: 868px;
+  max-width: none;
+  z-index: 3;
+  pointer-events: none;
+  user-select: none;
+}
+
+.g-box__seq-anim {
+  visibility: hidden;
+}
+
+/* Soft glow under the closed box (same warmth as before), fades as it opens */
+.g-box--seq .g-box__seq-closed {
+  filter: drop-shadow(0 0 60px rgba(255, 154, 174, 0.18));
+}
+
+.g-box--seq.is-playing .g-box__seq-anim {
+  visibility: visible;
+}
+
+.g-box--seq.is-playing .g-box__seq-closed,
+.g-box--seq.is-revealed .g-box__seq-closed,
+.g-box--seq.is-open .g-box__seq-closed,
+.g-box--seq.is-revealed .g-box__seq-anim,
+.g-box--seq.is-open .g-box__seq-anim {
+  visibility: hidden;
+}
+
+/* Kill the old timeline on the shell and card in sequence mode */
+.g-box--seq.is-opening .g-box__open-stage,
+.g-box--seq.is-opening .g-box__package {
+  animation: none;
+}
+
+.g-box--seq.is-revealed .g-box__open-stage,
+.g-box--seq.is-open .g-box__open-stage {
+  opacity: 1;
+}
+
+/* Card rises out of the box: starts small and low, whole (never clipped), long soft ease-out */
+.g-box--seq.is-revealed .g-box__package {
+  animation: g-box-seq-card 2.2s cubic-bezier(0.22, 0.8, 0.28, 1) forwards;
+}
+
+@keyframes g-box-seq-card {
+  0% { opacity: 0; translate: 0 22%; scale: 0.74; }
+  22% { opacity: 1; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+/*
+ * New Figma art: closed 980:11214 → open 1375:11434 (card front 856:11756 / back 862:10943).
+ * The open stills are framed taller than the canvas (1488 × 1057); sized so the box matches the
+ * closed box's width and centred, so the closed → open crossfade reads as one object.
+ */
+.g-box--seq .g-box__seq-anim,
+.g-box--seq .g-box__shell {
+  inset: auto;
+  left: 0;
+  top: -57px;
+  width: 1302px;
+  height: 925px;
+  object-fit: contain;
+}
+
+
+/*
+ * Opening clip (gift-box-opening-clip.webp, ~3.3s): built from the three Figma poses — closed
+ * 856:11752 → half open 1389:11277 → full open 1375:11434 — with the lid warped on its hinge
+ * between them. Same 1302 × 925 frame as the open shell; the closed still sits where the clip's
+ * first frame has it, so the hand-offs at both ends are invisible.
+ */
+.g-box--seq .g-box__seq-closed {
+  top: 143px;
+}
+
+/* Keep the closed still under the clip until its first frame (identical) has surely painted */
+.g-box--seq.is-playing .g-box__seq-closed {
+  visibility: visible;
+  animation: g-box-seq-handoff 0.5s step-end forwards;
+}
+
+@keyframes g-box-seq-handoff {
+  to { visibility: hidden; }
+}
+
+
+
+
+
+
+/*
+ * Card comes out of the box (open box 1371:11307 / 1375:11434). The card layer is clipped at
+ * the box's foot (y 761 in the canvas) and the box's front wall — the same open still, cut at
+ * its rim (74.6%) — is drawn over it, so the card is hidden inside the box and rises up past
+ * the rim. Desktop canvas only; below 992px the card re-flows taller and is not clipped.
+ */
+.g-box__rise {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1302px;
+  height: 868px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.g-box__rise .g-box__package {
+  z-index: auto;
+}
+
+.g-box.is-open .g-box__rise .g-box__package {
+  pointer-events: auto;
+}
+
+.g-box__front-wall {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .g-box--seq .g-box__rise {
+    height: 761px;
+    overflow: hidden;
+  }
+
+  /* Rests with its foot just tucked behind the rim, the Explore button clear of it */
+  .g-box--seq .g-box__package {
+    top: 250px;
+  }
+
+  .g-box--seq .g-box__front-wall {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: -57px;
+    width: 1302px;
+    height: 925px;
+    max-width: none;
+    z-index: 3;
+    clip-path: inset(74.6% 0 0 0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .g-box--seq.is-revealed .g-box__front-wall,
+  .g-box--seq.is-open .g-box__front-wall {
+    opacity: 1;
+  }
+
+  .g-box--seq.is-revealed .g-box__package {
+    animation: g-box-seq-rise 3.4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  }
+
+  /* From fully inside (top at the rim) up to rest; 2D only so text stays crisp */
+  @keyframes g-box-seq-rise {
+    0% { opacity: 1; translate: 0 384px; }
+    100% { opacity: 1; translate: 0 0; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-box--seq.is-revealed .g-box__package {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* =====================================================================================
+ * Package card — exact Figma values. FRONT 856:11756 · BACK 862:10943.
+ * The card is laid out at Figma size (889 × 391) and scaled with the box, so these px values
+ * render exactly as designed. (Earlier +px bumps made it crowded: wrapped subtitle, squeezed rows.)
+ * ===================================================================================== */
+
+/* ---------- Front ---------- */
+.g-box .g-box__card-face--front .g-box__script {
+  font-size: 39px;
+  line-height: 54px;
+}
+
+.g-box .g-box__card-face--front .g-box__package-panel {
+  /* Figma 413 / 22 from the card's outer edge; absolute offsets start inside its 4px border */
+  left: 409px;
+  top: 18px;
+  right: auto;
+  bottom: auto;
+  transform: none;
+  translate: none;
+  width: 449px;
+  height: 346px;
+  box-sizing: border-box;
+  padding: 21px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #eddcc0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
+}
+
+.g-box .g-box__card-face--front .g-box__badge {
+  align-self: flex-start;
+  padding: 5px 13px;
+  border: 1px solid rgba(217, 119, 6, 0.4);
+  border-radius: 9999px;
+  background: rgba(254, 243, 199, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16.5px;
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+  color: #451a03;
+}
+
+.g-box .g-box__card-face--front .g-box__pkg-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+  margin: 0;
+}
+
+.g-box .g-box__card-face--front .g-box__pkg-title {
+  margin: 0;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 25px;
+  line-height: 38px;
+  color: #0f172a;
+}
+
+.g-box .g-box__card-face--front .g-box__pkg-tag {
+  margin: -12px 0 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(6, 53, 51, 0.8);
+}
+
+.g-box .g-box__card-face--front .g-box__price-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.g-box .g-box__card-face--front .g-box__price {
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 700;
+  font-size: 29px;
+  line-height: 40px;
+  letter-spacing: -0.9px;
+  color: #0f172a;
+}
+
+.g-box .g-box__card-face--front .g-box__price-old {
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 28px;
+  text-decoration: line-through;
+  color: #9a9a9a;
+}
+
+.g-box .g-box__card-face--front .g-box__features {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 13px 8px;
+  list-style: none;
+  border-top: 1px solid rgba(223, 202, 162, 0.6);
+  border-bottom: 1px solid rgba(223, 202, 162, 0.6);
+}
+
+.g-box .g-box__card-face--front .g-box__features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.25px;
+  white-space: nowrap;
+  color: #2f241a;
+}
+
+.g-box .g-box__card-face--front .g-box__feat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.g-box .g-box__card-face--front .g-box__feat-icon img {
+  width: 20px;
+  height: 20px;
+}
+
+.g-box .g-box__card-face--front .g-box__explore-wrap {
+  padding: 6px 0 4px;
+}
+
+.g-box .g-box__card-face--front .g-box__explore {
+  padding: 11px 17px;
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+}
+
+/* ---------- Back ---------- */
+.g-box .g-box__card-face--back .g-box__wire {
+  left: 50%;
+  top: 50%;
+  width: 866px;
+  height: 368px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 8px;
+}
+
+.g-box .g-box__card-face--back .g-box__profiles {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.g-box .g-box__card-face--back .g-box__profiles-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+.g-box .g-box__card-face--back .g-box__profiles-title {
+  margin: 0;
+  font-family: Sora, sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: 4.4px;
+  text-transform: uppercase;
+  color: #e8c872;
+}
+
+.g-box .g-box__card-face--back .g-box__profiles-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 17px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 9999px;
+  background: rgba(2, 27, 19, 0.8);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #f5e1a4;
+}
+
+.g-box .g-box__card-face--back .g-box__profiles-badge-div {
+  width: 1px;
+  height: 14px;
+  background: rgba(212, 175, 55, 0.4);
+}
+
+.g-box .g-box__card-face--back .g-box__profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.g-box .g-box__card-face--back .g-box__profile {
+  position: relative;
+  padding-left: 24px;
+}
+
+.g-box .g-box__card-face--back .g-box__profile h4 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  color: #f1f5f9;
+}
+
+.g-box .g-box__card-face--back .g-box__profile h4 span {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(230, 202, 101, 0.9);
+}
+
+.g-box .g-box__card-face--back .g-box__profile p {
+  margin: 0;
+  white-space: normal;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: #9ab3a3;
+}
+
+/* =====================================================================================
+ * Crisp text in the gift box. The 1302 × 868 Figma canvas used to be shrunk with
+ * transform: scale(), which rasterises the card (3D flip, animation layers) at Figma size and
+ * then resamples it — soft, blurry text. `zoom` lays the canvas out again at its real on-screen
+ * size, so every glyph is drawn at true pixel size. Older browsers keep the transform fallback.
+ * ===================================================================================== */
+@supports (zoom: 0.5) {
+  .g-box__canvas {
+    transform: none;
+    zoom: var(--g-box-s);
+  }
+
+  @media (max-width: 991.98px) {
+    /* card counter-scaled back to 1:1 below 992px — same idea, via zoom */
+    .g-box__package {
+      transform: none;
+      zoom: calc(1 / var(--g-box-s));
+      /* with zoom the offset is multiplied by both zooms — 12px / s lands on 12px on screen */
+      left: 12px;
+    }
+  }
+}
+
+/* Once open, let the card render as normal content (no frozen GPU layer) */
+.g-box.is-open .g-box__package,
+.g-box.is-open .g-box__card-flip,
+.g-box.is-open .g-box__card-face {
+  will-change: auto;
 }

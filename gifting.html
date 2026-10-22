@@ -27,7 +27,7 @@
   <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lato:wght@400;700&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lato:wght@300;400;700&family=Sora:wght@100..800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
   <link rel="apple-touch-icon" sizes="57x57" href="assets/images/fav.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/images/fav.png">
@@ -38,7 +38,7 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261021-pull">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261022e">
   <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-closed.png">
   <link rel="preload" as="image" href="assets/images/gifting/box3d-tray.png">
   <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-open.png">
@@ -122,7 +122,7 @@
           Everything inside .g-box__canvas is laid out at Figma's 1302 × 868 px and scaled to fit (gifting.js).
         -->
         <div
-          class="g-box"
+          class="g-box g-box--seq"
           id="gift-box"
           role="button"
           tabindex="0"
@@ -137,10 +137,20 @@
           <div class="g-mbox" aria-hidden="true">
             <div class="g-mbox__stage" id="gift-mbox-stage">
               <div class="g-mbox__closed">
-                <img src="assets/images/gifting/gift-box-closed-sprite.png" width="1536" height="1024" alt="">
+                <img src="assets/images/gifting/gift-box-closed-v2.png" width="1024" height="683" alt="">
               </div>
+              <video
+                class="g-mbox__open-clip"
+                id="gift-mbox-open-clip"
+                muted
+                playsinline
+                preload="auto"
+                aria-hidden="true"
+              >
+                <source src="assets/images/gifting/gift-box-open-seq.mp4" type="video/mp4">
+              </video>
               <div class="g-mbox__open">
-                <img src="assets/images/gifting/gift-box-closed-sprite.png" width="1536" height="1024" alt="">
+                <img src="assets/images/gifting/gift-box-opening-v2.png" width="1488" height="1057" alt="">
               </div>
               <div class="g-mbox__card">
                 <div class="g-mbox__flip">
@@ -159,8 +169,8 @@
                       </div>
                       <div class="g-mbox__head">
                         <h3 class="g-mbox__title">SuperShyft Core+</h3>
-                        <p class="g-mbox__price">₹3,499</p>
-                        <p class="g-mbox__price-old">₹4,499</p>
+                        <p class="g-mbox__price">₹1,999</p>
+                        <p class="g-mbox__price-old">₹2,499</p>
                       </div>
                       <ul class="g-mbox__features">
                         <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 tests</li>
@@ -180,8 +190,8 @@
                     <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
                     <div class="g-mbox__profiles">
                       <h3 class="g-mbox__profiles-title">Profiles Included</h3>
-                      <div class="g-box__profiles-badge g-mbox__badge" aria-label="8 tests, 69 parameters">
-                        <span>8 Tests</span>
+                      <div class="g-box__profiles-badge g-mbox__badge" aria-label="8 profiles, 69 parameters">
+                        <span>8 Profiles</span>
                         <span class="g-box__profiles-badge-div" aria-hidden="true"></span>
                         <span>69 Parameters</span>
                       </div>
@@ -568,12 +578,12 @@
                   </div>
                   <div class="g-book__pair">
                     <div class="g-book__field">
-                      <label class="g-book__label" for="book-city">City</label>
-                      <input class="g-book__input" type="text" id="book-city" placeholder="e.g Mumbai" autocomplete="address-level2" required>
-                    </div>
-                    <div class="g-book__field">
                       <label class="g-book__label" for="book-pincode">Pincode</label>
                       <input class="g-book__input" type="text" id="book-pincode" placeholder="e.g 402201" pattern="[0-9]{6}" maxlength="6" inputmode="numeric" autocomplete="postal-code" required>
+                    </div>
+                    <div class="g-book__field">
+                      <label class="g-book__label" for="book-city">City</label>
+                      <input class="g-book__input" type="text" id="book-city" placeholder="e.g Mumbai" autocomplete="address-level2" required>
                     </div>
                   </div>
                 </div>
@@ -607,7 +617,10 @@
           <button type="button" class="g-book__back" id="gift-otp-back" aria-label="Back to booking">&larr; Back</button>
           <h3 class="g-book__title" id="gift-otp-title">Book Appointment</h3>
           <div class="g-otp">
-            <p class="g-otp__heading" id="gift-otp-heading">Enter OTP</p>
+            <div class="g-otp__copy">
+              <p class="g-otp__heading" id="gift-otp-heading">Enter OTP</p>
+              <p class="g-otp__hint" id="gift-otp-hint">OTP sent on +91 ——————</p>
+            </div>
             <div class="g-otp__digits" id="gift-otp-digits" role="group" aria-labelledby="gift-otp-heading">
               <input class="g-otp__digit" type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="OTP digit 1">
               <input class="g-otp__digit" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 2">
@@ -616,15 +629,14 @@
               <input class="g-otp__digit" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 5">
               <input class="g-otp__digit" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 6">
             </div>
-            <p class="g-otp__hint" id="gift-otp-hint">OTP sent on +91 ——————</p>
-            <div class="g-otp__resend-row">
-              <span class="g-otp__timer" id="gift-otp-timer" aria-live="polite">00:30</span>
-              <button type="button" class="g-otp__resend" id="gift-otp-resend" disabled>Resend OTP</button>
-            </div>
           </div>
           <p class="g-book__error" id="gift-otp-error" role="alert" hidden></p>
           <div class="g-book__actions">
             <button type="button" class="g-book__continue g-btn--sync" id="gift-otp-verify">Verify OTP</button>
+          </div>
+          <div class="g-otp__resend-row">
+            <span class="g-otp__timer" id="gift-otp-timer" aria-live="polite">00:30</span>
+            <button type="button" class="g-otp__resend" id="gift-otp-resend" disabled>Resend OTP</button>
           </div>
         </div>
 
@@ -744,7 +756,7 @@
   </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261021-pull" defer></script>
+  <script src="assets/js/gifting.js?v=20261022e" defer></script>
 </body>
 
 </html>

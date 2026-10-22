@@ -391,7 +391,7 @@
       window.clearTimeout(flipTimer);
       flipTimer = window.setTimeout(function () {
         giftBox.classList.remove("is-turning", "is-3d");
-      }, 950);
+      }, 800);
     } else {
       giftBox.classList.toggle("is-flipped");
     }
@@ -818,7 +818,10 @@
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserveChipHeight);
 
+  var currentOccasion = "diwali";
+
   function setOccasion(key) {
+    currentOccasion = OCCASIONS[key] ? key : "diwali";
     var config = OCCASIONS[key] || OCCASIONS.diwali;
     if (previewCard) {
       previewCard.classList.remove("is-diwali", "is-birthday", "is-just-because");
@@ -880,6 +883,25 @@
   var PROVIDER = "healthians";
   var PACKAGE_ID = 7;
   var SERVICEABILITY_DEBOUNCE_MS = 400;
+  var PINCODE_CITY_MAP_URL = "assets/data/pincode-city.json";
+  /* Birthday / Just Because: paste the real campaign code when you have it. Empty = no fake code. */
+  var DISCOUNT_CODES = {
+    diwali: "SUPERDIWALI",
+    birthday: "",
+    "just-because": "",
+  };
+
+  function getActiveOccasion() {
+    var activeTab = document.querySelector(".g-tab.is-active");
+    var fromTab = activeTab && activeTab.getAttribute("data-occasion");
+    if (fromTab && OCCASIONS[fromTab]) return fromTab;
+    return OCCASIONS[currentOccasion] ? currentOccasion : "diwali";
+  }
+
+  function getDiscountCode() {
+    var code = DISCOUNT_CODES[getActiveOccasion()];
+    return code ? String(code).trim() : "";
+  }
 
   var form = document.getElementById("gift-form");
   var book = document.getElementById("gift-book");
@@ -923,9 +945,16 @@
   var slotsAbort = null;
   var slotsGen = 0;
   var lastSlotPayload = null;
+  var pincodeCityMap = null;
+  var pincodeCityMapPromise = null;
+  var lastAutofilledCity = "";
   var OTP_RESEND_SECONDS = 30;
   var onboardSession = {
-    family_onboard_id: null,
+    booker_user_id: null,
+    otp_session_id: null,
+    payment_required: true,
+    engagement_ids: [],
+    booking_ids: [],
     payload: null,
     bookerPhone: "",
     bookerEmail: "",
@@ -933,6 +962,7 @@
     razorpay: null,
     amount_rupees: null,
     razorpay_payment_id: null,
+    access_token: null,
   };
   var otpTimerId = null;
   var otpSecondsLeft = 0;
@@ -1003,7 +1033,11 @@
 
   function resetOnboardSession() {
     stopOtpTimer();
-    onboardSession.family_onboard_id = null;
+    onboardSession.booker_user_id = null;
+    onboardSession.otp_session_id = null;
+    onboardSession.payment_required = true;
+    onboardSession.engagement_ids = [];
+    onboardSession.booking_ids = [];
     onboardSession.payload = null;
     onboardSession.bookerPhone = "";
     onboardSession.bookerEmail = "";
@@ -1011,8 +1045,39 @@
     onboardSession.razorpay = null;
     onboardSession.amount_rupees = null;
     onboardSession.razorpay_payment_id = null;
+    onboardSession.access_token = null;
     clearOtpInputs();
     setOtpError("");
+  }
+
+  function collectEngagementIds(members) {
+    var ids = [];
+    if (!members || !members.length) return ids;
+    for (var i = 0; i < members.length; i++) {
+      var id = members[i] && members[i].engagement_id;
+      if (id != null && id !== "") ids.push(id);
+    }
+    return ids;
+  }
+
+  function applyOnboardResponse(data, payload) {
+    var engagementIds = collectEngagementIds(data.members);
+    if (!engagementIds.length) {
+      throw new Error("Could not start booking. Please try again.");
+    }
+    onboardSession.payload = payload;
+    onboardSession.booker_user_id = data.booker_user_id != null ? data.booker_user_id : null;
+    onboardSession.otp_session_id = data.otp_session_id != null ? data.otp_session_id : null;
+    onboardSession.payment_required = data.payment_required !== false;
+    onboardSession.engagement_ids = engagementIds;
+    onboardSession.booking_ids = [];
+    onboardSession.bookerPhone = payload.booker.phone;
+    onboardSession.bookerEmail = payload.booker.email;
+    onboardSession.bookerName = payload.booker.name;
+    onboardSession.razorpay = null;
+    onboardSession.amount_rupees = null;
+    onboardSession.razorpay_payment_id = null;
+    onboardSession.access_token = null;
   }
 
   function resetBookingApiState() {
@@ -1028,6 +1093,7 @@
     setScheduleLoading(false);
     setContinueLoading(false);
     resetOnboardSession();
+    lastAutofilledCity = "";
   }
 
   function apiErrorMessage(json, fallback) {
@@ -1041,13 +1107,15 @@
     return fallback;
   }
 
-  function apiPost(path, body, signal) {
+  function apiPost(path, body, signal, token) {
     var url = API_BASE + path;
     var label = apiLabel(path);
+    var headers = { "Content-Type": "application/json", Accept: "application/json" };
+    if (token) headers.Authorization = "Bearer " + token;
     console.info("[gifting] POST " + url, body);
     return fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: headers,
       body: JSON.stringify(body),
       signal: signal,
     })
@@ -1103,13 +1171,13 @@
     );
   }
 
-  /* Tomorrow through same weekday next week (7 days); none pre-selected */
+  /* Tomorrow through the next 5 days; none pre-selected */
   function renderBookDates() {
     if (!bookDates) return;
     var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     bookDates.innerHTML = "";
     bookDates.setAttribute("data-api", API_BASE + "/diagnostics/public/serviceability");
-    for (var i = 1; i <= 7; i++) {
+    for (var i = 1; i <= 5; i++) {
       var d = new Date();
       d.setHours(12, 0, 0, 0);
       d.setDate(d.getDate() + i);
@@ -1183,6 +1251,61 @@
     var city = bookCity ? bookCity.value.trim() : "";
     var pincode = bookPincode ? bookPincode.value.trim() : "";
     return !!(address && city && /^\d{6}$/.test(pincode));
+  }
+
+  function loadPincodeCityMap() {
+    if (pincodeCityMap) return Promise.resolve(pincodeCityMap);
+    if (pincodeCityMapPromise) return pincodeCityMapPromise;
+    pincodeCityMapPromise = fetch(PINCODE_CITY_MAP_URL)
+      .then(function (res) {
+        if (!res.ok) throw new Error("pincode map " + res.status);
+        return res.json();
+      })
+      .then(function (map) {
+        pincodeCityMap = map && typeof map === "object" ? map : {};
+        return pincodeCityMap;
+      })
+      .catch(function () {
+        pincodeCityMap = {};
+        pincodeCityMapPromise = null;
+        return pincodeCityMap;
+      });
+    return pincodeCityMapPromise;
+  }
+
+  function cityMatchesAutofill(value) {
+    return !!(lastAutofilledCity && value === lastAutofilledCity);
+  }
+
+  function maybeAutofillCity() {
+    if (!bookCity || !bookPincode) return Promise.resolve(false);
+    var pin = bookPincode.value.trim();
+    var current = bookCity.value.trim();
+
+    if (!/^\d{6}$/.test(pin)) {
+      if (cityMatchesAutofill(current)) {
+        bookCity.value = "";
+        lastAutofilledCity = "";
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+    }
+
+    return loadPincodeCityMap().then(function (map) {
+      var city = map[pin];
+      if (!city) return false;
+      current = bookCity.value.trim();
+      if (!current || cityMatchesAutofill(current)) {
+        if (current === city) {
+          lastAutofilledCity = city;
+          return false;
+        }
+        bookCity.value = city;
+        lastAutofilledCity = city;
+        return true;
+      }
+      return false;
+    });
   }
 
   function unwrapApiData(payload) {
@@ -1523,7 +1646,10 @@
     showPanel(book);
     var first = book.querySelector("input[name='book-gender']");
     if (first) first.focus({ preventScroll: true });
-    if (addressFieldsReady()) scheduleServiceabilityCheck();
+    loadPincodeCityMap();
+    maybeAutofillCity().then(function () {
+      if (addressFieldsReady()) scheduleServiceabilityCheck();
+    });
   }
 
   function closeBook() {
@@ -1621,59 +1747,59 @@
     };
   }
 
-  function submitFamilyOnboard(opts) {
-    opts = opts || {};
-    var isResend = !!opts.resend;
-    var payload = isResend && onboardSession.payload
-      ? onboardSession.payload
-      : buildFamilyOnboardPayload();
-
-    if (!isResend) {
-      setContinueLoading(true);
-      setBookError("");
-    } else {
-      if (otpResend) otpResend.disabled = true;
-      setOtpError("");
-    }
+  function submitFamilyOnboard() {
+    var payload = buildFamilyOnboardPayload();
+    setContinueLoading(true);
+    setBookError("");
 
     return apiPost("/users/public/family-onboard", payload)
       .then(function (raw) {
         var data = unwrapApiData(raw);
-        var familyId = data.family_onboard_id;
-        if (!familyId) {
-          throw new Error("Could not start booking. Please try again.");
-        }
-        onboardSession.payload = payload;
-        onboardSession.family_onboard_id = familyId;
-        onboardSession.bookerPhone = payload.booker.phone;
-        onboardSession.bookerEmail = payload.booker.email;
-        onboardSession.bookerName = payload.booker.name;
-        onboardSession.razorpay = null;
-        onboardSession.amount_rupees = null;
-        onboardSession.razorpay_payment_id = null;
-
-        if (isResend) {
-          clearOtpInputs();
-          startOtpTimer();
-          setOtpError("");
-          if (otpDigitInputs[0]) otpDigitInputs[0].focus({ preventScroll: true });
-        } else {
-          setContinueLoading(false);
-          openOtpPanel();
-        }
+        applyOnboardResponse(data, payload);
+        setContinueLoading(false);
+        openOtpPanel();
       })
       .catch(function (err) {
         if (err && err.name === "AbortError") return;
         var msg =
           (err && err.message) || "Something went wrong. Please try again.";
-        if (isResend) {
-          setOtpError(msg);
-          if (otpResend && otpSecondsLeft <= 0) otpResend.disabled = false;
-        } else {
-          setContinueLoading(false);
-          setBookError(msg);
-          placeBook();
+        setContinueLoading(false);
+        setBookError(msg);
+        placeBook();
+      });
+  }
+
+  function resendOtp() {
+    if (otpResend && otpResend.disabled) return;
+    var phone = onboardSession.bookerPhone;
+    if (!phone) {
+      setOtpError("Session expired. Please go back and continue again.");
+      return;
+    }
+
+    var body = { phone: phone };
+    if (onboardSession.bookerEmail) body.email = onboardSession.bookerEmail;
+
+    if (otpResend) otpResend.disabled = true;
+    setOtpError("");
+
+    return apiPost("/auth/resend-otp", body)
+      .then(function (raw) {
+        var data = unwrapApiData(raw);
+        if (data.session_id != null) {
+          onboardSession.otp_session_id = data.session_id;
         }
+        clearOtpInputs();
+        startOtpTimer();
+        setOtpError("");
+        if (otpDigitInputs[0]) otpDigitInputs[0].focus({ preventScroll: true });
+      })
+      .catch(function (err) {
+        if (err && err.name === "AbortError") return;
+        var msg =
+          (err && err.message) || "Something went wrong. Please try again.";
+        setOtpError(msg);
+        if (otpResend && otpSecondsLeft <= 0) otpResend.disabled = false;
       });
   }
 
@@ -1705,6 +1831,15 @@
 
     return loadRazorpayScript().then(function () {
       return new Promise(function (resolve) {
+        /* Razorpay also fires modal.ondismiss after a successful pay. Only the first
+           outcome (handler / payment.failed / user cancel) may change the panel. */
+        var settled = false;
+        function settleOnce() {
+          if (settled) return false;
+          settled = true;
+          return true;
+        }
+
         var options = {
           key: rz.key_id,
           amount: rz.amount_paise,
@@ -1719,6 +1854,7 @@
           },
           theme: { color: "#296359" },
           handler: function (response) {
+            if (!settleOnce()) return;
             confirmFamilyPayment(response)
               .then(resolve)
               .catch(function () {
@@ -1728,6 +1864,7 @@
           },
           modal: {
             ondismiss: function () {
+              if (!settleOnce()) return;
               openPayFailed();
               resolve();
             },
@@ -1736,41 +1873,64 @@
         try {
           var checkout = new window.Razorpay(options);
           checkout.on("payment.failed", function () {
+            if (!settleOnce()) return;
             openPayFailed();
             resolve();
           });
           checkout.open();
         } catch (err) {
           console.error("[gifting] Razorpay open failed", err);
-          openPayFailed();
-          resolve();
+          if (settleOnce()) {
+            openPayFailed();
+            resolve();
+          }
         }
       });
     });
   }
 
-  function membersAllSuccess(members) {
-    if (!members || !members.length) return true;
+  function memberStatusFailed(status) {
+    var s = String(status || "").toLowerCase();
+    return s === "failed" || s === "error" || s === "failure";
+  }
+
+  function membersHaveFailure(members) {
+    if (!members || !members.length) return false;
     for (var i = 0; i < members.length; i++) {
-      if (!members[i] || members[i].status !== "success") return false;
+      if (members[i] && memberStatusFailed(members[i].status)) return true;
     }
+    return false;
+  }
+
+  function confirmPaymentSucceeded(data) {
+    if (data.payment_verified === false || data.payment_verified === "false") {
+      return false;
+    }
+    if (membersHaveFailure(data.members)) return false;
     return true;
   }
 
   function confirmFamilyPayment(response) {
     var body = {
-      family_onboard_id: onboardSession.family_onboard_id,
       razorpay_payment_id: response.razorpay_payment_id,
       razorpay_order_id: response.razorpay_order_id,
       razorpay_signature: response.razorpay_signature,
     };
-    return apiPost("/users/public/family-onboard/confirm-payment", body).then(
+    return apiPost(
+      "/users/public/family-onboard/confirm-payment",
+      body,
+      undefined,
+      onboardSession.access_token
+    ).then(
       function (raw) {
         var data = unwrapApiData(raw);
         var paymentId =
           data.razorpay_payment_id || response.razorpay_payment_id || "";
         onboardSession.razorpay_payment_id = paymentId;
-        if (data.payment_verified && membersAllSuccess(data.members)) {
+        if (data.booking_ids && data.booking_ids.length) {
+          onboardSession.booking_ids = data.booking_ids;
+        }
+        if (confirmPaymentSucceeded(data)) {
           openPaySuccess(paymentId, onboardSession.amount_rupees);
         } else {
           openPayFailed();
@@ -1785,7 +1945,7 @@
       setOtpError("Please enter the 6-digit OTP.");
       return;
     }
-    if (!onboardSession.family_onboard_id) {
+    if (!onboardSession.engagement_ids || !onboardSession.engagement_ids.length) {
       setOtpError("Session expired. Please go back and continue again.");
       return;
     }
@@ -1796,14 +1956,21 @@
     }
     setOtpError("");
 
-    apiPost("/users/public/family-onboard/verify-pay", {
-      family_onboard_id: onboardSession.family_onboard_id,
+    var verifyBody = {
       phone: onboardSession.bookerPhone,
       otp: otp,
-      discount_code: null,
-    })
+      engagement_ids: onboardSession.engagement_ids.slice(),
+      discount_code: getDiscountCode() || null,
+    };
+
+    apiPost("/users/public/family-onboard/verify-pay", verifyBody)
       .then(function (raw) {
         var data = unwrapApiData(raw);
+        var tokens = (data && data.tokens) || (raw && raw.tokens) || {};
+        onboardSession.access_token = tokens.access_token || null;
+        if (data.booking_ids && data.booking_ids.length) {
+          onboardSession.booking_ids = data.booking_ids;
+        }
         onboardSession.razorpay = {
           key_id: data.key_id,
           razorpay_order_id: data.razorpay_order_id,
@@ -1817,6 +1984,19 @@
           otpVerify.textContent = "Verify OTP";
         }
         hidePanel(otpPanel);
+        var hasOrder = !!(data.key_id && data.razorpay_order_id);
+        if (!hasOrder) {
+          if (onboardSession.payment_required === false) {
+            openPaySuccess(
+              data.booking_id ||
+                (data.booking_ids && data.booking_ids[0]) ||
+                "",
+              onboardSession.amount_rupees
+            );
+            return;
+          }
+          throw new Error("Could not start payment. Please try again.");
+        }
         return openRazorpayCheckout();
       })
       .catch(function (err) {
@@ -1840,7 +2020,8 @@
       "--------------------------------",
       "Transaction ID: " + id,
       "Amount: " + amount,
-      "Family onboard ID: " + (onboardSession.family_onboard_id || ""),
+      "Engagement IDs: " + ((onboardSession.engagement_ids || []).join(", ") || "—"),
+      "Booking IDs: " + ((onboardSession.booking_ids || []).join(", ") || "—"),
       "",
       "Thank you for gifting with SuperShyft.",
     ];
@@ -1921,7 +2102,7 @@
   if (otpResend) {
     otpResend.addEventListener("click", function () {
       if (otpResend.disabled) return;
-      submitFamilyOnboard({ resend: true });
+      resendOtp();
     });
   }
   if (paySuccessClose) paySuccessClose.addEventListener("click", closeBook);
@@ -1949,6 +2130,12 @@
       if (t && t.classList) t.classList.remove("is-invalid");
       if (!t) return;
       if (t.id === "book-address" || t.id === "book-city" || t.id === "book-pincode") {
+        if (t.id === "book-pincode") {
+          maybeAutofillCity().then(function () {
+            scheduleServiceabilityCheck();
+          });
+          return;
+        }
         scheduleServiceabilityCheck();
       }
     });

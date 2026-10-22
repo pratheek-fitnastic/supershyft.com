@@ -69,3 +69,7 @@ node_modules/
 .dataconnect
 
 .claude/
+gemini_generated_video_b36e0cb6.mp4
+
+# Local source for assets/data/pincode-city.json — do not deploy
+pincodes.csv
