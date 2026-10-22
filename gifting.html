@@ -38,11 +38,10 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261022h">
-  <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-closed.png">
-  <link rel="preload" as="image" href="assets/images/gifting/box3d-tray.png">
-  <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-open.png">
-  <link rel="preload" as="image" href="assets/images/gifting/gift-card-ui.png">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261022i">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-lid-closed-face.png">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-lid-inner-1369.png">
+  <link rel="preload" as="image" href="assets/images/gifting/gift-tray-1369.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-inner-scene.png">
   <link rel="preload" as="image" href="assets/images/gifting/bg-sections.jpg">
   <link rel="preload" as="image" href="assets/images/gifting/mandala-with-diya.png">
@@ -106,7 +105,7 @@
       </div>
     </section>
 
-    <!-- 2. Gift pack — Figma 856:10808 / Gift Box 856:11751 -->
+    <!-- 2. Gift pack — Figma 856:10808. Lid opens to 1369:11304. -->
     <section class="g-pack" id="gift-pack">
       <img class="g-pack__bg" src="assets/images/gifting/bg-sections.jpg" srcset="assets/images/gifting/bg-sections.jpg 2048w, assets/images/gifting/bg-sections-2x.jpg 4096w" sizes="100vw" width="2048" height="1623" alt="" decoding="async">
       <img class="g-pack__fade" src="assets/images/gifting/section-fade.png" width="1440" height="125" alt="" decoding="async" aria-hidden="true">
@@ -117,179 +116,49 @@
           <p class="g-pack__sub">Choose a SuperShyft Bio-AI health package for the people who mean the most to you.</p>
         </header>
 
-        <!--
-          Gift box — Figma Gift Box 1 (856:11751): closed 856:11752 → open 856:11754 → card back 862:10880.
-          Everything inside .g-box__canvas is laid out at Figma's 1302 × 868 px and scaled to fit (gifting.js).
-        -->
-        <div
-          class="g-box g-box--seq"
-          id="gift-box"
-          role="button"
-          tabindex="0"
-          aria-expanded="false"
-          aria-controls="gift-box-open"
-          aria-label="Open gift box"
-        >
-          <!--
-            Mobile box (< 768px only) — Figma "box 1 mobile" 856:11817: closed 856:11818,
-            open card 856:11820, card back 862:11473. Laid out at 552 × 637 and scaled in gifting.js.
-          -->
-          <div class="g-mbox" aria-hidden="true">
-            <div class="g-mbox__stage" id="gift-mbox-stage">
-              <div class="g-mbox__closed">
-                <img src="assets/images/gifting/gift-box-closed-v2.png" width="1024" height="683" alt="">
-              </div>
-              <video
-                class="g-mbox__open-clip"
-                id="gift-mbox-open-clip"
-                muted
-                playsinline
-                preload="auto"
-                aria-hidden="true"
-              >
-                <source src="assets/images/gifting/gift-box-open-seq.mp4" type="video/mp4">
-              </video>
-              <div class="g-mbox__open">
-                <img src="assets/images/gifting/gift-box-opening-v2.png" width="1488" height="1057" alt="">
-              </div>
-              <div class="g-mbox__card">
-                <div class="g-mbox__flip">
-                  <div class="g-mbox__face g-mbox__face--front">
-                    <img class="g-mbox__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
+        <div class="g-box" id="gift-box">
+          <div class="g-box__stage" id="gift-box-stage">
+            <div class="g-box__lid-open" id="gift-lid-open" aria-hidden="true">
+              <img src="assets/images/gifting/gift-lid-inner-1369.png" width="1600" height="155" alt="">
+            </div>
+            <div class="g-box__lid-closed" id="gift-lid-closed" aria-hidden="true">
+              <img src="assets/images/gifting/gift-lid-closed-face.png" width="1230" height="346" alt="">
+            </div>
+            <div class="g-box__tray">
+              <img src="assets/images/gifting/gift-tray-1369.png" width="1600" height="714" alt="SuperShyft gift box">
+            </div>
+            <div class="g-box__well" id="gift-box-well">
+              <article class="g-box__package" id="gift-package">
+                <div class="g-box__card-flip">
+                  <div class="g-box__card-face g-box__card-face--front">
+                    <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
                     <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
                     <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <div class="g-mbox__panel">
-                      <img class="g-mbox__panel-fil g-mbox__panel-fil--tl" src="assets/images/gifting/filigree-sm-tl.svg" width="16" height="16" alt="">
-                      <img class="g-mbox__panel-fil g-mbox__panel-fil--tr" src="assets/images/gifting/filigree-sm-tr.svg" width="16" height="16" alt="">
-                      <div class="g-mbox__meta">
-                        <img src="assets/images/gifting/icon-lotus.svg" width="24" height="24" alt="">
-                        <span class="g-mbox__pill">Men &amp; Women</span>
+                    <p class="g-box__script">Wrapped in Love</p>
+                    <div class="g-box__package-panel">
+                      <div class="g-box__badge">Men &amp; Women</div>
+                      <div class="g-box__pkg-head">
+                        <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
+                        <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
+                        <div class="g-box__price-row">
+                          <span class="g-box__price">₹ 3,499/-</span>
+                          <span class="g-box__price-old">₹4,499</span>
+                        </div>
                       </div>
-                      <div class="g-mbox__head">
-                        <h3 class="g-mbox__title">SuperShyft Core+</h3>
-                        <p class="g-mbox__price">₹1,999</p>
-                        <p class="g-mbox__price-old">₹2,499</p>
-                      </div>
-                      <ul class="g-mbox__features">
-                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 tests</li>
-                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-home.svg" width="20" height="20" alt=""></span>Home blood collection</li>
-                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation<br>included</li>
+                      <ul class="g-box__features">
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 test parameters</li>
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt=""></span>Doctor consultation included</li>
+                        <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation included</li>
                       </ul>
                       <div class="g-box__explore-wrap">
-                        <button type="button" class="g-box__explore js-gift-flip" tabindex="-1">Explore Package</button>
+                        <button type="button" class="g-box__explore" id="flip-package-card">Explore Package</button>
                       </div>
                     </div>
                   </div>
-                  <div class="g-mbox__face g-mbox__face--back">
-                    <div class="g-mbox__wire" aria-hidden="true"></div>
-                    <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
-                    <div class="g-mbox__profiles">
-                      <h3 class="g-mbox__profiles-title">Profiles Included</h3>
-                      <div class="g-box__profiles-badge g-mbox__badge" aria-label="8 profiles, 69 parameters">
-                        <span>8 Profiles</span>
-                        <span class="g-box__profiles-badge-div" aria-hidden="true"></span>
-                        <span>69 Parameters</span>
-                      </div>
-                      <ul class="g-mbox__list">
-                    <li>Complete Haemogram <span>(25 tests)</span></li>
-                    <li>Lipid Profile <span>(9 tests)</span></li>
-                    <li>Thyroid Profile <span>(3 tests)</span></li>
-                    <li>Liver Function Tests <span>(12 tests)</span></li>
-                    <li>Kidney Function Tests <span>(12 tests)</span></li>
-                    <li>Diabetes Profile <span>(2 tests)</span></li>
-                    <li>Iron Profile <span>(4 tests)</span></li>
-                    <li>Vitamins <span>(2 tests)</span></li>
-                      </ul>
-                    </div>
-                    <button type="button" class="g-box__flip-back js-gift-flip" aria-label="Flip package card back">Show package</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="g-box__canvas" id="gift-box-canvas">
-            <div class="g-box__ambient" aria-hidden="true"></div>
-            <div class="g-box__burst" aria-hidden="true"></div>
-            <div class="g-box__dust" id="gift-box-dust" aria-hidden="true"></div>
-            <div class="g-box__sparkles" id="gift-box-sparkles" aria-hidden="true"></div>
-
-            <!--
-              Figma 980:11214 (closed) / 980:11211 (open).
-              Tray stays fixed. Only the L-lid plate lifts, then settles to open pose.
-              Card rises from the tray well.
-            -->
-            <div class="g-box__stage" id="gift-box-open" aria-hidden="false">
-              <img
-                class="g-box__tray"
-                src="assets/images/gifting/box3d-tray.png"
-                width="3072"
-                height="2048"
-                alt=""
-                decoding="async"
-                aria-hidden="true"
-              >
-
-              <div class="g-box__llid" id="gift-box-llid">
-                <img
-                  class="g-box__lid-closed"
-                  src="assets/images/gifting/box3d-lid-closed.png"
-                  width="2972"
-                  height="2116"
-                  alt="Closed SuperShyft gift box"
-                  decoding="async"
-                >
-                <img
-                  class="g-box__lid-open"
-                  src="assets/images/gifting/box3d-lid-open.png"
-                  width="3072"
-                  height="2048"
-                  alt=""
-                  decoding="async"
-                  aria-hidden="true"
-                >
-              </div>
-
-              <div class="g-box__well" id="gift-box-well">
-                <div class="g-box__package" id="gift-package">
-                  <div class="g-box__card-flip">
-                    <!-- FRONT — 856:11756 -->
-                    <div class="g-box__card-face g-box__card-face--front">
-                      <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="1920" height="1088" alt="" decoding="async">
-                      <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
-                      <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
-                      <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
-                      <img class="g-box__filigree g-box__filigree--br" src="assets/images/gifting/filigree-br.svg" width="20" height="20" alt="" aria-hidden="true">
-                      <p class="g-box__script">Wrapped in Love</p>
-
-                      <div class="g-box__package-panel">
-                        <div class="g-box__badge">Men &amp; Women</div>
-                        <div class="g-box__pkg-head">
-                          <h3 class="g-box__pkg-title">SuperShyft Core+</h3>
-                          <p class="g-box__pkg-tag">Comprehensive health. Personalized insights.</p>
-                          <div class="g-box__price-row">
-                            <span class="g-box__price">₹ 3,499/-</span>
-                            <span class="g-box__price-old">₹4,499</span>
-                          </div>
-                        </div>
-                        <ul class="g-box__features">
-                          <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-flask.svg" width="20" height="20" alt=""></span>69 test parameters</li>
-                          <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-doctor.svg" width="20" height="20" alt=""></span>Doctor consultation included</li>
-                          <li><span class="g-box__feat-icon"><img src="assets/images/gifting/icon-feat-nutrition.svg" width="20" height="20" alt=""></span>Nutritionist consultation included</li>
-                        </ul>
-                        <div class="g-box__explore-wrap">
-                          <button type="button" class="g-box__explore" id="flip-package-card">Explore Package</button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- BACK — Profiles Included (860:10630) -->
-                    <div class="g-box__card-face g-box__card-face--back">
+                  <div class="g-box__card-face g-box__card-face--back">
+                    <div class="g-box__back-art">
                       <div class="g-box__wire" aria-hidden="true"></div>
                       <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
                       <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
@@ -339,11 +208,11 @@
                           </article>
                         </div>
                       </div>
-                      <button type="button" class="g-box__flip-back" id="flip-package-card-back" aria-label="Flip package card back">Show package</button>
                     </div>
+                    <button type="button" class="g-box__flip-back" id="flip-package-card-back" aria-label="Show package">Show package</button>
                   </div>
                 </div>
-              </div>
+              </article>
             </div>
           </div>
         </div>
@@ -485,8 +354,10 @@
                     <button type="button" class="g-chip" data-message="A little gift for more moments together.">A little gift for more moments together.</button>
                     <button type="button" class="g-chip" data-message="Because I want you around for every celebration.">Because I want you around for every celebration.</button>
                   </div>
-                  <textarea id="gift-message" rows="1" maxlength="60" placeholder="Write your message..." required></textarea>
-                  <p class="g-msg-count" id="gift-message-count" aria-live="polite">0/60</p>
+                  <div class="g-msg-input">
+                    <textarea id="gift-message" rows="1" maxlength="60" placeholder="Write your message..." required></textarea>
+                    <p class="g-msg-count" id="gift-message-count" aria-live="polite" hidden>0/60</p>
+                  </div>
                 </div>
               </div>
               <div class="g-field g-field--rel">
@@ -757,7 +628,7 @@
   </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261022h" defer></script>
+  <script src="assets/js/gifting.js?v=20261022i" defer></script>
 </body>
 
 </html>
