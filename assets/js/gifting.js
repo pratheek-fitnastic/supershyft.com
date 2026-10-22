@@ -494,6 +494,7 @@
     if (!messageCount) return;
     var length = messageInput ? messageInput.value.length : 0;
     messageCount.textContent = length + "/" + MESSAGE_MAX;
+    messageCount.hidden = length === 0;
   }
 
   if (messageInput) {

@@ -1721,7 +1721,8 @@
 }
 
 @media (min-width: 1280px) {
-  .gifting-page .g-form-sec .g-field--msg textarea {
+  .gifting-page .g-form-sec .g-field--msg textarea,
+  .g-msg-input {
     width: 718px;
     max-width: calc(200% + 24px);
   }
@@ -1736,6 +1737,14 @@
   color: rgba(255, 255, 255, 0.25);
 }
 
+.g-msg-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+}
+
 .gifting-page .g-form-sec .g-msg-count {
   width: 100%;
   box-sizing: border-box;
@@ -1748,13 +1757,6 @@
   letter-spacing: 0.24px;
   line-height: 18px;
   color: rgba(255, 255, 255, 0.5);
-}
-
-@media (min-width: 1280px) {
-  .gifting-page .g-form-sec .g-msg-count {
-    width: 718px;
-    max-width: calc(200% + 24px);
-  }
 }
 
 /* Relationship dropdown 862:12515 — glass panel, Mom + caret, rule, then the options */
