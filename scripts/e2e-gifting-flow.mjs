@@ -78,12 +78,15 @@ async function installMocks(page, { confirmOk = true } = {}) {
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
-          payment_verified: true,
-          razorpay_order_id: post.razorpay_order_id,
-          razorpay_payment_id: post.razorpay_payment_id,
-          booking_ids: [10001],
-          members: [{ user_id: 43, engagement_id: 501, status: "success", message: "Payment recorded" }],
-          booker_user_id: 42,
+          data: {
+            payment_verified: true,
+            razorpay_order_id: post.razorpay_order_id,
+            razorpay_payment_id: post.razorpay_payment_id,
+            booking_ids: [10001],
+            members: [{ user_id: 43, engagement_id: 501, status: "failed", message: "Payment recorded" }],
+            booker_user_id: 42,
+          },
+          meta: {},
         }),
       });
     } else {
@@ -91,8 +94,11 @@ async function installMocks(page, { confirmOk = true } = {}) {
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
-          payment_verified: false,
-          members: [{ user_id: 43, engagement_id: 501, status: "failed" }],
+          data: {
+            payment_verified: false,
+            members: [{ user_id: 43, engagement_id: 501, status: "failed" }],
+          },
+          meta: {},
         }),
       });
     }

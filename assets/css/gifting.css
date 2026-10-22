@@ -216,11 +216,6 @@
   color: transparent;
 }
 
-.g-hero__title-dot {
-  font-weight: 600;
-  font-style: normal;
-}
-
 .g-hero__sub {
   font-family: Sora, sans-serif;
   font-weight: 400;
@@ -1829,8 +1824,12 @@
 
 @media (min-width: 768px) {
   .g-row--split {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 32px;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .g-row--split > * {
+    min-width: 0;
   }
 }
 
@@ -1892,11 +1891,11 @@
  */
 @media (min-width: 768px) {
   .gifting-page .g-form-sec .g-chip {
-    max-width: calc(100% + 312px);
+    max-width: calc(200% + 24px);
   }
 
   .gifting-page .g-form-sec .g-chip:first-child {
-    max-width: calc(100% + 28px);
+    max-width: calc(100% + 20px);
   }
 }
 
@@ -1925,7 +1924,7 @@
 @media (min-width: 1280px) {
   .gifting-page .g-form-sec .g-field--msg textarea {
     width: 718px;
-    max-width: calc(100% + 312px);
+    max-width: calc(200% + 24px);
   }
 }
 
@@ -1938,12 +1937,34 @@
   color: rgba(255, 255, 255, 0.25);
 }
 
+.gifting-page .g-form-sec .g-msg-count {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 22px;
+  text-align: right;
+  font-family: Sora, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.24px;
+  line-height: 18px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (min-width: 1280px) {
+  .gifting-page .g-form-sec .g-msg-count {
+    width: 718px;
+    max-width: calc(200% + 24px);
+  }
+}
+
 /* Relationship dropdown 862:12515 — glass panel, Mom + caret, rule, then the options */
 .g-rel-box {
   position: relative;
   width: 100%;
+  height: 54px;
   box-sizing: border-box;
-  padding: 5px 10px;
+  padding: 0;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
@@ -1956,7 +1977,8 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0;
+  height: 54px;
+  padding: 10px 20px;
   border: 0;
   background: transparent;
   color: #fff;
@@ -1969,7 +1991,7 @@
 }
 
 .g-rel-toggle span {
-  padding: 10px;
+  padding: 0;
 }
 
 .g-rel-toggle img {
@@ -2628,13 +2650,15 @@
   align-items: center;
   justify-content: center;
   height: 39px;
-  border-radius: 20px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.05);
   color: #9a9a9a;
   font-family: Lato, sans-serif;
   font-size: 14px;
   white-space: nowrap;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .g-book__slot:hover span,
@@ -2644,6 +2668,7 @@
 }
 
 .g-book__slot input:checked + span {
+  border-color: transparent;
   background: var(--g-book-on);
   color: #fff;
 }
@@ -3859,7 +3884,17 @@
     white-space: normal;
   }
 
-  .g-rel-toggle,
+  .g-rel-box,
+  .gifting-page .g-rel-toggle {
+    height: auto;
+    min-height: 40px;
+  }
+
+  .gifting-page .g-rel-toggle {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
   .g-rel-list li {
     font-size: 13px;
   }

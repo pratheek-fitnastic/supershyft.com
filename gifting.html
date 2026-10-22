@@ -38,7 +38,7 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261022e">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261022h">
   <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-closed.png">
   <link rel="preload" as="image" href="assets/images/gifting/box3d-tray.png">
   <link rel="preload" as="image" href="assets/images/gifting/box3d-lid-open.png">
@@ -95,7 +95,7 @@
         <div class="g-hero__copy">
           <h1 class="g-hero__title">
             <span class="g-hero__title-top">This Diwali, Gift them</span>
-            <span class="g-hero__title-gold">Good Health<span class="g-hero__title-dot">.</span></span>
+            <span class="g-hero__title-gold">Good Health</span>
           </h1>
           <p class="g-hero__sub">
             Because the best gift isn't something they can unwrap.<br>
@@ -113,7 +113,7 @@
       <div class="g-pack__shade" aria-hidden="true"></div>
       <div class="g-pack__inner">
         <header class="g-pack__intro">
-          <h2 class="g-pack__title">A <span class="g-gold">Gift of Health</span>, Wrapped in Love.</h2>
+          <h2 class="g-pack__title">A <span class="g-gold">Gift of Health</span>, Wrapped in Love</h2>
           <p class="g-pack__sub">Choose a SuperShyft Bio-AI health package for the people who mean the most to you.</p>
         </header>
 
@@ -469,11 +469,11 @@
             <div class="g-row">
               <div class="g-field">
                 <label for="recipient-phone">Recipient Phone</label>
-                <input type="tel" id="recipient-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}" inputmode="numeric" autocomplete="tel">
+                <input type="tel" id="recipient-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel">
               </div>
               <div class="g-field">
                 <label for="your-phone">Your Phone</label>
-                <input type="tel" id="your-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}" inputmode="numeric" autocomplete="tel">
+                <input type="tel" id="your-phone" placeholder="e.g 9876543210" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel">
               </div>
             </div>
             <div class="g-row g-row--split">
@@ -485,7 +485,8 @@
                     <button type="button" class="g-chip" data-message="A little gift for more moments together.">A little gift for more moments together.</button>
                     <button type="button" class="g-chip" data-message="Because I want you around for every celebration.">Because I want you around for every celebration.</button>
                   </div>
-                  <textarea id="gift-message" rows="1" placeholder="Write your message..." required></textarea>
+                  <textarea id="gift-message" rows="1" maxlength="60" placeholder="Write your message..." required></textarea>
+                  <p class="g-msg-count" id="gift-message-count" aria-live="polite">0/60</p>
                 </div>
               </div>
               <div class="g-field g-field--rel">
@@ -710,7 +711,7 @@
       </div>
       <img class="g-close__fade" src="assets/images/gifting/closing-overlay.png" width="1024" height="154" alt="" decoding="async">
       <div class="g-close__inner">
-        <h2>Because one <span class="g-gold">festive season</span> is never enough.</h2>
+        <h2>Because one <span class="g-gold">festive season</span> is never enough</h2>
         <p>We want a thousand more moments together.</p>
       </div>
     </section>
@@ -756,7 +757,7 @@
   </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261022e" defer></script>
+  <script src="assets/js/gifting.js?v=20261022h" defer></script>
 </body>
 
 </html>

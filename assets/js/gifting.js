@@ -519,7 +519,16 @@
     });
   }
 
-  /* ===== Four steps: GSAP ScrollTrigger pin + mandala rotate (Figma 856:10815–10897) ===== */
+  /* ===== Four steps: GSAP pin + one scroll gesture per step (Figma 856:10815–10897) ===== */
+  var STEP_COUNT = 4;
+  var STEP_LAST = STEP_COUNT - 1;
+  var stepsST = null;
+  var stepsCleanup = null;
+  var currentStep = 0;
+  var stepLock = false;
+  var stepLockTimer = 0;
+  var touchStartY = 0;
+
   function setActiveStep(index) {
     stepPanels.forEach(function (panel, i) {
       panel.classList.toggle("is-active", i === index);
@@ -527,14 +536,78 @@
     });
   }
 
+  function rotateMandala(index) {
+    if (!mandalaImg) return;
+    var deg = index * 90;
+    if (reducedMotion) {
+      gsap.set(mandalaImg, { rotation: deg });
+      return;
+    }
+    gsap.to(mandalaImg, {
+      rotation: deg,
+      duration: 0.45,
+      ease: "power2.out",
+      overwrite: "auto"
+    });
+  }
+
+  function stepScrollY(index) {
+    if (!stepsST) return window.scrollY;
+    return stepsST.start + (stepsST.end - stepsST.start) * (index / STEP_LAST);
+  }
+
+  function goToStep(index) {
+    index = Math.max(0, Math.min(STEP_LAST, index));
+    if (index === currentStep) return;
+    currentStep = index;
+    setActiveStep(index);
+    rotateMandala(index);
+    stepLock = true;
+    window.clearTimeout(stepLockTimer);
+    if (stepsST) window.scrollTo(0, stepScrollY(index));
+    stepLockTimer = window.setTimeout(function () {
+      stepLock = false;
+    }, reducedMotion ? 80 : 520);
+  }
+
+  function stepsInRange() {
+    if (!stepsST) return false;
+    if (stepsST.isActive) return true;
+    var y = window.scrollY;
+    return y >= stepsST.start - 2 && y <= stepsST.end + 2;
+  }
+
+  function handleStepGesture(goingDown) {
+    if (!stepsInRange()) return false;
+    if (stepLock) return true;
+    if (goingDown && currentStep < STEP_LAST) {
+      goToStep(currentStep + 1);
+      return true;
+    }
+    if (!goingDown && currentStep > 0) {
+      goToStep(currentStep - 1);
+      return true;
+    }
+    return false;
+  }
+
   function initStepsScroll() {
     if (!stepsRoot || !stepsPin || !window.gsap || !window.ScrollTrigger) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
+    if (stepsCleanup) {
+      stepsCleanup();
+      stepsCleanup = null;
+    }
+
     ScrollTrigger.getAll().forEach(function (t) {
       if (t.vars && t.vars.id === "gifting-steps") t.kill();
     });
+    stepsST = null;
+    currentStep = 0;
+    stepLock = false;
+    window.clearTimeout(stepLockTimer);
 
     setActiveStep(0);
     /*
@@ -550,35 +623,79 @@
       });
     }
 
-    /* ~1 viewport per step so all 4 panels appear while pinned */
-    ScrollTrigger.create({
+    stepsST = ScrollTrigger.create({
       id: "gifting-steps",
       trigger: stepsRoot,
       start: "top top",
       end: function () {
-        return "+=" + Math.round(window.innerHeight * 4);
+        return "+=" + Math.round(window.innerHeight * STEP_LAST);
       },
       pin: stepsPin,
       pinSpacing: true,
-      scrub: reducedMotion ? false : 0.55,
       anticipatePin: 1,
       invalidateOnRefresh: true,
+      onEnter: function () {
+        currentStep = 0;
+        setActiveStep(0);
+        rotateMandala(0);
+        stepLock = true;
+        window.clearTimeout(stepLockTimer);
+        stepLockTimer = window.setTimeout(function () {
+          stepLock = false;
+        }, 280);
+      },
+      onEnterBack: function () {
+        currentStep = STEP_LAST;
+        setActiveStep(STEP_LAST);
+        rotateMandala(STEP_LAST);
+        stepLock = true;
+        window.clearTimeout(stepLockTimer);
+        stepLockTimer = window.setTimeout(function () {
+          stepLock = false;
+        }, 280);
+      },
       onUpdate: function (self) {
-        var progress = self.progress;
-        var idx = Math.min(3, Math.floor(progress * 4));
-        if (progress >= 0.999) idx = 3;
+        if (stepLock) return;
+        var idx = Math.min(STEP_LAST, Math.round(self.progress * STEP_LAST));
+        if (idx === currentStep) return;
+        currentStep = idx;
         setActiveStep(idx);
-        if (mandalaImg && !reducedMotion) {
-          /* Mandala PNG is a transparent circle centred in its box: rotate at scale 1 so it never hits the crop edge */
-          gsap.to(mandalaImg, {
-            rotation: progress * 360,
-            duration: 0.4,
-            ease: "power2.out",
-            overwrite: "auto"
-          });
-        }
+        rotateMandala(idx);
       }
     });
+
+    function onWheel(e) {
+      if (!stepsInRange()) return;
+      if (Math.abs(e.deltaY) < 4) return;
+      if (handleStepGesture(e.deltaY > 0)) e.preventDefault();
+    }
+
+    function onTouchStart(e) {
+      if (!e.touches || !e.touches.length) return;
+      touchStartY = e.touches[0].clientY;
+    }
+
+    function onTouchMove(e) {
+      if (!stepsInRange() || !e.touches || !e.touches.length) return;
+      var dy = touchStartY - e.touches[0].clientY;
+      if (Math.abs(dy) < 28) return;
+      if (handleStepGesture(dy > 0)) {
+        e.preventDefault();
+        touchStartY = e.touches[0].clientY;
+      }
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    stepsCleanup = function () {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.clearTimeout(stepLockTimer);
+      stepLock = false;
+    };
   }
 
   function bootGiftingMotion() {
@@ -644,6 +761,50 @@
   var previewCardImg = document.getElementById("preview-card-img");
   var previewNote = document.getElementById("preview-note");
   var chipsRoot = document.getElementById("gift-message-chips");
+  var messageCount = document.getElementById("gift-message-count");
+  var recipientPhone = document.getElementById("recipient-phone");
+  var yourPhone = document.getElementById("your-phone");
+  var MESSAGE_MAX = 60;
+  var PHONE_MAX = 10;
+
+  function clampMessage(value) {
+    return String(value || "").slice(0, MESSAGE_MAX);
+  }
+
+  function clampPhone(value) {
+    return String(value || "").replace(/\D/g, "").slice(0, PHONE_MAX);
+  }
+
+  [recipientPhone, yourPhone].forEach(function (el) {
+    if (!el) return;
+    el.addEventListener("input", function () {
+      var next = clampPhone(el.value);
+      if (el.value !== next) el.value = next;
+    });
+    el.addEventListener("paste", function (e) {
+      e.preventDefault();
+      var text = "";
+      if (e.clipboardData) text = e.clipboardData.getData("text");
+      else if (window.clipboardData) text = window.clipboardData.getData("Text");
+      el.value = clampPhone(text);
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  });
+
+  function updateMessageCount() {
+    if (!messageCount) return;
+    var length = messageInput ? messageInput.value.length : 0;
+    messageCount.textContent = length + "/" + MESSAGE_MAX;
+  }
+
+  if (messageInput) {
+    messageInput.addEventListener("input", function () {
+      var next = clampMessage(messageInput.value);
+      if (messageInput.value !== next) messageInput.value = next;
+      updateMessageCount();
+    });
+  }
+  updateMessageCount();
 
   /* Custom relationship dropdown (Figma 862:12515) — drives the hidden native <select> */
   var relBox = document.getElementById("rel-box");
@@ -758,7 +919,7 @@
         });
         chip.classList.add("is-active");
         if (messageInput) {
-          messageInput.value = chip.getAttribute("data-message") || "";
+          messageInput.value = clampMessage(chip.getAttribute("data-message") || "");
           messageInput.dispatchEvent(new Event("input"));
         }
       });
@@ -1889,25 +2050,8 @@
     });
   }
 
-  function memberStatusFailed(status) {
-    var s = String(status || "").toLowerCase();
-    return s === "failed" || s === "error" || s === "failure";
-  }
-
-  function membersHaveFailure(members) {
-    if (!members || !members.length) return false;
-    for (var i = 0; i < members.length; i++) {
-      if (members[i] && memberStatusFailed(members[i].status)) return true;
-    }
-    return false;
-  }
-
   function confirmPaymentSucceeded(data) {
-    if (data.payment_verified === false || data.payment_verified === "false") {
-      return false;
-    }
-    if (membersHaveFailure(data.members)) return false;
-    return true;
+    return data.payment_verified === true || data.payment_verified === "true";
   }
 
   function confirmFamilyPayment(response) {
