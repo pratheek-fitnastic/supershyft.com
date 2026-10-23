@@ -55,8 +55,14 @@
     }
     giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
     if (giftPackage) {
-      var backS = Math.min(giftPackage.clientWidth / 889, giftPackage.clientHeight / 391);
-      giftPackage.style.setProperty("--g-back-s", backS > 0 ? backS.toFixed(5) : "1");
+      /* Mobile card artboard is Figma 856:11822 (322 × 415); desktop is 889 × 391 */
+      var isMobileCard = window.matchMedia("(max-width: 767.98px)").matches;
+      var cardS = isMobileCard
+        ? Math.min(giftPackage.clientWidth / 322, giftPackage.clientHeight / 415)
+        : Math.min(giftPackage.clientWidth / 889, giftPackage.clientHeight / 391);
+      var cardSValue = cardS > 0 ? cardS.toFixed(5) : "1";
+      giftPackage.style.setProperty("--g-card-s", cardSValue);
+      giftPackage.style.setProperty("--g-back-s", cardSValue);
     }
     var newH = document.documentElement.scrollHeight;
     if (window.ScrollTrigger && newH !== lastDocH) {
@@ -176,7 +182,7 @@
         if (!giftBox) return;
         var opened = self.progress > 0.97;
         giftBox.classList.toggle("is-open", opened);
-        if (!opened) giftBox.classList.remove("is-flipped");
+        if (!opened) giftBox.classList.remove("is-flipped", "is-flat");
       }
     });
   }
@@ -188,8 +194,51 @@
       e.preventDefault();
       e.stopPropagation();
       if (!giftBox.classList.contains("is-open")) return;
+      unflattenCard();
       giftBox.classList.toggle("is-flipped");
+      if (giftBox.classList.contains("is-flipped")) scheduleFlatten();
+      else {
+        clearTimeout(flattenTimer);
+        giftBox.classList.remove("is-flat");
+      }
     });
+  }
+
+  /*
+   * A card left turned through 3D (rotateY 180° twice) is composited as a 3D layer, which blurs
+   * its text on phones. Once the flip ends, .is-flat lays the back face out flat (same look).
+   * Before flipping back, restore the 3D pose without a transition so the flip still animates.
+   * Mobile browsers often skip transitionend — a timeout still flattens so the back stays readable.
+   */
+  var cardFlip = giftBox ? giftBox.querySelector(".g-box__card-flip") : null;
+  var flattenTimer = null;
+  var FLIP_MS = 900;
+  function flattenIfNeeded() {
+    if (giftBox && giftBox.classList.contains("is-flipped")) giftBox.classList.add("is-flat");
+  }
+  function scheduleFlatten() {
+    clearTimeout(flattenTimer);
+    var mobile = window.matchMedia("(max-width: 767.98px)").matches;
+    flattenTimer = setTimeout(flattenIfNeeded, mobile ? 520 : FLIP_MS);
+  }
+  function unflattenCard() {
+    clearTimeout(flattenTimer);
+    if (!cardFlip || !giftBox.classList.contains("is-flat")) return;
+    cardFlip.style.transition = "none";
+    giftBox.classList.remove("is-flat");
+    void cardFlip.offsetWidth;
+    cardFlip.style.transition = "";
+  }
+  if (cardFlip) {
+    function onFlipEnd(e) {
+      if (e.target !== cardFlip) return;
+      var prop = e.propertyName || "";
+      if (prop && prop.indexOf("transform") === -1) return;
+      clearTimeout(flattenTimer);
+      flattenIfNeeded();
+    }
+    cardFlip.addEventListener("transitionend", onFlipEnd);
+    cardFlip.addEventListener("webkitTransitionEnd", onFlipEnd);
   }
   bindPackageFlip("flip-package-card");
   bindPackageFlip("flip-package-card-back");
@@ -463,8 +512,13 @@
   var messageCount = document.getElementById("gift-message-count");
   var recipientPhone = document.getElementById("recipient-phone");
   var yourPhone = document.getElementById("your-phone");
+  var recipientEmail = document.getElementById("recipient-email");
+  var yourEmail = document.getElementById("your-email");
   var MESSAGE_MAX = 60;
   var PHONE_MAX = 10;
+  var AGE_MAX = 2;
+  var PINCODE_MAX = 6;
+  var EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   function clampMessage(value) {
     return String(value || "").slice(0, MESSAGE_MAX);
@@ -487,6 +541,41 @@
       else if (window.clipboardData) text = window.clipboardData.getData("Text");
       el.value = clampPhone(text);
       el.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  });
+
+  function isValidGiftEmail(value) {
+    return EMAIL_RE.test(String(value || "").trim());
+  }
+
+  function setEmailError(input, show) {
+    if (!input) return;
+    var errorEl = document.getElementById(input.id + "-error");
+    input.classList.toggle("is-invalid", !!show);
+    input.setCustomValidity(show ? "Enter a valid email address." : "");
+    if (errorEl) errorEl.hidden = !show;
+  }
+
+  function validateEmailField(input, onBlur) {
+    if (!input) return true;
+    var value = String(input.value || "").trim();
+    if (!value) {
+      setEmailError(input, false);
+      return !onBlur;
+    }
+    var ok = isValidGiftEmail(value);
+    setEmailError(input, !ok);
+    return ok;
+  }
+
+  [recipientEmail, yourEmail].forEach(function (el) {
+    if (!el) return;
+    el.addEventListener("blur", function () {
+      validateEmailField(el, true);
+    });
+    el.addEventListener("input", function () {
+      if (!el.classList.contains("is-invalid")) return;
+      validateEmailField(el, false);
     });
   });
 
@@ -1921,7 +2010,8 @@
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      if (!form.checkValidity()) {
+      var emailsOk = validateEmailField(recipientEmail, true) && validateEmailField(yourEmail, true);
+      if (!emailsOk || !form.checkValidity()) {
         form.reportValidity();
         return;
       }
@@ -1973,8 +2063,15 @@
       var t = e.target;
       if (t && t.classList) t.classList.remove("is-invalid");
       if (!t) return;
+      if (t.id === "book-age") {
+        var age = String(t.value || "").replace(/\D/g, "").slice(0, AGE_MAX);
+        if (t.value !== age) t.value = age;
+        return;
+      }
       if (t.id === "book-address" || t.id === "book-city" || t.id === "book-pincode") {
         if (t.id === "book-pincode") {
+          var pin = String(t.value || "").replace(/\D/g, "").slice(0, PINCODE_MAX);
+          if (t.value !== pin) t.value = pin;
           maybeAutofillCity().then(function () {
             scheduleServiceabilityCheck();
           });

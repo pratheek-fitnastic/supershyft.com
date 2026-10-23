@@ -317,7 +317,7 @@
 .g-pack__title {
   font-family: "DM Sans", sans-serif;
   font-weight: 600;
-  font-size: clamp(30px, 3.75vw, 54px);
+  font-size: clamp(34px, 3.75vw, 58px);
   font-variation-settings: "opsz" 14;
   color: #fff;
   margin: 0;
@@ -343,7 +343,7 @@
 .g-pack__sub {
   font-family: Sora, sans-serif;
   font-weight: 400;
-  font-size: clamp(14px, 1.39vw, 20px);
+  font-size: clamp(18px, 1.39vw, 24px);
   line-height: 30px;
   color: rgba(252, 252, 252, 0.95);
   margin: 15px auto 0;
@@ -353,20 +353,21 @@
 /*
  * Gift box — one tray + one lid. The lid hinges at the back rim with 2D scaleY
  * (no perspective) so it opens out, stays attached, and never grows.
- * Open pose: Figma 1369:11304.
+ * Open pose: Figma 1405:11397.
  *
- * Stage is 1600 × 861: open lid 155, 8px overlap onto the tray, tray 714.
+ * Stage is 1600 × 928: open lid 176, 8px overlap onto the tray, tray 689 art stretched to 760 so the card fits the velvet.
  */
 .g-box {
   --g-stage-w: 1600;
-  --g-stage-h: 861;
-  --g-lid-open-h: 155;
+  --g-stage-h: 928;
+  --g-lid-open-h: 176;
   --g-lid-overlap: 8;
-  --g-tray-h: 714;
+  --g-tray-h: 760;
+  --g-card-s: 1;
   position: relative;
   display: block;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1302px;
   margin: 0 auto;
 }
 
@@ -374,7 +375,7 @@
   position: relative;
   width: 100%;
   /* Layout height is the tray only. The lid opens upward into the space above. */
-  aspect-ratio: 1600 / 714;
+  aspect-ratio: 1600 / 760;
   overflow: visible;
 }
 
@@ -384,9 +385,14 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
   pointer-events: none;
   user-select: none;
+}
+
+.g-box__lid-closed img {
+  object-fit: cover;
+  object-position: center top;
 }
 
 .g-box__lid-open {
@@ -394,8 +400,8 @@
   left: 0;
   bottom: 100%;
   width: 100%;
-  height: calc(155 / 714 * 100%);
-  margin-bottom: calc(-8 / 714 * 100%);
+  height: calc(176 / 760 * 100%);
+  margin-bottom: calc(-8 / 760 * 100%);
   transform: scaleY(0);
   transform-origin: 50% 100%;
   z-index: 2;
@@ -408,7 +414,7 @@
   top: 0;
   width: 100%;
   /* Cover the 3-well opening; leave the tray's front wall visible */
-  height: calc(548 / 714 * 100%);
+  height: calc(528 / 689 * 100%);
   transform: scaleY(1);
   transform-origin: 50% 0;
   z-index: 3;
@@ -430,8 +436,8 @@
  */
 .g-box__well {
   position: absolute;
-  left: 2.6%;
-  width: 94.8%;
+  left: 5.2%;
+  width: 89.6%;
   top: 0;
   height: 76%;
   overflow: hidden;
@@ -448,10 +454,11 @@
 
 .g-box__package {
   position: absolute;
-  left: 8%;
-  width: 84%;
+  /* Figma 862:10880 card inset mapped through the 94.8% well */
+  left: 13.93%;
+  width: 72.03%;
   bottom: 0;
-  /* Figma 860:10630 card = 889 × 391 */
+  /* Figma 856:11756 / 862:10943 card = 889 × 391 */
   aspect-ratio: 889 / 391;
   transform: translateY(110%);
   transform-origin: 50% 100%;
@@ -476,12 +483,16 @@
   inset: 0;
   box-sizing: border-box;
   overflow: hidden;
-  border: 3px solid #dfb76c;
+  border: 4px solid #dfb76c;
   border-radius: 12px;
   background: linear-gradient(180deg, #001e20 0%, #001115 100%);
-  box-shadow: 0 -8px 48px rgba(255, 214, 128, 0.28);
+  box-shadow: 0 -4px 100px rgba(255, 255, 128, 0.5);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+}
+
+.g-box__card-face--front {
+  transform: rotateY(0deg);
 }
 
 .g-box__card-face--back {
@@ -491,25 +502,45 @@
   box-shadow: 0 -4px 100px rgba(255, 255, 128, 0.5);
 }
 
-/* Figma 860:10630 laid out at 889 × 391, then scaled to the card */
+/* Figma 856:11756 / 862:10943 laid out at 889 × 391, then zoomed to the card.
+ * zoom shrinks layout so overflow:hidden on the face cannot clip the artboard. */
+.g-box__front-art,
 .g-box__back-art {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 0;
+  top: 0;
   width: 889px;
   height: 391px;
   box-sizing: border-box;
-  transform: translate(-50%, -50%) scale(var(--g-back-s, 1));
-  transform-origin: center center;
+  transform: none;
+  zoom: var(--g-card-s, var(--g-back-s, 1));
+}
+
+@supports not (zoom: 1) {
+  .g-box__front-art,
+  .g-box__back-art {
+    left: 50%;
+    top: 50%;
+    zoom: normal;
+    transform: translate(-50%, -50%) scale(var(--g-card-s, var(--g-back-s, 1)));
+    transform-origin: center center;
+  }
+
+  .g-box__card-face {
+    overflow: visible;
+  }
+}
+
+.g-box__back-art {
   pointer-events: none;
 }
 
 .g-box__scene {
   position: absolute;
-  left: -10%;
-  top: -6%;
-  width: 96%;
-  height: 116%;
+  left: -117.83px;
+  top: -6px;
+  width: 838px;
+  height: 475px;
   object-fit: cover;
   transform: scaleX(-1);
   pointer-events: none;
@@ -517,27 +548,29 @@
 
 .g-box__filigree {
   position: absolute;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   z-index: 3;
   pointer-events: none;
   opacity: 0.85;
 }
 
-.g-box__filigree--tl { left: 6px; top: 6px; }
-.g-box__filigree--tr { right: 6px; top: 6px; transform: rotate(90deg); }
-.g-box__filigree--bl { left: 6px; bottom: 6px; transform: rotate(-90deg); }
-.g-box__filigree--br { right: 6px; bottom: 6px; transform: rotate(180deg); }
+.g-box__filigree--tl { left: 9px; top: 9px; }
+.g-box__filigree--tr { right: 9.33px; top: 9px; transform: rotate(90deg); }
+.g-box__filigree--bl { left: 9px; bottom: 9.5px; transform: rotate(-90deg); }
+.g-box__filigree--br { right: 9.33px; bottom: 9.5px; transform: rotate(180deg); }
 
 .g-box__script {
-  position: relative;
+  position: absolute;
+  left: 28px;
+  top: 28px;
   z-index: 1;
-  width: 44%;
-  margin: 3% 0 0;
-  padding: 2% 0;
+  width: 365px;
+  margin: 0;
+  padding: 14px 0;
   font-family: "Alex Brush", cursive;
-  font-size: clamp(22px, 2.5vw, 36px);
-  line-height: 1.35;
+  font-size: 38px;
+  line-height: 54px;
   text-align: center;
   white-space: nowrap;
   background: linear-gradient(90deg, #ffe5a3 0%, #ffeed0 50%, #f3cb79 100%);
@@ -549,19 +582,18 @@
 
 .g-box__package-panel {
   position: absolute;
-  right: 3.4%;
-  top: 50%;
+  left: 417px;
+  top: 22px;
   z-index: 2;
-  width: 50%;
-  height: 88%;
+  width: 449px;
+  height: 346px;
   box-sizing: border-box;
-  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4.4% 5.2% 4.8%;
+  padding: 21px 25px;
   border: 1px solid #eddcc0;
-  border-radius: 14px;
+  border-radius: 16px;
   background: linear-gradient(180deg, #f9f3e6 0%, #f5ebdc 50%, #ecd9be 100%);
   text-align: left;
 }
@@ -570,15 +602,16 @@
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  padding: 4px 12px;
+  padding: 5px 13px;
   border-radius: 9999px;
   border: 1px solid rgba(217, 119, 6, 0.4);
   background: rgba(254, 243, 199, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: clamp(9px, 0.75vw, 11px);
-  line-height: 1.4;
+  font-size: 11px;
+  line-height: 16.5px;
   letter-spacing: 0.55px;
   text-transform: uppercase;
   color: #451a03;
@@ -587,15 +620,16 @@
 .g-box__pkg-head {
   display: flex;
   flex-direction: column;
-  gap: 0.35em;
+  gap: 12px;
+  padding: 12px 0;
 }
 
 .g-box__pkg-title {
   margin: 0;
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: clamp(16px, 1.55vw, 22px);
-  line-height: 1.25;
+  font-size: 24px;
+  line-height: 38px;
   color: #0f172a;
 }
 
@@ -604,27 +638,28 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: clamp(9px, 0.8vw, 11px);
-  line-height: 1.3;
-  letter-spacing: 0.9px;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
   color: rgba(6, 53, 51, 0.8);
 }
 
 .g-box__price-row {
   display: flex;
   align-items: flex-end;
-  gap: 10px;
-  margin-top: 0.2em;
+  gap: 12px;
+  margin-top: 0;
 }
 
 .g-box__price {
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 700;
-  font-size: clamp(18px, 1.7vw, 26px);
-  line-height: 1.2;
-  letter-spacing: -0.8px;
+  font-size: 28px;
+  line-height: 40px;
+  letter-spacing: -0.9px;
   color: #0f172a;
 }
 
@@ -632,8 +667,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: clamp(12px, 1.1vw, 16px);
-  line-height: 1.3;
+  font-size: 18px;
+  line-height: 28px;
   color: #9a9a9a;
   text-decoration: line-through;
 }
@@ -641,25 +676,26 @@
 .g-box__features {
   list-style: none;
   margin: 0;
-  padding: 0.55em 0.4em;
+  padding: 13px 8px;
   width: 100%;
   box-sizing: border-box;
   border-top: 1px solid rgba(223, 202, 162, 0.6);
   border-bottom: 1px solid rgba(223, 202, 162, 0.6);
   display: flex;
   flex-direction: column;
-  gap: 0.35em;
+  gap: 6px;
 }
 
 .g-box__features li {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: clamp(11px, 0.95vw, 13px);
-  line-height: 1.25;
+  font-size: 13px;
+  line-height: 16.25px;
+  white-space: nowrap;
   color: #2f241a;
 }
 
@@ -667,19 +703,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 }
 
 .g-box__feat-icon img {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .g-box__explore-wrap {
   width: 100%;
-  padding-top: 0.2em;
+  padding: 6px 0 4px;
 }
 
 .g-box__explore {
@@ -688,15 +724,15 @@
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.7em 1em;
+  padding: 11px 17px;
   border-radius: 9999px;
   border: 1px solid #c49b49;
   background: linear-gradient(90deg, #e7d2ad 0%, #dfb76c 50%, #d6a958 100%);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: clamp(10px, 0.85vw, 12px);
-  line-height: 1.3;
+  font-size: 12px;
+  line-height: 16px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: #2c1d0c;
@@ -760,7 +796,7 @@
   top: 28px;
   z-index: 1;
   width: 833px;
-  height: 314px;
+  height: 335px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -777,11 +813,10 @@
 
 .g-box__profiles-title {
   margin: 0;
-  font-family: "DM Sans", sans-serif;
-  font-variation-settings: "opsz" 14;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 30px;
+  font-family: Sora, sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
   letter-spacing: 4.4px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -799,9 +834,9 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 18px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -842,22 +877,25 @@
 }
 
 .g-box__profile h4 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin: 0 0 4px;
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 26px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
   letter-spacing: 0.4px;
   white-space: nowrap;
   color: #f1f5f9;
 }
 
 .g-box__profile h4 span {
-  margin-left: 4px;
+  margin-left: 0;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
   color: rgba(230, 202, 101, 0.9);
 }
 
@@ -866,8 +904,8 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 300;
-  font-size: 16px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
   color: #9ab3a3;
 }
 
@@ -881,7 +919,7 @@
   }
 
   .g-box__profile p {
-    white-space: nowrap;
+    white-space: normal;
   }
 }
 
@@ -914,17 +952,35 @@
   }
 
   .g-pack__title {
-    font-size: calc(54px * var(--g-pack-s, 1));
-    line-height: calc(80px * var(--g-pack-s, 1));
+    font-size: calc(58px * var(--g-pack-s, 1));
+    /* Figma 856:10813: 100px line (the italic span's) inside 10px padding */
+    line-height: calc(100px * var(--g-pack-s, 1));
+    padding: calc(10px * var(--g-pack-s, 1)) 0;
     margin-bottom: 0;
+    /* Tracks the title out so it starts and ends with the subtitle line below */
+    letter-spacing: 0.05em;
   }
 
   .g-pack__sub {
     max-width: none;
-    font-size: calc(20px * var(--g-pack-s, 1));
+    font-size: calc(24px * var(--g-pack-s, 1));
     line-height: calc(30px * var(--g-pack-s, 1));
-    /* Lid sits in this gap (~155/1600 of the box). Extra air keeps the title off it. */
-    margin-bottom: calc(148px * var(--g-pack-s, 1));
+    /* Figma mb-[-26px]: subtitle tucks up under the title */
+    margin-top: calc(-26px * var(--g-pack-s, 1));
+    /* Lid sits in this gap (~176/1600 of the box). Extra air keeps the title off it. */
+    margin-bottom: calc(168px * var(--g-pack-s, 1));
+  }
+
+  /* Box scales with the heading so the opened lid lands below the subtitle and the section fits the viewport */
+  .g-box {
+    max-width: calc(1302px * var(--g-pack-s, 1));
+  }
+
+  /* Card fills the velvet and sits just above the front rim so Explore Package stays visible */
+  .g-box__package {
+    left: 6%;
+    width: 88%;
+    bottom: 1.5%;
   }
 
   .g-pack__cta {
@@ -1596,6 +1652,18 @@
 .g-field input:focus,
 .g-field textarea:focus {
   border-color: rgba(223, 183, 108, 0.65);
+}
+
+.gifting-page .g-form-sec .g-field input.is-invalid {
+  border-color: rgba(255, 120, 120, 0.7);
+}
+
+.g-field__error {
+  margin: 6px 10px 0;
+  color: #ff9c9c;
+  font-family: Sora, sans-serif;
+  font-size: 13px;
+  line-height: 1.3;
 }
 
 .g-row {
@@ -3227,7 +3295,10 @@
   /* above the artwork, below the text (.g-close__inner is z-index 1) */
   z-index: 0;
   pointer-events: none;
-  background: url("../images/gifting/section-fade.png") center / 100% 100% no-repeat;
+  /* Solid 2px black at the seam edge: the stretched PNG's edge row is not fully opaque */
+  background:
+    linear-gradient(#000, #000) top / 100% 2px no-repeat,
+    url("../images/gifting/section-fade.png") center / 100% 100% no-repeat;
   transform: scaleY(-1);
 }
 
@@ -3243,7 +3314,32 @@
   top: 0;
   height: 125px;
   pointer-events: none;
-  background: url("../images/gifting/section-fade.png") center / 100% 100% no-repeat;
+  background:
+    linear-gradient(#000, #000) top / 100% 2px no-repeat,
+    url("../images/gifting/section-fade.png") center / 100% 100% no-repeat;
+}
+
+/*
+ * Soft black band straddling the section 5 / footer seam, painted over both fades so no
+ * hairline shows where they meet. Sits below the text layers (z-index 1).
+ */
+.gifting-page .bs-footer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -40px;
+  height: 80px;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.85) 35%,
+    #000 50%,
+    rgba(0, 0, 0, 0.85) 65%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 /* Footer content stays above its fade */
@@ -3470,24 +3566,55 @@
     aspect-ratio: 320 / 430;
   }
 
+  .g-box__front-art,
+  .g-box__back-art {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    zoom: 1;
+  }
+
   .g-box__scene,
   .g-box__script {
     display: none;
   }
 
+  .g-box .g-box__card-face--front .g-box__package-panel,
   .g-box__package-panel {
     position: relative;
-    right: auto;
+    left: auto;
     top: auto;
+    right: auto;
     transform: none;
     width: 100%;
     height: 100%;
     padding: 16px 16px 14px;
   }
 
+  .g-box__pkg-title {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .g-box__pkg-tag {
+    white-space: normal;
+  }
+
+  .g-box__price {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .g-box__features li {
+    white-space: normal;
+  }
+
   /* Mobile design: two lines — "A Gift of Health," / "Wrapped in Love." */
   .g-pack__title {
-    font-size: 32px;
+    font-size: 36px;
     line-height: 1.3;
     max-width: 320px;
     margin-left: auto;
@@ -3495,7 +3622,7 @@
   }
 
   .g-pack__sub {
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.4;
     padding: 0 8px;
   }
@@ -4033,16 +4160,15 @@
  * render exactly as designed. (Earlier +px bumps made it crowded: wrapped subtitle, squeezed rows.)
  * ===================================================================================== */
 
-/* ---------- Front ---------- */
+/* ---------- Front (px live on the 889 × 391 artboard, then scale) ---------- */
 .g-box .g-box__card-face--front .g-box__script {
-  font-size: 39px;
+  font-size: 40px;
   line-height: 54px;
 }
 
 .g-box .g-box__card-face--front .g-box__package-panel {
-  /* Figma 413 / 22 from the card's outer edge; absolute offsets start inside its 4px border */
-  left: 409px;
-  top: 18px;
+  left: 413px;
+  top: 22px;
   right: auto;
   bottom: auto;
   transform: none;
@@ -4069,7 +4195,7 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16.5px;
   letter-spacing: 0.55px;
   text-transform: uppercase;
@@ -4084,21 +4210,27 @@
   margin: 0;
 }
 
+/* Figma 1404:11298 — title and tagline sit together; the 12px gap is only above the price */
+.g-box .g-box__card-face--front .g-box__pkg-name {
+  display: flex;
+  flex-direction: column;
+}
+
 .g-box .g-box__card-face--front .g-box__pkg-title {
   margin: 0;
   font-family: Sora, sans-serif;
   font-weight: 600;
-  font-size: 25px;
+  font-size: 26px;
   line-height: 38px;
   color: #0f172a;
 }
 
 .g-box .g-box__card-face--front .g-box__pkg-tag {
-  margin: -12px 0 0;
+  margin: 0;
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 16px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -4116,7 +4248,7 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 700;
-  font-size: 29px;
+  font-size: 30px;
   line-height: 40px;
   letter-spacing: -0.9px;
   color: #0f172a;
@@ -4126,7 +4258,7 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: 19px;
+  font-size: 20px;
   line-height: 28px;
   text-decoration: line-through;
   color: #9a9a9a;
@@ -4151,7 +4283,7 @@
   font-family: "DM Sans", sans-serif;
   font-variation-settings: "opsz" 14;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 16.25px;
   white-space: nowrap;
   color: #2f241a;
@@ -4177,9 +4309,12 @@
 
 .g-box .g-box__card-face--front .g-box__explore {
   padding: 11px 17px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.6px;
+  /* Lift 1px off the panel's bottom edge */
+  position: relative;
+  top: -1px;
 }
 
 /* ---------- Back ---------- */
@@ -4194,10 +4329,13 @@
 }
 
 .g-box .g-box__card-face--back .g-box__profiles {
+  position: absolute;
+  left: 28px;
+  top: 28px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: 100%;
+  width: 833px;
 }
 
 .g-box .g-box__card-face--back .g-box__profiles-head {
@@ -4245,13 +4383,16 @@
 
 .g-box .g-box__card-face--back .g-box__profiles-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, 267px);
   gap: 16px;
+  width: 833px;
 }
 
 .g-box .g-box__card-face--back .g-box__profile {
   position: relative;
+  width: 267px;
   padding-left: 24px;
+  box-sizing: border-box;
 }
 
 .g-box .g-box__card-face--back .g-box__profile h4 {
@@ -4300,11 +4441,10 @@
   }
 
   @media (max-width: 991.98px) {
-    /* card counter-scaled back to 1:1 below 992px — same idea, via zoom */
-    .g-box__package {
+    /* Unused canvas path only — do not override the live lid/card animation. */
+    .g-box__canvas .g-box__package {
       transform: none;
       zoom: calc(1 / var(--g-box-s));
-      /* with zoom the offset is multiplied by both zooms — 12px / s lands on 12px on screen */
       left: 12px;
     }
   }
@@ -4315,4 +4455,387 @@
 .g-box.is-open .g-box__card-flip,
 .g-box.is-open .g-box__card-face {
   will-change: auto;
+}
+
+@media (max-width: 767.98px) {
+  .g-box .g-box__front-art,
+  .g-box .g-box__back-art {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    zoom: 1;
+  }
+
+  .g-box .g-box__card-face--front .g-box__package-panel {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px 14px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__pkg-title {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .g-box .g-box__card-face--front .g-box__pkg-tag,
+  .g-box .g-box__card-face--front .g-box__features li {
+    white-space: normal;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: auto;
+    gap: 12px;
+    padding: 16px 14px 12px;
+    box-sizing: border-box;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-head {
+    gap: 10px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-title {
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile {
+    width: 100%;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile h4 {
+    white-space: normal;
+  }
+
+  .g-box .g-box__card-face--back .g-box__wire {
+    display: none;
+  }
+}
+
+/* Tray art is stretched to the deeper 1600 × 760 stage (see .g-box) */
+.g-box__tray img {
+  object-fit: fill;
+}
+
+/* =====================================================================================
+ * Mobile package card — Figma 856:11822. Laid out on its 322 × 415 artboard and scaled by
+ * --g-card-s (gifting.js), like the desktop card. Mobile-only parts are hidden on desktop.
+ * ===================================================================================== */
+.g-box__lotus,
+.g-box__panel-corner,
+.g-box__feat-short {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-box__package {
+    aspect-ratio: 322 / 415;
+  }
+
+  /*
+   * The seated card stands taller than the velvet well, so it rises above the box. Reserve that
+   * overhang above the box so the card clears the subtitle. As a share of the box width W:
+   * card = 92% × 89.6% × W × 415/322 ≈ 106.24% W, well = 76% × (760/1600) W ≈ 36.1% W.
+   */
+  .g-box {
+    margin-top: calc(70.14% + 16px);
+  }
+
+  /* Less top padding so the taller stack (card overhang) still ends with Book the Gift on screen */
+  .g-pack {
+    padding-top: 96px;
+  }
+
+  /* Figma 856:11822 / 862:11544: both mobile card faces use the softer 50px glow */
+  .g-box .g-box__card-face--front,
+  .g-box .g-box__card-face--back {
+    box-shadow: 0 -4px 50px rgba(255, 255, 128, 0.5);
+  }
+
+  .g-box .g-box__card-face--front .g-box__front-art {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 322px;
+    height: 415px;
+    zoom: var(--g-card-s, 1);
+  }
+
+  .g-box .g-box__card-face--front .g-box__scene {
+    display: block;
+    left: -134px;
+    top: 0;
+    width: 854px;
+    height: 484px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__script,
+  .g-box .g-box__card-face--front .g-box__pkg-tag,
+  .g-box .g-box__card-face--front .g-box__price-suffix,
+  .g-box .g-box__card-face--front .g-box__feat-long {
+    display: none;
+  }
+
+  .g-box .g-box__card-face--front .g-box__feat-short {
+    display: inline;
+  }
+
+  .g-box .g-box__card-face--front .g-box__package-panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 275px;
+    height: 364px;
+    transform: translate(-50%, -50%);
+    padding: 21px 25px 20px;
+    align-items: center;
+    border: 1px solid #eddcc0;
+    border-bottom: 0;
+    border-radius: 12px;
+    filter: drop-shadow(0 -4px 25px rgba(255, 255, 128, 0.25));
+    text-align: center;
+  }
+
+  .g-box .g-box__card-face--front .g-box__panel-corner {
+    display: block;
+    position: absolute;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__panel-corner--tl {
+    left: 8px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__panel-corner--tr {
+    right: 8.34px;
+    opacity: 0.7;
+    transform: rotate(90deg);
+  }
+
+  .g-box .g-box__card-face--front .g-box__lotus {
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-top: 4px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__badge {
+    align-self: center;
+    margin: 6px 0 7px;
+    padding: 2px 12px;
+    border: 0;
+    background: #1f2824;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    font-size: 10px;
+    line-height: 15px;
+    letter-spacing: 1px;
+    color: #dfb76c;
+  }
+
+  .g-box .g-box__card-face--front .g-box__pkg-head {
+    width: 100%;
+    gap: 0;
+    padding: 0 0 6px;
+    align-items: center;
+  }
+
+  .g-box .g-box__card-face--front .g-box__pkg-title {
+    margin-bottom: -2px;
+    font-size: 20px;
+    line-height: 22px;
+    color: #1e1713;
+    white-space: nowrap;
+  }
+
+  .g-box .g-box__card-face--front .g-box__price-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding-top: 6px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__price {
+    margin-bottom: -2px;
+    font-size: 24px;
+    line-height: 30px;
+    letter-spacing: 0;
+    color: #1f1915;
+  }
+
+  .g-box .g-box__card-face--front .g-box__price-old {
+    font-size: 12px;
+    line-height: 16px;
+    color: #8c7e6e;
+  }
+
+  .g-box .g-box__card-face--front .g-box__features {
+    width: 100%;
+    box-sizing: border-box;
+    gap: 14px;
+    margin: 2.25px 0;
+    padding: 13px 8px;
+    text-align: left;
+  }
+
+  .g-box .g-box__card-face--front .g-box__features li {
+    font-size: 13px;
+    line-height: 16.25px;
+    white-space: normal;
+  }
+
+  .g-box .g-box__card-face--front .g-box__explore-wrap {
+    width: 100%;
+    padding: 6px 0 4px;
+  }
+
+  .g-box .g-box__card-face--front .g-box__explore {
+    top: 0;
+    font-size: 12px;
+  }
+}
+
+/* Mobile back card: name + test count per row, no descriptions (matches the mobile reference) */
+.g-box__profile-unit {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-box .g-box__card-face--back .g-box__profiles {
+    padding: 20px 18px 16px;
+    gap: 16px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-head {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-title {
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 2.4px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-badge {
+    gap: 10px;
+    padding: 5px 14px;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-badge-div {
+    height: 12px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profiles-grid {
+    gap: 12px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile {
+    padding-left: 22px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile::before {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile h4 {
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile h4 span {
+    font-size: 11px;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile-unit {
+    display: inline;
+  }
+
+  .g-box .g-box__card-face--back .g-box__profile p {
+    display: none;
+  }
+
+  /* Reference order: Haemogram, Lipid, Thyroid, Liver, Kidney, Diabetes, Iron, Vitamins */
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(6) { order: 2; }
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(3) { order: 3; }
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(4) { order: 4; }
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(5) { order: 5; }
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(2) { order: 6; }
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(7) { order: 7; }
+  .g-box .g-box__card-face--back .g-box__profile:nth-child(8) { order: 8; }
+}
+
+/*
+ * Mobile: the card ends taller than the box, so the well must not clip its top while it rises
+ * (that cut it off at the box rim, then it popped out). Clip only below the front rim.
+ */
+@media (max-width: 767.98px) {
+  .g-box__well,
+  .g-box.is-open .g-box__well,
+  .g-box.is-flipped .g-box__well {
+    overflow: visible;
+    clip-path: inset(-1000px -100px 0 -100px);
+  }
+}
+
+/* Flip finished: lay the back face out flat so its text is not drawn through a 3D layer (gifting.js) */
+.g-box.is-flipped.is-flat .g-box__card-flip,
+.g-box.is-flipped.is-flat .g-box__card-face--back {
+  transform: none;
+  transition: none;
+}
+
+.g-box.is-flipped.is-flat .g-box__card-face--front {
+  visibility: hidden;
+}
+
+/*
+ * Mobile Safari/Chrome ignore backface-visibility when a child uses zoom, so the front
+ * ("Explore Package") shows through the back for the whole 0.85s flip. Hide it as soon
+ * as the card is flipped. After flatten, drop perspective so profile text stays sharp.
+ */
+@media (max-width: 767.98px) {
+  .g-box.is-flipped .g-box__card-face--front {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    /* Hide after the front has turned away so it cannot ghost through the back */
+    transition: opacity 0s linear 0.42s, visibility 0s linear 0.42s;
+  }
+
+  .g-box.is-flipped.is-flat .g-box__package {
+    perspective: none;
+  }
+
+  .g-box.is-flipped.is-flat .g-box__card-face--back {
+    -webkit-transform: none;
+    transform: none;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+  }
 }
