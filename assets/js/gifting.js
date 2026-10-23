@@ -878,7 +878,6 @@
   var payFailedClose = document.getElementById("gift-pay-failed-close");
   var payTxnId = document.getElementById("gift-pay-txn-id");
   var payAmount = document.getElementById("gift-pay-amount");
-  var payDownload = document.getElementById("gift-pay-download");
   var payRetry = document.getElementById("gift-pay-retry");
   var payChange = document.getElementById("gift-pay-change");
   var formInner = form ? form.parentElement : null;
@@ -1539,36 +1538,87 @@
     return null;
   }
 
-  /* Pin the visible glass panel to the form (15px above it, as in Figma) */
+  var overlayScrollY = 0;
+  var overlayLocked = false;
+
+  function lockPageScroll() {
+    if (overlayLocked) return;
+    overlayLocked = true;
+    overlayScrollY = window.scrollY || window.pageYOffset || 0;
+    document.documentElement.classList.add("g-overlay-open");
+    document.body.style.top = -overlayScrollY + "px";
+  }
+
+  function unlockPageScroll() {
+    if (!overlayLocked) return;
+    overlayLocked = false;
+    document.documentElement.classList.remove("g-overlay-open");
+    document.body.style.top = "";
+    window.scrollTo(0, overlayScrollY);
+  }
+
+  function isMobileOverlay() {
+    return window.matchMedia("(max-width: 767.98px)").matches;
+  }
+
+  /* Pin the visible glass panel in the current viewport so Gift It / OTP
+   * do not jump the page. Figma's 15px-above-form offset is used when the
+   * form top is already on screen. Mobile uses position:fixed, so top is
+   * viewport-relative. */
   function placeBook() {
     var panel = activeOverlay();
     if (!panel || !form || !formInner) return;
-    formInner.style.paddingBottom = "";
-    panel.style.setProperty("--g-book-top", form.offsetTop - 15 + "px");
-    var section = formInner.closest("section");
-    var room = section ? parseFloat(getComputedStyle(section).paddingBottom) - 40 : 0;
+    panel.style.height = "";
+    panel.style.maxHeight = "";
+    var header = document.querySelector(".bs-header");
+    var headerH = header ? header.getBoundingClientRect().height : 80;
+    var gap = 16;
+    var minTopInView = headerH + gap;
+
+    if (isMobileOverlay()) {
+      panel.style.setProperty("--g-book-top", Math.round(minTopInView) + "px");
+      var mobileMaxH = Math.max(240, Math.round(window.innerHeight - minTopInView - gap));
+      panel.style.maxHeight = mobileMaxH + "px";
+      if (panel.scrollHeight > mobileMaxH + 1) {
+        panel.style.height = mobileMaxH + "px";
+      }
+      return;
+    }
+
+    var innerRect = formInner.getBoundingClientRect();
+    var figTop = form.offsetTop - 15;
+    var figTopInView = innerRect.top + figTop;
+    var top = figTopInView >= minTopInView ? figTop : minTopInView - innerRect.top;
+    if (top < 0) top = 0;
+    panel.style.setProperty("--g-book-top", Math.round(top) + "px");
+    var maxH = Math.max(240, Math.round(window.innerHeight - (innerRect.top + top) - gap));
+    panel.style.maxHeight = maxH + "px";
+    if (panel.scrollHeight > maxH + 1) {
+      panel.style.height = maxH + "px";
+    }
     var extra =
-      panel.offsetTop +
-      panel.offsetHeight -
-      (form.offsetTop + form.offsetHeight) -
-      Math.max(0, room);
-    if (extra > 0) formInner.style.paddingBottom = extra + "px";
+      panel.offsetTop + panel.offsetHeight - (form.offsetTop + form.offsetHeight);
+    if (extra > 0) {
+      var current = parseFloat(formInner.style.paddingBottom) || 0;
+      if (extra > current) formInner.style.paddingBottom = extra + "px";
+    }
   }
 
   function hidePanel(panel) {
     if (!panel) return;
     panel.classList.remove("is-visible");
     panel.hidden = true;
+    panel.style.height = "";
+    panel.style.maxHeight = "";
   }
 
   function showPanel(panel) {
     if (!panel) return;
     panel.hidden = false;
+    lockPageScroll();
     placeBook();
     void panel.offsetWidth;
     panel.classList.add("is-visible");
-    panel.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-    placeBook();
   }
 
   function lockFormUnderOverlay() {
@@ -1584,6 +1634,13 @@
     form.removeAttribute("aria-hidden");
     form.inert = false;
     if (formInner) formInner.style.paddingBottom = "";
+    [book, otpPanel, paySuccess, payFailed].forEach(function (p) {
+      if (p) {
+        p.style.height = "";
+        p.style.maxHeight = "";
+      }
+    });
+    unlockPageScroll();
   }
 
   function openBook() {
@@ -1610,7 +1667,7 @@
     resetBookingApiState();
     unlockForm();
     var submit = form ? form.querySelector("[type='submit']") : null;
-    if (submit) submit.focus();
+    if (submit) submit.focus({ preventScroll: true });
   }
 
   function openOtpPanel() {
@@ -1945,30 +2002,6 @@
       });
   }
 
-  function downloadReceipt() {
-    var id = onboardSession.razorpay_payment_id || (payTxnId && payTxnId.textContent) || "";
-    var amount = (payAmount && payAmount.textContent) || "";
-    var lines = [
-      "SuperShyft Gift Booking Receipt",
-      "--------------------------------",
-      "Transaction ID: " + id,
-      "Amount: " + amount,
-      "Engagement IDs: " + ((onboardSession.engagement_ids || []).join(", ") || "—"),
-      "Booking IDs: " + ((onboardSession.booking_ids || []).join(", ") || "—"),
-      "",
-      "Thank you for gifting with SuperShyft.",
-    ];
-    var blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "supershyft-receipt-" + (id || "gift") + ".txt";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
   function wireOtpDigits() {
     otpDigitInputs.forEach(function (input, index) {
       input.addEventListener("input", function () {
@@ -2041,7 +2074,6 @@
   }
   if (paySuccessClose) paySuccessClose.addEventListener("click", closeBook);
   if (payFailedClose) payFailedClose.addEventListener("click", closeBook);
-  if (payDownload) payDownload.addEventListener("click", downloadReceipt);
   if (payRetry) payRetry.addEventListener("click", function () {
     hidePanel(payFailed);
     openRazorpayCheckout();
@@ -2128,7 +2160,7 @@
         bookError.hidden = !msg;
       }
       if (msg) {
-        if (missing.length) missing[0].focus();
+        if (missing.length) missing[0].focus({ preventScroll: true });
         placeBook();
         return;
       }

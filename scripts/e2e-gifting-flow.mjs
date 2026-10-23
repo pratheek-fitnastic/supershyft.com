@@ -47,14 +47,22 @@ async function fillBookAndWaitSlots(page) {
     null,
     { timeout: 20000 }
   );
-  await page.locator('#book-dates input[name="book-date"]').first().check({ force: true });
+  const firstDate = page.locator('#book-dates input[name="book-date"]').first();
+  await firstDate.evaluate((el) => {
+    el.scrollIntoView({ block: "center", inline: "nearest" });
+  });
+  await firstDate.check({ force: true });
 
   await page.waitForFunction(
     () => document.querySelectorAll('#book-slots input[name="book-slot"]').length > 0,
     null,
     { timeout: 20000 }
   );
-  await page.locator('#book-slots input[name="book-slot"]').first().check({ force: true });
+  const firstSlot = page.locator('#book-slots input[name="book-slot"]').first();
+  await firstSlot.evaluate((el) => {
+    el.scrollIntoView({ block: "center", inline: "nearest" });
+  });
+  await firstSlot.check({ force: true });
 }
 
 async function installMocks(page, { confirmOk = true } = {}) {
@@ -213,17 +221,31 @@ async function runSuccessPath(browser) {
   await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
   await scrollToForm(page);
   await fillGiftForm(page);
+  const scrollBeforeGift = await page.evaluate(() => window.scrollY);
   await page.locator(".g-preview__submit").click();
 
   await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
   pass("Gift It opens Book Appointment");
+  const scrollAfterGift = await page.evaluate(() => window.scrollY);
+  if (Math.abs(scrollAfterGift - scrollBeforeGift) <= 2) {
+    pass("Gift It keeps the screen stuck", String(scrollAfterGift));
+  } else {
+    fail("Gift It moved the screen", `before=${scrollBeforeGift} after=${scrollAfterGift}`);
+  }
 
   await fillBookAndWaitSlots(page);
   pass("Serviceability + slots loaded (live diagnostics)");
 
+  const scrollBeforeOtp = await page.evaluate(() => window.scrollY);
   await page.locator("#gift-book-continue").click();
   await page.waitForSelector("#gift-otp:not([hidden])", { timeout: 15000 });
   pass("Continue opens OTP panel after family-onboard");
+  const scrollAfterOtp = await page.evaluate(() => window.scrollY);
+  if (Math.abs(scrollAfterOtp - scrollBeforeOtp) <= 2) {
+    pass("OTP panel keeps the screen stuck", String(scrollAfterOtp));
+  } else {
+    fail("OTP panel moved the screen", `before=${scrollBeforeOtp} after=${scrollAfterOtp}`);
+  }
 
   const body = captured.onboardBody;
   if (!body) throw new Error("family-onboard not captured");
@@ -283,6 +305,10 @@ async function runSuccessPath(browser) {
   else fail("Success payment id", txn);
   if (amt.includes("1220")) pass("Success shows amount", amt);
   else fail("Success amount", amt);
+
+  const downloadCount = await page.locator("#gift-pay-download").count();
+  if (downloadCount === 0) pass("Success has no download transaction control");
+  else fail("Download transaction control still present", String(downloadCount));
 
   const verifyIds = captured.verifyBody?.engagement_ids;
   if (
