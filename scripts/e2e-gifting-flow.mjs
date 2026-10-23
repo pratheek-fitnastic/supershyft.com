@@ -48,9 +48,51 @@ async function fillBookAndWaitSlots(page) {
     { timeout: 20000 }
   );
   const firstDate = page.locator('#book-dates input[name="book-date"]').first();
-  await firstDate.evaluate((el) => {
-    el.scrollIntoView({ block: "center", inline: "nearest" });
-  });
+  const viewport = page.viewportSize() || { width: 1440, height: 900 };
+  if (viewport.width >= 768) {
+    const locked = await page.evaluate(() =>
+      document.documentElement.classList.contains("g-overlay-open")
+    );
+    if (locked) pass("Desktop Book Appointment freezes the page");
+    else fail("Desktop Book Appointment did not lock page scroll");
+    const scrollBeforeDates = await page.evaluate(() => window.scrollY);
+    await firstDate.evaluate((el) => {
+      const body = document.querySelector(".g-book.is-visible .g-book__body");
+      if (body) {
+        const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
+        body.scrollTop += delta;
+      } else {
+        el.scrollIntoView({ block: "center", inline: "nearest" });
+      }
+    });
+    const scrollAfterDates = await page.evaluate(() => window.scrollY);
+    if (Math.abs(scrollAfterDates - scrollBeforeDates) <= 2) {
+      pass("Date/slot scroll stays inside the panel");
+    } else {
+      fail(
+        "Reaching dates moved the page",
+        `before=${scrollBeforeDates} after=${scrollAfterDates}`
+      );
+    }
+    const dateInView = await page.evaluate(() => {
+      const el = document.querySelector("#book-dates");
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.bottom > 80 && r.top < window.innerHeight - 40;
+    });
+    if (dateInView) pass("Date picker reachable inside panel");
+    else fail("Date picker still out of view after inner scroll");
+  } else {
+    await firstDate.evaluate((el) => {
+      const body = document.querySelector(".g-book.is-visible .g-book__body");
+      if (body) {
+        const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
+        body.scrollTop += delta;
+      } else {
+        el.scrollIntoView({ block: "center", inline: "nearest" });
+      }
+    });
+  }
   await firstDate.check({ force: true });
 
   await page.waitForFunction(
@@ -58,11 +100,34 @@ async function fillBookAndWaitSlots(page) {
     null,
     { timeout: 20000 }
   );
+  const stayedOnSchedule = await page.evaluate(() => {
+    const body = document.querySelector(".g-book.is-visible .g-book__body");
+    const dates = document.getElementById("book-dates");
+    const slots = document.getElementById("book-slots");
+    if (!body || !dates) return false;
+    const br = body.getBoundingClientRect();
+    const dr = dates.getBoundingClientRect();
+    const datesVisible = dr.bottom > br.top + 8 && dr.top < br.bottom - 8;
+    const sr = slots ? slots.getBoundingClientRect() : null;
+    const slotsVisible = !!(sr && sr.bottom > br.top + 8 && sr.top < br.bottom - 8);
+    return datesVisible || slotsVisible;
+  });
+  if (stayedOnSchedule) pass("Selecting a date keeps dates/slots in view");
+  else fail("Selecting a date jumped back to gender/pincode");
   const firstSlot = page.locator('#book-slots input[name="book-slot"]').first();
   await firstSlot.evaluate((el) => {
-    el.scrollIntoView({ block: "center", inline: "nearest" });
+    const body = document.querySelector(".g-book.is-visible .g-book__body");
+    if (body) {
+      const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
+      body.scrollTop += delta;
+    } else {
+      el.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
   });
   await firstSlot.check({ force: true });
+  const continueReady = await page.locator("#gift-book-continue").isEnabled();
+  if (continueReady) pass("Continue enabled after date and slot");
+  else fail("Continue stayed disabled after complete booking details");
 }
 
 async function installMocks(page, { confirmOk = true } = {}) {
@@ -226,11 +291,36 @@ async function runSuccessPath(browser) {
 
   await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
   pass("Gift It opens Book Appointment");
-  const scrollAfterGift = await page.evaluate(() => window.scrollY);
-  if (Math.abs(scrollAfterGift - scrollBeforeGift) <= 2) {
-    pass("Gift It keeps the screen stuck", String(scrollAfterGift));
+  const continueBlocked = await page.locator("#gift-book-continue").isDisabled();
+  if (continueBlocked) pass("Continue disabled until book details complete");
+  else fail("Continue was enabled with empty book fields");
+  await page.evaluate(() => {
+    const btn = document.getElementById("gift-book-continue");
+    if (btn) btn.click();
+  });
+  const stayedOnBook = await page.evaluate(() => {
+    const book = document.getElementById("gift-book");
+    const otp = document.getElementById("gift-otp");
+    return book && !book.hidden && otp && otp.hidden;
+  });
+  if (stayedOnBook) pass("Empty Continue stays on Book Appointment");
+  else fail("Empty Continue left Book Appointment");
+  const stuckAfterGift = await page.evaluate((before) => {
+    const bodyTop = parseFloat(document.body.style.top) || 0;
+    const locked = document.documentElement.classList.contains("g-overlay-open");
+    const book = document.getElementById("gift-book");
+    const r = book ? book.getBoundingClientRect() : null;
+    const bookInView = !!(r && r.bottom > 80 && r.top < window.innerHeight - 16);
+    return {
+      locked,
+      visualShift: Math.abs(-bodyTop - before),
+      bookInView,
+    };
+  }, scrollBeforeGift);
+  if (stuckAfterGift.locked && stuckAfterGift.visualShift <= 2 && stuckAfterGift.bookInView) {
+    pass("Gift It keeps the screen stuck", JSON.stringify(stuckAfterGift));
   } else {
-    fail("Gift It moved the screen", `before=${scrollBeforeGift} after=${scrollAfterGift}`);
+    fail("Gift It moved the screen", JSON.stringify(stuckAfterGift));
   }
 
   await fillBookAndWaitSlots(page);
@@ -359,8 +449,9 @@ async function runResendOtpPath(browser) {
   await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
   await scrollToForm(page);
   await fillGiftForm(page);
+  await page.waitForTimeout(300);
   await page.locator(".g-preview__submit").click();
-  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 15000 });
   await fillBookAndWaitSlots(page);
   await page.locator("#gift-book-continue").click();
   await page.waitForSelector("#gift-otp:not([hidden])", { timeout: 15000 });

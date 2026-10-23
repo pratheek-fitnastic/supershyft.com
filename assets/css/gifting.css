@@ -2251,13 +2251,18 @@ html.g-overlay-open body {
   z-index: 2;
 }
 
-/* Tall Book Appointment: fields scroll inside the panel; title + Continue stay */
 .g-book.is-visible .g-book__body {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
+  overflow-anchor: none;
+  scrollbar-width: none;
+}
+
+.g-book.is-visible .g-book__body::-webkit-scrollbar {
+  display: none;
 }
 
 .g-book[hidden] {
@@ -2989,7 +2994,7 @@ html.g-overlay-open body {
 
 .g-book__continue:disabled {
   opacity: 0.55;
-  cursor: wait;
+  cursor: not-allowed;
   pointer-events: none;
 }
 
@@ -3038,11 +3043,11 @@ html.g-overlay-open body {
   }
 
   .gifting-page .g-book:not(.g-book--result) .g-book__title {
-    font-size: 20px;
+    font-size: clamp(16px, 5vw, 20px);
     letter-spacing: 0.4px;
-    padding-left: 68px;
-    padding-right: 16px;
-    white-space: nowrap;
+    padding-left: 48px;
+    padding-right: 12px;
+    white-space: normal;
   }
 
   .gifting-page .g-book__heading {
@@ -3060,6 +3065,19 @@ html.g-overlay-open body {
     gap: 24px;
     width: 100%;
     max-width: 363px;
+  }
+
+  .g-book.is-visible .g-book__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    overflow-anchor: none;
+    scrollbar-width: none;
+  }
+
+  .g-book.is-visible .g-book__body::-webkit-scrollbar {
+    display: none;
   }
 
   .g-book__details {
@@ -3217,8 +3235,8 @@ html.g-overlay-open body {
   }
 
   .gifting-page .g-otp__digit {
-    width: 44px;
-    height: 44px;
+    width: min(44px, 12vw);
+    height: min(44px, 12vw);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 16px;
@@ -3540,6 +3558,7 @@ html.g-overlay-open body {
   .g-hero {
     aspect-ratio: auto;
     height: auto;
+    min-height: 100vh;
     min-height: 100svh;
     max-height: none;
   }
@@ -3566,13 +3585,13 @@ html.g-overlay-open body {
   }
 
   .g-hero__title-top {
-    font-size: 28px;
-    line-height: 50px;
+    font-size: clamp(24px, 7.4vw, 28px);
+    line-height: 1.25;
   }
 
   .g-hero__title-gold {
-    font-size: 38px;
-    line-height: 50px;
+    font-size: clamp(32px, 10vw, 38px);
+    line-height: 1.2;
   }
 
   .g-hero__sub {
@@ -3582,19 +3601,20 @@ html.g-overlay-open body {
   }
 
   .g-hero .g-btn {
-    padding: 9px 65px;
+    padding: clamp(8px, 2.4vw, 9px) clamp(36px, 16vw, 65px);
     font-size: 16px;
   }
 
   .g-btn {
-    padding: 9px 65px;
+    padding: clamp(8px, 2.4vw, 9px) clamp(36px, 16vw, 65px);
     font-size: 16px;
   }
 
   /* Mobile design 856:11047: heading near the top, box centred, button at the bottom of one screen */
   .g-pack {
+    min-height: 100vh;
     min-height: 100svh;
-    padding: 120px 16px 72px;
+    padding: clamp(72px, 12svh, 96px) 16px clamp(24px, 6svh, 48px);
     display: flex;
     flex-direction: column;
   }
@@ -3607,14 +3627,15 @@ html.g-overlay-open body {
   .g-box {
     margin-top: auto;
     margin-bottom: auto;
+    max-width: calc(100% * var(--g-pack-s, 1));
   }
 
   .g-pack__cta {
-    margin-top: 40px;
+    margin-top: 16px;
   }
 
   .g-pack__sub {
-    margin-bottom: 28px;
+    margin-bottom: 12px;
   }
 
   .g-box__well {
@@ -3676,7 +3697,7 @@ html.g-overlay-open body {
 
   /* Mobile design: two lines — "A Gift of Health," / "Wrapped in Love." */
   .g-pack__title {
-    font-size: 36px;
+    font-size: clamp(28px, 9vw, 36px);
     line-height: 1.3;
     max-width: 320px;
     margin-left: auto;
@@ -3696,6 +3717,7 @@ html.g-overlay-open body {
   }
 
   .g-steps__pin {
+    height: 100vh;
     height: 100svh;
   }
 
@@ -3715,7 +3737,7 @@ html.g-overlay-open body {
 
   /* Mandala sits on the bottom edge and shrinks on short phones so it never runs under the step text or past the section */
   .g-steps__pin {
-    --g-mandala-d: min(124vw, calc((100svh - 330px) * 0.9));
+    --g-mandala-d: min(124vw, calc((100svh - min(330px, 42svh)) * 0.9));
     --g-mandala-cx: 0px;
     --g-mandala-cy: calc(100% - 16px - var(--g-mandala-d) * 0.5572);
   }
@@ -3769,7 +3791,7 @@ html.g-overlay-open body {
 
   .g-steps__headline {
     white-space: normal;
-    font-size: 26px;
+    font-size: clamp(22px, 6.5vw, 26px);
     line-height: 1.25;
   }
 
@@ -3811,7 +3833,7 @@ html.g-overlay-open body {
   }
 
   .g-steps__title {
-    font-size: 30px;
+    font-size: clamp(22px, 8vw, 30px);
     margin: 0 0 8px;
     padding: 0;
     line-height: 1.2;
@@ -3885,13 +3907,14 @@ html.g-overlay-open body {
     font-size: 11px;
     letter-spacing: 1.1px;
     line-height: 20px;
+    white-space: normal;
   }
 
   .gifting-page .g-form-sec .g-field input,
   .gifting-page .g-form-sec .g-field textarea {
     height: auto;
     padding: 10px 12px;
-    font-size: 13px;
+    font-size: clamp(14px, 3.8vw, 16px);
     line-height: 20px;
   }
 
@@ -3923,6 +3946,7 @@ html.g-overlay-open body {
 
   .g-preview__card {
     max-width: 313px;
+    margin-bottom: clamp(24px, 6vw, 48px);
   }
 
   .gifting-page .g-preview__submit {
@@ -3938,18 +3962,51 @@ html.g-overlay-open body {
     justify-content: center;
   }
 
+  .g-close__photo {
+    top: 0;
+    height: 100%;
+  }
+
+  .g-close__fade {
+    top: 0;
+    height: min(120px, 40%);
+  }
+
   .g-close__inner {
     padding-top: 0;
   }
 
   .g-close__inner h2 {
-    font-size: 28px;
+    font-size: clamp(24px, 7vw, 28px);
     line-height: 1.3;
   }
 
   .g-close__inner p {
     font-size: 14px;
     line-height: 2;
+  }
+}
+
+@media (max-width: 767.98px) and (max-height: 700px) {
+  .g-hero__content {
+    top: 32%;
+    gap: 24px;
+  }
+
+  .g-steps__content {
+    padding-top: 48px;
+    gap: 16px;
+  }
+
+  .g-steps__panels {
+    min-height: 0;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .g-row {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -4056,6 +4113,13 @@ html.g-overlay-open body {
   .gifting-page .g-book.g-book--otp .g-book__continue.g-btn--sync {
     font-weight: 600;
     border-radius: 24px;
+  }
+
+  .gifting-page .g-book .g-book__continue,
+  .gifting-page .g-pay-actions__retry {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
   }
 }
 
@@ -4639,14 +4703,9 @@ html.g-overlay-open body {
     aspect-ratio: 322 / 415;
   }
 
-  /* Lid grows up from the tray (~176/1600 of box width). Extra air keeps the title off it. */
+  /* Seated mobile card hangs ~0.53 of box width above the tray */
   .g-box {
-    margin-top: max(calc(176 / 1600 * 100% + 28px), clamp(72px, 24vw, 140px));
-  }
-
-  /* Less top padding so the taller stack (card overhang) still ends with Book the Gift on screen */
-  .g-pack {
-    padding-top: 96px;
+    margin-top: calc(54% * var(--g-pack-s, 1));
   }
 
   /* Figma 856:11822 / 862:11544: both mobile card faces use the softer 50px glow */

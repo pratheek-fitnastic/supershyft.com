@@ -47,11 +47,23 @@
     var inner = giftPack.querySelector(".g-pack__inner");
     var avail = inner ? inner.clientWidth : giftPack.clientWidth;
     var s = Math.min(1, avail / 1344);
+    var header = document.getElementById("header");
+    var headerH = header ? header.getBoundingClientRect().height : 80;
     if (window.matchMedia("(min-width: 992px)").matches) {
-      var header = document.getElementById("header");
-      var headerH = header ? header.getBoundingClientRect().height : 80;
       var frame = window.innerHeight - headerH - window.innerHeight * 0.04 - 12;
       s = Math.max(0.45, Math.min(s, frame / 1000));
+    } else if (window.matchMedia("(max-width: 767.98px)").matches) {
+      var title = giftPack.querySelector(".g-pack__title");
+      var sub = giftPack.querySelector(".g-pack__sub");
+      var cta = giftPack.querySelector(".g-pack__cta");
+      var titleH = title ? title.offsetHeight : 72;
+      var subH = sub ? sub.offsetHeight : 44;
+      var ctaH = cta ? cta.offsetHeight : 48;
+      var padTop = Math.max(72, Math.min(96, window.innerHeight * 0.12));
+      var padBot = Math.max(24, Math.min(48, window.innerHeight * 0.06));
+      var budget = window.innerHeight - headerH - titleH - subH - ctaH - padTop - padBot - 20;
+      /* Opened card hangs ~0.70 of box width above the tray; tray is ~0.48 wide */
+      s = budget > 80 ? Math.max(0.52, Math.min(1, budget / (avail * 1.22))) : 0.62;
     }
     giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
     if (giftPackage) {
@@ -1163,6 +1175,7 @@
     lastSlotPayload = null;
     if (!slots || !slots.length) {
       setScheduleStatus("No slots available for this date.");
+      syncBookContinue();
       return;
     }
     setScheduleStatus("");
@@ -1179,6 +1192,7 @@
       }
       bookSlots.appendChild(el);
     });
+    syncBookContinue();
   }
 
   function getSelectedGender() {
@@ -1319,10 +1333,9 @@
           geoState = null;
           clearDatesAndSlots();
           setScheduleStatus("");
-          setBookError(
-            (result && result.message) || "This area is not serviceable."
-          );
+          setBookError("This area is not serviceable.");
           placeBook();
+          syncBookContinue();
           return;
         }
 
@@ -1338,6 +1351,8 @@
         setScheduleStatus("");
         renderBookDates();
         placeBook();
+        revealBookSchedule();
+        syncBookContinue();
       })
       .catch(function (err) {
         if (gen !== serviceabilityGen) return;
@@ -1349,6 +1364,7 @@
         setScheduleStatus("");
         setBookError("Unable to check serviceability. Please try again.");
         placeBook();
+        syncBookContinue();
       });
   }
 
@@ -1367,6 +1383,7 @@
       if (bookError && /serviceable|availability|Unable to check/i.test(bookError.textContent || "")) {
         setBookError("");
       }
+      syncBookContinue();
       return;
     }
     serviceabilityTimer = setTimeout(function () {
@@ -1378,6 +1395,8 @@
   function fetchAvailableSlots() {
     var slotDate = getSelectedDate();
     if (!slotDate || !geoState || !geoState.serviceable) return;
+    var body = book && book.querySelector(".g-book__body");
+    var savedScroll = body ? body.scrollTop : 0;
 
     if (!getSelectedGender()) {
       if (bookSlots) {
@@ -1388,6 +1407,7 @@
       setScheduleStatus("");
       setBookError("Please select the recipient's gender.");
       placeBook();
+      syncBookContinue();
       return;
     }
 
@@ -1424,6 +1444,8 @@
         var data = unwrapApiData(payload);
         renderBookSlotsFromApi(data.slots || []);
         placeBook();
+        restoreBookBodyScroll(body, savedScroll);
+        syncBookContinue();
       })
       .catch(function (err) {
         if (gen !== slotsGen) return;
@@ -1437,6 +1459,8 @@
         setScheduleStatus("");
         setBookError("Unable to load slots. Please try another date.");
         placeBook();
+        restoreBookBodyScroll(body, savedScroll);
+        syncBookContinue();
       });
   }
 
@@ -1474,10 +1498,43 @@
     return head + "xxxx" + tail + "@" + domain;
   }
 
+  function bookDetailsComplete() {
+    if (!book) return false;
+    var gender = book.querySelector("input[name='book-gender']:checked");
+    var date = book.querySelector("input[name='book-date']:checked");
+    var slot = book.querySelector("input[name='book-slot']:checked");
+    var ageOk = bookAge && bookAge.checkValidity();
+    var addrOk = bookAddress && bookAddress.checkValidity();
+    var pinOk = bookPincode && bookPincode.checkValidity();
+    var cityOk = bookCity && bookCity.checkValidity();
+    return !!(
+      gender &&
+      ageOk &&
+      addrOk &&
+      pinOk &&
+      cityOk &&
+      geoState &&
+      geoState.serviceable &&
+      date &&
+      slot
+    );
+  }
+
+  function syncBookContinue() {
+    if (!bookContinue) return;
+    if (bookContinue.textContent === "Please wait…") return;
+    bookContinue.disabled = !bookDetailsComplete();
+  }
+
   function setContinueLoading(loading) {
     if (!bookContinue) return;
-    bookContinue.disabled = !!loading;
-    bookContinue.textContent = loading ? "Please wait…" : "Continue";
+    if (loading) {
+      bookContinue.disabled = true;
+      bookContinue.textContent = "Please wait…";
+      return;
+    }
+    bookContinue.textContent = "Continue";
+    syncBookContinue();
   }
 
   function setOtpError(msg) {
@@ -1565,9 +1622,19 @@
    * do not jump the page. Figma's 15px-above-form offset is used when the
    * form top is already on screen. Mobile uses position:fixed, so top is
    * viewport-relative. */
+  function restoreBookBodyScroll(body, savedScroll) {
+    if (!body) return;
+    body.scrollTop = savedScroll;
+    requestAnimationFrame(function () {
+      body.scrollTop = savedScroll;
+    });
+  }
+
   function placeBook() {
     var panel = activeOverlay();
     if (!panel || !form || !formInner) return;
+    var body = panel.querySelector(".g-book__body");
+    var savedScroll = body ? body.scrollTop : 0;
     panel.style.height = "";
     panel.style.maxHeight = "";
     var header = document.querySelector(".bs-header");
@@ -1582,6 +1649,7 @@
       if (panel.scrollHeight > mobileMaxH + 1) {
         panel.style.height = mobileMaxH + "px";
       }
+      restoreBookBodyScroll(body, savedScroll);
       return;
     }
 
@@ -1591,17 +1659,19 @@
     var top = figTopInView >= minTopInView ? figTop : minTopInView - innerRect.top;
     if (top < 0) top = 0;
     panel.style.setProperty("--g-book-top", Math.round(top) + "px");
-    var maxH = Math.max(240, Math.round(window.innerHeight - (innerRect.top + top) - gap));
-    panel.style.maxHeight = maxH + "px";
-    if (panel.scrollHeight > maxH + 1) {
-      panel.style.height = maxH + "px";
+    var panelTopInView = innerRect.top + top;
+    var desktopMaxH = Math.max(240, Math.round(window.innerHeight - panelTopInView - gap));
+    panel.style.maxHeight = desktopMaxH + "px";
+    if (panel.scrollHeight > desktopMaxH + 1) {
+      panel.style.height = desktopMaxH + "px";
     }
     var extra =
-      panel.offsetTop + panel.offsetHeight - (form.offsetTop + form.offsetHeight);
+      panel.offsetTop + desktopMaxH - (form.offsetTop + form.offsetHeight);
     if (extra > 0) {
       var current = parseFloat(formInner.style.paddingBottom) || 0;
       if (extra > current) formInner.style.paddingBottom = extra + "px";
     }
+    restoreBookBodyScroll(body, savedScroll);
   }
 
   function hidePanel(panel) {
@@ -1619,6 +1689,19 @@
     placeBook();
     void panel.offsetWidth;
     panel.classList.add("is-visible");
+  }
+
+  function revealBookSchedule() {
+    var dates = document.getElementById("book-dates");
+    if (!dates || !dates.querySelector("input")) return;
+    var body = book && book.querySelector(".g-book__body");
+    if (body) {
+      var delta = dates.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
+      if (reducedMotion) body.scrollTop += delta;
+      else body.scrollTo({ top: body.scrollTop + delta, behavior: "smooth" });
+      return;
+    }
+    dates.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
   }
 
   function lockFormUnderOverlay() {
@@ -1651,6 +1734,7 @@
     resetBookingApiState();
     lockFormUnderOverlay();
     showPanel(book);
+    syncBookContinue();
     var first = book.querySelector("input[name='book-gender']");
     if (first) first.focus({ preventScroll: true });
     loadPincodeCityMap();
@@ -2098,6 +2182,7 @@
       if (t.id === "book-age") {
         var age = String(t.value || "").replace(/\D/g, "").slice(0, AGE_MAX);
         if (t.value !== age) t.value = age;
+        syncBookContinue();
         return;
       }
       if (t.id === "book-address" || t.id === "book-city" || t.id === "book-pincode") {
@@ -2106,11 +2191,14 @@
           if (t.value !== pin) t.value = pin;
           maybeAutofillCity().then(function () {
             scheduleServiceabilityCheck();
+            syncBookContinue();
           });
+          syncBookContinue();
           return;
         }
         scheduleServiceabilityCheck();
       }
+      syncBookContinue();
     });
 
     book.addEventListener("change", function (e) {
@@ -2118,12 +2206,14 @@
       if (!t) return;
       if (t.name === "book-date") {
         fetchAvailableSlots();
+        syncBookContinue();
         return;
       }
       if (t.name === "book-gender") {
         if (getSelectedDate() && geoState && geoState.serviceable) {
           fetchAvailableSlots();
         }
+        syncBookContinue();
         return;
       }
       if (t.name === "book-slot") {
@@ -2136,6 +2226,7 @@
           zone_id: geoState ? geoState.zone_id : null,
         };
       }
+      syncBookContinue();
     });
 
     book.addEventListener("submit", function (e) {
