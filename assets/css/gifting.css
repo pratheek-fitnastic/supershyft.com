@@ -3919,14 +3919,14 @@ html.g-overlay-open body {
   }
 
   .gifting-page .g-form-sec .g-chip {
-    padding: 8px 12px;
-    font-size: 12px;
-    line-height: 20px;
+    padding: 10px 16px;
+    font-size: clamp(12px, 3.6vw, 14px);
+    line-height: 1.35;
     white-space: normal;
   }
 
   .gifting-page .g-form-sec .g-field--msg textarea {
-    white-space: normal;
+    white-space: pre-wrap;
   }
 
   .g-rel-box,
@@ -4007,6 +4007,50 @@ html.g-overlay-open body {
 @media (max-width: 400px) {
   .g-row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Stacked form (phone + tablet): chips and the typed message wrap so the full line stays readable */
+@media (max-width: 1279.98px) {
+  .g-field--msg,
+  .g-msg-stack,
+  .g-chips,
+  .g-msg-input {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gifting-page .g-form-sec .g-chip {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 40px;
+    padding: 10px 16px;
+    border-radius: 20px;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.35;
+    text-align: left;
+  }
+
+  .gifting-page .g-form-sec .g-field--msg textarea {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 20px;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.35;
+    field-sizing: content;
   }
 }
 

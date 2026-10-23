@@ -598,14 +598,30 @@
     messageCount.hidden = length === 0;
   }
 
+  function fitMessageInput() {
+    if (!messageInput) return;
+    if (!window.matchMedia("(max-width: 1279.98px)").matches) {
+      messageInput.style.height = "";
+      return;
+    }
+    messageInput.style.height = "auto";
+    messageInput.style.height = Math.max(messageInput.scrollHeight, 44) + "px";
+  }
+
   if (messageInput) {
     messageInput.addEventListener("input", function () {
       var next = clampMessage(messageInput.value);
       if (messageInput.value !== next) messageInput.value = next;
       updateMessageCount();
+      fitMessageInput();
     });
   }
   updateMessageCount();
+  fitMessageInput();
+  window.addEventListener("resize", function () {
+    window.clearTimeout(fitMessageInput.t);
+    fitMessageInput.t = window.setTimeout(fitMessageInput, 150);
+  });
 
   /* Custom relationship dropdown (Figma 862:12515) — drives the hidden native <select> */
   var relBox = document.getElementById("rel-box");
@@ -1308,6 +1324,8 @@
     setBookError("");
     setScheduleStatus("Checking availability…");
     setScheduleLoading(true);
+    placeBook();
+    revealBookSchedule();
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     serviceabilityAbort = controller;
@@ -1335,6 +1353,7 @@
           setScheduleStatus("");
           setBookError("This area is not serviceable.");
           placeBook();
+          revealBookSchedule();
           syncBookContinue();
           return;
         }
@@ -1364,6 +1383,7 @@
         setScheduleStatus("");
         setBookError("Unable to check serviceability. Please try again.");
         placeBook();
+        revealBookSchedule();
         syncBookContinue();
       });
   }
@@ -1386,6 +1406,8 @@
       syncBookContinue();
       return;
     }
+    placeBook();
+    revealBookSchedule();
     serviceabilityTimer = setTimeout(function () {
       serviceabilityTimer = null;
       checkServiceability();
@@ -1414,7 +1436,7 @@
     abortSlots();
     var gen = (slotsGen += 1);
     setBookError("");
-    setScheduleStatus("Loading slots…");
+    setScheduleStatus("");
     if (bookSlots) {
       bookSlots.innerHTML = "";
       bookSlots.removeAttribute("data-api");
@@ -1622,10 +1644,13 @@
    * do not jump the page. Figma's 15px-above-form offset is used when the
    * form top is already on screen. Mobile uses position:fixed, so top is
    * viewport-relative. */
+  var holdBookBodyScroll = false;
+
   function restoreBookBodyScroll(body, savedScroll) {
-    if (!body) return;
+    if (!body || holdBookBodyScroll) return;
     body.scrollTop = savedScroll;
     requestAnimationFrame(function () {
+      if (holdBookBodyScroll) return;
       body.scrollTop = savedScroll;
     });
   }
@@ -1646,9 +1671,7 @@
       panel.style.setProperty("--g-book-top", Math.round(minTopInView) + "px");
       var mobileMaxH = Math.max(240, Math.round(window.innerHeight - minTopInView - gap));
       panel.style.maxHeight = mobileMaxH + "px";
-      if (panel.scrollHeight > mobileMaxH + 1) {
-        panel.style.height = mobileMaxH + "px";
-      }
+      panel.style.height = mobileMaxH + "px";
       restoreBookBodyScroll(body, savedScroll);
       return;
     }
@@ -1662,9 +1685,7 @@
     var panelTopInView = innerRect.top + top;
     var desktopMaxH = Math.max(240, Math.round(window.innerHeight - panelTopInView - gap));
     panel.style.maxHeight = desktopMaxH + "px";
-    if (panel.scrollHeight > desktopMaxH + 1) {
-      panel.style.height = desktopMaxH + "px";
-    }
+    panel.style.height = desktopMaxH + "px";
     var extra =
       panel.offsetTop + desktopMaxH - (form.offsetTop + form.offsetHeight);
     if (extra > 0) {
@@ -1692,16 +1713,36 @@
   }
 
   function revealBookSchedule() {
-    var dates = document.getElementById("book-dates");
-    if (!dates || !dates.querySelector("input")) return;
+    var target = scheduleGroup;
+    if (!target) return;
     var body = book && book.querySelector(".g-book__body");
-    if (body) {
-      var delta = dates.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
-      if (reducedMotion) body.scrollTop += delta;
-      else body.scrollTo({ top: body.scrollTop + delta, behavior: "smooth" });
-      return;
+    var heading = target.querySelector(".g-book__heading") || target;
+    holdBookBodyScroll = true;
+    function apply(smooth) {
+      if (!body) {
+        heading.scrollIntoView({
+          behavior: smooth && !reducedMotion ? "smooth" : "auto",
+          block: "start",
+        });
+        return;
+      }
+      var delta = heading.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
+      if (Math.abs(delta) < 2) return;
+      var next = body.scrollTop + delta;
+      if (smooth && !reducedMotion && typeof body.scrollTo === "function") {
+        body.scrollTo({ top: next, behavior: "smooth" });
+      } else {
+        body.scrollTop = next;
+      }
     }
-    dates.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    apply(false);
+    requestAnimationFrame(function () {
+      apply(false);
+      requestAnimationFrame(function () {
+        apply(!reducedMotion);
+        holdBookBodyScroll = false;
+      });
+    });
   }
 
   function lockFormUnderOverlay() {

@@ -41,6 +41,24 @@ async function fillBookAndWaitSlots(page) {
   await page.locator("#book-city").fill("Gurgaon");
   await page.locator("#book-pincode").fill("122001");
 
+  try {
+    await page.waitForFunction(
+      () => {
+        const body = document.querySelector(".g-book.is-visible .g-book__body");
+        const group = document.querySelector(".g-book__group--schedule");
+        if (!body || !group) return false;
+        const br = body.getBoundingClientRect();
+        const gr = group.getBoundingClientRect();
+        return gr.top < br.bottom - 8 && gr.bottom > br.top + 8;
+      },
+      null,
+      { timeout: 12000 }
+    );
+    pass("Schedule Blood Collection comes into view on serviceability");
+  } catch (err) {
+    fail("Schedule Blood Collection stayed out of view after address fill", err.message);
+  }
+
   // Wait for serviceability → dates
   await page.waitForFunction(
     () => document.querySelectorAll('#book-dates input[name="book-date"]').length > 0,
@@ -56,15 +74,14 @@ async function fillBookAndWaitSlots(page) {
     if (locked) pass("Desktop Book Appointment freezes the page");
     else fail("Desktop Book Appointment did not lock page scroll");
     const scrollBeforeDates = await page.evaluate(() => window.scrollY);
-    await firstDate.evaluate((el) => {
-      const body = document.querySelector(".g-book.is-visible .g-book__body");
-      if (body) {
-        const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
-        body.scrollTop += delta;
-      } else {
-        el.scrollIntoView({ block: "center", inline: "nearest" });
-      }
+    const dateInView = await page.evaluate(() => {
+      const el = document.querySelector("#book-dates");
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.bottom > 80 && r.top < window.innerHeight - 40;
     });
+    if (dateInView) pass("Date picker reachable inside panel");
+    else fail("Date picker still out of view after serviceability");
     const scrollAfterDates = await page.evaluate(() => window.scrollY);
     if (Math.abs(scrollAfterDates - scrollBeforeDates) <= 2) {
       pass("Date/slot scroll stays inside the panel");
@@ -74,24 +91,6 @@ async function fillBookAndWaitSlots(page) {
         `before=${scrollBeforeDates} after=${scrollAfterDates}`
       );
     }
-    const dateInView = await page.evaluate(() => {
-      const el = document.querySelector("#book-dates");
-      if (!el) return false;
-      const r = el.getBoundingClientRect();
-      return r.bottom > 80 && r.top < window.innerHeight - 40;
-    });
-    if (dateInView) pass("Date picker reachable inside panel");
-    else fail("Date picker still out of view after inner scroll");
-  } else {
-    await firstDate.evaluate((el) => {
-      const body = document.querySelector(".g-book.is-visible .g-book__body");
-      if (body) {
-        const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8;
-        body.scrollTop += delta;
-      } else {
-        el.scrollIntoView({ block: "center", inline: "nearest" });
-      }
-    });
   }
   await firstDate.check({ force: true });
 
