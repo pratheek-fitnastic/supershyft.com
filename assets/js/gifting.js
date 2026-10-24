@@ -862,11 +862,10 @@
   var PACKAGE_ID = 7;
   var SERVICEABILITY_DEBOUNCE_MS = 400;
   var PINCODE_CITY_MAP_URL = "assets/data/pincode-city.json";
-  /* Birthday / Just Because: paste the real campaign code when you have it. Empty = no fake code. */
   var DISCOUNT_CODES = {
     diwali: "SUPERDIWALI",
-    birthday: "",
-    "just-because": "",
+    birthday: "HAPPYBIRTHDAY",
+    "just-because": "JUSTBECAUSE",
   };
 
   function getActiveOccasion() {
@@ -884,6 +883,7 @@
   var form = document.getElementById("gift-form");
   var book = document.getElementById("gift-book");
   var bookBack = document.getElementById("gift-book-back");
+  var bookClose = document.getElementById("gift-book-close");
   var bookDates = document.getElementById("book-dates");
   var bookSlots = document.getElementById("book-slots");
   var bookError = document.getElementById("gift-book-error");
@@ -1875,7 +1875,7 @@
           booker_message: fieldValue("gift-message"),
         },
       ],
-      discount_code: null,
+      discount_code: getDiscountCode() || null,
     };
   }
 
@@ -2179,6 +2179,7 @@
   }
 
   if (bookBack) bookBack.addEventListener("click", closeBook);
+  if (bookClose) bookClose.addEventListener("click", closeBook);
   if (otpBack) {
     otpBack.addEventListener("click", function () {
       hidePanel(otpPanel);

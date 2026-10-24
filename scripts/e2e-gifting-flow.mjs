@@ -1,6 +1,6 @@
 /**
  * End-to-end gifting workflow test (Playwright).
- * UI: Gift It → Book → OTP → Verify → (mocked) Razorpay → confirm → success/fail
+ * UI: Gift It → Book close/reopen → Book → OTP → Verify → (mocked) Razorpay → confirm → success/fail
  * Diagnostics APIs hit live; onboard/verify/confirm/Razorpay are mocked for determinism.
  */
 import { chromium } from "playwright";
@@ -355,7 +355,7 @@ async function runSuccessPath(browser) {
     [m?.booker_message === "Morning slot gift", "booker_message"],
     [!!m?.blood_collection_date, "blood_collection_date"],
     [!!m?.blood_collection_time_slot_id, "blood_collection_time_slot_id"],
-    [body.discount_code === null, "discount_code null"],
+    [body.discount_code === "SUPERDIWALI", "discount_code SUPERDIWALI"],
   ];
   const failedChecks = checks.filter((c) => !c[0]).map((c) => c[1]);
   if (failedChecks.length) {
@@ -546,15 +546,15 @@ async function runOccasionDiscountPath(browser, occasion, expectedCode) {
   const ids = captured.verifyBody?.engagement_ids;
   const label = expectedCode || "null";
   if (
-    captured.onboardBody?.discount_code === null &&
+    captured.onboardBody?.discount_code === expectedCode &&
     Array.isArray(ids) &&
     Number(ids[0]) === 501 &&
     (expectedCode ? code === expectedCode : code == null)
   ) {
-    pass(`Tab ${occasion} verify-pay discount_code`, String(code));
+    pass(`Tab ${occasion} onboard+verify discount_code`, String(code));
   } else {
     fail(
-      `Tab ${occasion} verify-pay discount_code (expected ${label})`,
+      `Tab ${occasion} onboard+verify discount_code (expected ${label})`,
       JSON.stringify({ onboard: captured.onboardBody?.discount_code, verify: captured.verifyBody })
     );
   }
@@ -621,6 +621,156 @@ async function runPincodeCityAutofillPath(browser) {
   else fail("Edited city overwritten", kept);
 
   await page.close();
+}
+
+async function runBookClosePath(browser) {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await page.waitForFunction(
+    () => {
+      const pack = document.querySelector(".g-pack");
+      return pack && parseFloat(getComputedStyle(pack).getPropertyValue("--g-pack-s")) > 0;
+    },
+    null,
+    { timeout: 10000 }
+  );
+
+  await page.evaluate(() => document.fonts.ready);
+  const type = await page.evaluate(() => {
+    const pack = document.querySelector(".g-pack");
+    const title = document.querySelector(".g-pack__title");
+    const sub = document.querySelector(".g-pack__sub");
+    const s = parseFloat(getComputedStyle(pack).getPropertyValue("--g-pack-s")) || 1;
+    const box = (el) => {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getBoundingClientRect();
+    };
+    const tr = box(title);
+    const sr = box(sub);
+    return {
+      s,
+      title: parseFloat(getComputedStyle(title).fontSize),
+      sub: parseFloat(getComputedStyle(sub).fontSize),
+      expectTitle: 71.35 * s,
+      expectSub: 29 * s,
+      leftDiff: sr.left - tr.left,
+      rightDiff: sr.right - tr.right,
+    };
+  });
+  if (Math.abs(type.title - type.expectTitle) <= 0.75) {
+    pass("Desktop title matches subtitle width", `${type.title.toFixed(2)}px at scale ${type.s}`);
+  } else {
+    fail("Desktop title matches subtitle width", JSON.stringify(type));
+  }
+  if (Math.abs(type.sub - type.expectSub) <= 0.75) {
+    pass("Desktop subtitle is +2px", `${type.sub.toFixed(2)}px at scale ${type.s}`);
+  } else {
+    fail("Desktop subtitle is +2px", JSON.stringify(type));
+  }
+  if (Math.abs(type.leftDiff) <= 1.5 && Math.abs(type.rightDiff) <= 1.5) {
+    pass("Section 2 title and subtitle edges align", JSON.stringify({
+      leftDiff: +type.leftDiff.toFixed(2),
+      rightDiff: +type.rightDiff.toFixed(2),
+    }));
+  } else {
+    fail("Section 2 title and subtitle edges align", JSON.stringify(type));
+  }
+
+  await scrollToForm(page);
+  await fillGiftForm(page);
+  await page.locator(".g-preview__submit").click();
+  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+  pass("Gift It opens Book Appointment for close");
+
+  const locked = await page.evaluate(() => {
+    const form = document.getElementById("gift-form");
+    const closeBtn = document.getElementById("gift-book-close");
+    return {
+      booking: form.classList.contains("is-booking"),
+      inert: !!form.inert,
+      overlay: document.documentElement.classList.contains("g-overlay-open"),
+      closeVisible: !!(closeBtn && closeBtn.offsetParent),
+    };
+  });
+  if (locked.booking && locked.inert && locked.overlay && locked.closeVisible) {
+    pass("Book overlay locks form and shows close");
+  } else {
+    fail("Book overlay lock/close", JSON.stringify(locked));
+  }
+
+  await page.locator("#gift-book-close").click();
+  await page.waitForFunction(() => {
+    const book = document.getElementById("gift-book");
+    return book && book.hidden;
+  }, null, { timeout: 8000 });
+
+  const after = await page.evaluate(() => {
+    const form = document.getElementById("gift-form");
+    const hidden = (id) => {
+      const el = document.getElementById(id);
+      return !el || el.hidden;
+    };
+    const active = document.activeElement;
+    return {
+      bookHidden: hidden("gift-book"),
+      otpHidden: hidden("gift-otp"),
+      successHidden: hidden("gift-pay-success"),
+      failedHidden: hidden("gift-pay-failed"),
+      booking: form.classList.contains("is-booking"),
+      inert: !!form.inert,
+      overlay: document.documentElement.classList.contains("g-overlay-open"),
+      focusIsGiftIt: !!(active && active.classList && active.classList.contains("g-preview__submit")),
+    };
+  });
+  if (after.bookHidden && after.otpHidden && after.successHidden && after.failedHidden) {
+    pass("Close hides all book overlays");
+  } else {
+    fail("Close hides all book overlays", JSON.stringify(after));
+  }
+  if (!after.booking && !after.inert && !after.overlay) {
+    pass("Close unlocks the gift form");
+  } else {
+    fail("Close unlocks the gift form", JSON.stringify(after));
+  }
+  if (after.focusIsGiftIt) pass("Close focuses Gift It");
+  else fail("Close focuses Gift It", JSON.stringify(after));
+
+  await page.locator(".g-preview__submit").click();
+  await page.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+  pass("Gift It reopens Book after close");
+  await page.close();
+
+  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await mobile.goto(BASE, { waitUntil: "domcontentloaded", timeout: 30000 });
+  const mobType = await mobile.evaluate(() => {
+    const title = document.querySelector(".g-pack__title");
+    const sub = document.querySelector(".g-pack__sub");
+    return {
+      title: parseFloat(getComputedStyle(title).fontSize),
+      sub: parseFloat(getComputedStyle(sub).fontSize),
+    };
+  });
+  if (mobType.sub === 16 && mobType.title >= 28 && mobType.title <= 36) {
+    pass("Mobile section 2 type unchanged", JSON.stringify(mobType));
+  } else {
+    fail("Mobile section 2 type unchanged", JSON.stringify(mobType));
+  }
+
+  await scrollToForm(mobile);
+  await fillGiftForm(mobile);
+  await mobile.locator(".g-preview__submit").click();
+  await mobile.waitForSelector("#gift-book:not([hidden])", { timeout: 10000 });
+  const noOverlap = await mobile.evaluate(() => {
+    const title = document.getElementById("gift-book-title");
+    const closeBtn = document.getElementById("gift-book-close");
+    if (!title || !closeBtn) return false;
+    const padRight = parseFloat(getComputedStyle(title).paddingRight);
+    return padRight >= 48 && closeBtn.getBoundingClientRect().width > 0;
+  });
+  if (noOverlap) pass("Mobile Book title clears the close button");
+  else fail("Mobile Book title clears the close button");
+  await mobile.close();
 }
 
 async function runLiveDiagnosticsSmoke() {
@@ -693,11 +843,12 @@ async function main() {
     }
   }
   try {
+    await runBookClosePath(browser);
     await runPincodeCityAutofillPath(browser);
     await runSuccessPath(browser);
     await runResendOtpPath(browser);
-    await runOccasionDiscountPath(browser, "birthday", null);
-    await runOccasionDiscountPath(browser, "just-because", null);
+    await runOccasionDiscountPath(browser, "birthday", "HAPPYBIRTHDAY");
+    await runOccasionDiscountPath(browser, "just-because", "JUSTBECAUSE");
     await runFailPath(browser);
   } finally {
     await browser.close();

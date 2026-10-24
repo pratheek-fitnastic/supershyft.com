@@ -966,7 +966,7 @@ html.g-overlay-open body {
   }
 
   .g-pack__title {
-    font-size: calc(58px * var(--g-pack-s, 1));
+    font-size: calc(71.35px * var(--g-pack-s, 1));
     /* Figma 856:10813: 100px line (the italic span's) inside 10px padding */
     line-height: calc(100px * var(--g-pack-s, 1));
     padding: calc(10px * var(--g-pack-s, 1)) 0;
@@ -977,8 +977,8 @@ html.g-overlay-open body {
 
   .g-pack__sub {
     max-width: none;
-    font-size: calc(24px * var(--g-pack-s, 1));
-    line-height: calc(30px * var(--g-pack-s, 1));
+    font-size: calc(29px * var(--g-pack-s, 1));
+    line-height: calc(32px * var(--g-pack-s, 1));
     /* Figma mb-[-26px]: subtitle tucks up under the title */
     margin-top: calc(-26px * var(--g-pack-s, 1));
     /* Lid sits in this gap (~176/1600 of the box). Extra air keeps the title off it. */
@@ -3046,7 +3046,7 @@ html.g-overlay-open body {
     font-size: clamp(16px, 5vw, 20px);
     letter-spacing: 0.4px;
     padding-left: 48px;
-    padding-right: 12px;
+    padding-right: 48px;
     white-space: normal;
   }
 
