@@ -3635,7 +3635,7 @@ html.g-overlay-open body {
   }
 
   .g-pack__sub {
-    margin-bottom: 12px;
+    margin-bottom: 36px;
   }
 
   .g-box__well {
@@ -3644,8 +3644,8 @@ html.g-overlay-open body {
   }
 
   .g-box__package {
-    left: 4%;
-    width: 92%;
+    left: calc(4% + 1px);
+    width: calc(92% - 2px);
     aspect-ratio: 320 / 430;
   }
 
@@ -3708,6 +3708,7 @@ html.g-overlay-open body {
     font-size: 16px;
     line-height: 1.4;
     padding: 0 8px;
+    margin-top: 14px;
   }
 
   .g-pack__cta .g-btn {
@@ -3757,8 +3758,8 @@ html.g-overlay-open body {
   .g-steps__diya {
     left: calc(var(--g-mandala-d) * -0.22);
     top: calc(var(--g-mandala-cy) - 3.5% - var(--g-mandala-d) * 0.1254);
-    width: calc(var(--g-mandala-d) * 0.45);
-    height: calc(var(--g-mandala-d) * 0.355);
+    width: calc(var(--g-mandala-d) * 0.45 - 2px);
+    height: calc(var(--g-mandala-d) * 0.355 - 2px);
     object-fit: cover;
     object-position: center center;
   }
@@ -4749,7 +4750,7 @@ html.g-overlay-open body {
 
   /* Seated mobile card hangs ~0.53 of box width above the tray */
   .g-box {
-    margin-top: calc(54% * var(--g-pack-s, 1));
+    margin-top: calc(66% * var(--g-pack-s, 1));
   }
 
   /* Figma 856:11822 / 862:11544: both mobile card faces use the softer 50px glow */
@@ -4849,7 +4850,7 @@ html.g-overlay-open body {
 
   .g-box .g-box__card-face--front .g-box__pkg-title {
     margin-bottom: -2px;
-    font-size: 20px;
+    font-size: 19px;
     line-height: 22px;
     color: #1e1713;
     white-space: nowrap;
@@ -4864,7 +4865,7 @@ html.g-overlay-open body {
 
   .g-box .g-box__card-face--front .g-box__price {
     margin-bottom: -2px;
-    font-size: 24px;
+    font-size: 23px;
     line-height: 30px;
     letter-spacing: 0;
     color: #1f1915;
@@ -4886,7 +4887,7 @@ html.g-overlay-open body {
   }
 
   .g-box .g-box__card-face--front .g-box__features li {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 16.25px;
     white-space: normal;
   }
@@ -4953,14 +4954,14 @@ html.g-overlay-open body {
   .g-box .g-box__card-face--back .g-box__profile h4 {
     gap: 8px;
     margin: 0;
-    font-size: 13px;
+    font-size: 11px;
     line-height: 18px;
     letter-spacing: 0.2px;
     white-space: nowrap;
   }
 
   .g-box .g-box__card-face--back .g-box__profile h4 span {
-    font-size: 11px;
+    font-size: 9px;
   }
 
   .g-box .g-box__card-face--back .g-box__profile-unit {
