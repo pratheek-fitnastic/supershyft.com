@@ -4910,19 +4910,22 @@ html.g-overlay-open body {
 
 @media (max-width: 767.98px) {
   .g-box .g-box__card-face--back .g-box__profiles {
-    padding: 20px 18px 16px;
-    gap: 16px;
+    height: 100%;
+    min-height: 0;
+    padding: 12px 6px 10px;
+    gap: 8px;
   }
 
   .g-box .g-box__card-face--back .g-box__profiles-head {
     flex-direction: column;
-    gap: 12px;
+    flex: 0 0 auto;
+    gap: 8px;
     text-align: center;
   }
 
   .g-box .g-box__card-face--back .g-box__profiles-title {
-    font-size: 15px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 18px;
     letter-spacing: 2.4px;
   }
 
@@ -4939,11 +4942,14 @@ html.g-overlay-open body {
   }
 
   .g-box .g-box__card-face--back .g-box__profiles-grid {
-    gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-content: start;
+    gap: 6px;
   }
 
   .g-box .g-box__card-face--back .g-box__profile {
-    padding-left: 22px;
+    padding-left: 14px;
   }
 
   .g-box .g-box__card-face--back .g-box__profile::before {
@@ -4952,11 +4958,13 @@ html.g-overlay-open body {
   }
 
   .g-box .g-box__card-face--back .g-box__profile h4 {
-    gap: 8px;
+    gap: 4px;
     margin: 0;
+    max-width: 100%;
+    min-width: 0;
     font-size: 11px;
-    line-height: 18px;
-    letter-spacing: 0.2px;
+    line-height: 14px;
+    letter-spacing: 0;
     white-space: nowrap;
   }
 
