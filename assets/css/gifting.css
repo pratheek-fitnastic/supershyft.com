@@ -3675,7 +3675,6 @@ html.g-overlay-open .g-tabs {
     height: auto;
     min-height: 100vh;
     min-height: 100svh;
-    min-height: 100dvh;
     max-height: none;
     padding-top: env(safe-area-inset-top);
   }
@@ -3731,7 +3730,6 @@ html.g-overlay-open .g-tabs {
   .g-pack {
     min-height: 100vh;
     min-height: 100svh;
-    min-height: 100dvh;
     padding: clamp(72px, 12svh, 96px) 16px clamp(24px, 6svh, 48px);
     padding-top: max(clamp(72px, 12svh, 96px), calc(env(safe-area-inset-top) + 56px));
     display: flex;
@@ -3763,8 +3761,8 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-box__package {
-    left: calc(4% + 1px);
-    width: calc(92% - 2px);
+    left: 4%;
+    width: 92%;
     aspect-ratio: 320 / 430;
   }
 
@@ -3839,7 +3837,6 @@ html.g-overlay-open .g-tabs {
   .g-steps__pin {
     height: 100vh;
     height: 100svh;
-    height: 100dvh;
   }
 
   .g-steps__bg {
@@ -4895,6 +4892,8 @@ html.g-overlay-open .g-tabs {
   /* Seated mobile card hangs ~0.53 of box width above the tray */
   .g-box {
     margin-top: calc(66% * var(--g-pack-s, 1));
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   /* Figma 856:11822 / 862:11544: both mobile card faces use the softer 50px glow */
@@ -4907,9 +4906,10 @@ html.g-overlay-open .g-tabs {
     position: absolute;
     left: 0;
     top: 0;
-    width: 322px;
-    height: 415px;
-    zoom: var(--g-card-s, 1);
+    width: 100%;
+    height: 100%;
+    transform: none;
+    zoom: 1;
   }
 
   .g-box .g-box__card-face--front .g-box__scene {
@@ -4918,6 +4918,7 @@ html.g-overlay-open .g-tabs {
     top: 0;
     width: 854px;
     height: 484px;
+    transform: none;
   }
 
   .g-box .g-box__card-face--front .g-box__script,
@@ -4933,13 +4934,18 @@ html.g-overlay-open .g-tabs {
 
   .g-box .g-box__card-face--front .g-box__package-panel {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 275px;
-    height: 364px;
-    transform: translate(-50%, -50%);
-    padding: 21px 25px 20px;
+    left: 7.1%;
+    right: 7.1%;
+    top: 6%;
+    bottom: 6.3%;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    transform: none;
+    padding: clamp(12px, 5.5%, 21px) clamp(12px, 6.5%, 25px) clamp(10px, 5%, 20px);
     align-items: center;
+    justify-content: flex-start;
+    container-type: inline-size;
     border: 1px solid #eddcc0;
     border-bottom: 0;
     border-radius: 12px;
@@ -4994,10 +5000,11 @@ html.g-overlay-open .g-tabs {
 
   .g-box .g-box__card-face--front .g-box__pkg-title {
     margin-bottom: -2px;
-    font-size: 19px;
-    line-height: 22px;
+    font-size: clamp(16px, 6.8cqw, 19px);
+    line-height: 1.2;
     color: #1e1713;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .g-box .g-box__card-face--front .g-box__price-row {
@@ -5009,8 +5016,8 @@ html.g-overlay-open .g-tabs {
 
   .g-box .g-box__card-face--front .g-box__price {
     margin-bottom: -2px;
-    font-size: 23px;
-    line-height: 30px;
+    font-size: clamp(18px, 8cqw, 23px);
+    line-height: 1.25;
     letter-spacing: 0;
     color: #1f1915;
   }
@@ -5024,7 +5031,9 @@ html.g-overlay-open .g-tabs {
   .g-box .g-box__card-face--front .g-box__features {
     width: 100%;
     box-sizing: border-box;
-    gap: 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: clamp(8px, 3.5%, 14px);
     margin: 2.25px 0;
     padding: 13px 8px;
     text-align: left;
@@ -5038,6 +5047,7 @@ html.g-overlay-open .g-tabs {
 
   .g-box .g-box__card-face--front .g-box__explore-wrap {
     width: 100%;
+    flex-shrink: 0;
     padding: 6px 0 4px;
   }
 

@@ -43,33 +43,66 @@
 
   /* Scale pack title/CTA to the 1440 × 1010 Figma frame. */
   var lastDocH = 0;
-  function fitGiftBox() {
+  var lastFitWidth = 0;
+  var mobileScaleLocked = false;
+  var mobileLayoutH = 0;
+
+  function isMobilePack() {
+    return window.matchMedia("(max-width: 767.98px)").matches;
+  }
+
+  function layoutWidth() {
+    return document.documentElement.clientWidth || window.innerWidth;
+  }
+
+  /* Phone URL bar must not change --g-pack-s. Prefer 100lvh (large viewport) once. */
+  function layoutHeight() {
+    if (!isMobilePack()) return window.innerHeight;
+    if (mobileLayoutH) return mobileLayoutH;
+    var lvh = 0;
+    try {
+      var probe = document.createElement("div");
+      probe.style.cssText = "position:fixed;left:0;top:0;height:100lvh;width:0;visibility:hidden;pointer-events:none";
+      document.documentElement.appendChild(probe);
+      lvh = probe.offsetHeight;
+      probe.remove();
+    } catch (e) {}
+    mobileLayoutH = Math.max(window.innerHeight, lvh || 0);
+    return mobileLayoutH;
+  }
+
+  function fitGiftBox(force) {
     if (!giftPack) return;
+    var w = layoutWidth();
+    if (isMobilePack() && mobileScaleLocked && !force && Math.abs(w - lastFitWidth) <= 2) {
+      return;
+    }
     var inner = giftPack.querySelector(".g-pack__inner");
     var avail = inner ? inner.clientWidth : giftPack.clientWidth;
     var s = Math.min(1, avail / 1344);
     var header = document.getElementById("header");
     var headerH = header ? header.getBoundingClientRect().height : 80;
+    var viewH = layoutHeight();
     if (window.matchMedia("(min-width: 992px)").matches) {
-      var frame = window.innerHeight - headerH - window.innerHeight * 0.04 - 12;
+      var frame = viewH - headerH - viewH * 0.04 - 12;
       s = Math.max(0.45, Math.min(s, frame / 1000));
-    } else if (window.matchMedia("(max-width: 767.98px)").matches) {
+    } else if (isMobilePack()) {
       var title = giftPack.querySelector(".g-pack__title");
       var sub = giftPack.querySelector(".g-pack__sub");
       var cta = giftPack.querySelector(".g-pack__cta");
       var titleH = title ? title.offsetHeight : 72;
       var subH = sub ? sub.offsetHeight : 44;
       var ctaH = cta ? cta.offsetHeight : 48;
-      var padTop = Math.max(72, Math.min(96, window.innerHeight * 0.12));
-      var padBot = Math.max(24, Math.min(48, window.innerHeight * 0.06));
-      var budget = window.innerHeight - headerH - titleH - subH - ctaH - padTop - padBot - 20;
+      var padTop = Math.max(72, Math.min(96, viewH * 0.12));
+      var padBot = Math.max(24, Math.min(48, viewH * 0.06));
+      var budget = viewH - headerH - titleH - subH - ctaH - padTop - padBot - 20;
       /* Opened card hangs ~0.70 of box width above the tray; tray is ~0.48 wide */
       s = budget > 80 ? Math.max(0.52, Math.min(1, budget / (avail * 1.22))) : 0.62;
     }
     giftPack.style.setProperty("--g-pack-s", s.toFixed(5));
     if (giftPackage) {
       /* Mobile card artboard is Figma 856:11822 (322 × 415); desktop is 889 × 391 */
-      var isMobileCard = window.matchMedia("(max-width: 767.98px)").matches;
+      var isMobileCard = isMobilePack();
       var cardS = isMobileCard
         ? Math.min(giftPackage.clientWidth / 322, giftPackage.clientHeight / 415)
         : Math.min(giftPackage.clientWidth / 889, giftPackage.clientHeight / 391);
@@ -77,17 +110,27 @@
       giftPackage.style.setProperty("--g-card-s", cardSValue);
       giftPackage.style.setProperty("--g-back-s", cardSValue);
     }
+    lastFitWidth = w;
     var newH = document.documentElement.scrollHeight;
     if (window.ScrollTrigger && newH !== lastDocH) {
       lastDocH = newH;
-      window.requestAnimationFrame(function () {
-        ScrollTrigger.refresh();
-      });
+      if (!isMobilePack() || force) {
+        window.requestAnimationFrame(function () {
+          ScrollTrigger.refresh();
+        });
+      }
     }
   }
 
+  function lockMobileScale() {
+    fitGiftBox(true);
+    if (isMobilePack()) mobileScaleLocked = true;
+  }
+
   fitGiftBox();
-  window.addEventListener("resize", fitGiftBox);
+  window.addEventListener("resize", function () {
+    fitGiftBox();
+  });
 
   /*
    * Every CTA on the page takes the hero "Explore Gifts" button's exact size (it scales with the
@@ -108,11 +151,11 @@
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(function () {
       syncCtaSize();
-      fitGiftBox();
+      lockMobileScale();
     });
   }
 
-  window.addEventListener("load", fitGiftBox);
+  window.addEventListener("load", lockMobileScale);
 
   function whenGiftImagesReady(cb) {
     var imgs = document.querySelectorAll("#gift-box img, #gift-package img");
@@ -130,8 +173,8 @@
     if (pending === 0) cb();
   }
   whenGiftImagesReady(function () {
-    fitGiftBox();
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    lockMobileScale();
+    if (window.ScrollTrigger && !isMobilePack()) ScrollTrigger.refresh();
   });
 
   function scrollToEl(el, block) {
@@ -558,10 +601,10 @@
       var widthChanged = Math.abs(w - lastPinWidth) > 2;
       lastPinWidth = w;
       if (!window.ScrollTrigger) return;
-      if (widthChanged) {
-        initBoxLidScroll();
-        initStepsScroll();
-      }
+      /* Height-only resizes (phone URL bar) must not remasure pins — that bounces section 4. */
+      if (!widthChanged) return;
+      initBoxLidScroll();
+      initStepsScroll();
       ScrollTrigger.refresh();
       syncOpenCard();
     }, 220);
