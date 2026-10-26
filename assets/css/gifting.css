@@ -40,8 +40,32 @@ html.g-overlay-open .g-form-sec {
   overflow: visible;
 }
 
-/* Closing headline must not paint through a failed glass blur on iOS. */
-html.g-overlay-open .g-close {
+/* Let the sheet compete at the viewport, not inside this z-index:1 context. */
+html.g-overlay-open .g-form-sec__inner {
+  z-index: auto;
+}
+
+/* Closing headline / footer must not paint through a failed glass blur on phones. */
+html.g-overlay-open .g-close,
+html.g-overlay-open .bs-footer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Solid header so gift-form copy cannot show through the transparent nav. */
+html.g-overlay-open body.gifting-page .bs-header,
+html.g-overlay-open body.gifting-page .bs-header.sticked {
+  background: #000;
+  z-index: 2005;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: none;
+}
+
+/* Gift form / preview sit in the locked scroll position and must not bleed. */
+html.g-overlay-open .g-form-grid,
+html.g-overlay-open .g-form-sec__header,
+html.g-overlay-open .g-tabs {
   visibility: hidden;
   pointer-events: none;
 }
@@ -49,7 +73,7 @@ html.g-overlay-open .g-close {
 .g-book-scrim {
   position: fixed;
   inset: 0;
-  z-index: 1040;
+  z-index: 2000;
   background: #000;
   opacity: 0;
   visibility: hidden;
@@ -2224,7 +2248,7 @@ html.g-overlay-open .g-close {
   left: 0;
   right: 0;
   top: var(--g-book-top, 0px);
-  z-index: 1050;
+  z-index: 2010;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -3046,10 +3070,18 @@ html.g-overlay-open .g-close {
     position: fixed;
     left: 16px;
     right: 16px;
+    top: var(--g-book-top, 0px);
+    bottom: 16px;
     width: auto;
-    z-index: 1050;
+    z-index: 2010;
     padding-bottom: max(16px, env(safe-area-inset-bottom));
-    background: rgba(8, 16, 15, 0.94);
+    background: #080f0e;
+  }
+
+  .g-book::before {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #080f0e;
   }
 }
 
@@ -3058,7 +3090,7 @@ html.g-overlay-open .g-close {
     left: 16px;
     right: 16px;
     width: auto;
-    z-index: 1050;
+    z-index: 2010;
   }
 
   /* Book + OTP overlays — Figma 862:14438 / 864:13393. Payment results stay on the older mobile scale. */
@@ -3319,10 +3351,13 @@ html.g-overlay-open .g-close {
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  @media (max-width: 767.98px) {
-    .g-book:not(.g-book--result)::before {
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
+  @media (max-width: 991.98px) {
+    .g-book::before,
+    .g-book:not(.g-book--result)::before,
+    .g-book--otp::before {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: #080f0e;
     }
   }
 }
