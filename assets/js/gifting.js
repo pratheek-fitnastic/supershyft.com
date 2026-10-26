@@ -954,6 +954,7 @@
   var bookAge = document.getElementById("book-age");
   var otpPanel = document.getElementById("gift-otp");
   var otpBack = document.getElementById("gift-otp-back");
+  var otpClose = document.getElementById("gift-otp-close");
   var otpDigits = document.getElementById("gift-otp-digits");
   var otpHint = document.getElementById("gift-otp-hint");
   var otpTimerEl = document.getElementById("gift-otp-timer");
@@ -1762,8 +1763,9 @@
     var desktopMaxH = Math.max(240, Math.round(viewportHeight() - panelTopInView - gap));
     panel.style.maxHeight = desktopMaxH + "px";
     panel.style.height = desktopMaxH + "px";
+    var usedH = desktopMaxH;
     var extra =
-      panel.offsetTop + desktopMaxH - (form.offsetTop + form.offsetHeight);
+      panel.offsetTop + usedH - (form.offsetTop + form.offsetHeight);
     if (extra > 0) {
       var current = parseFloat(formInner.style.paddingBottom) || 0;
       if (extra > current) formInner.style.paddingBottom = extra + "px";
@@ -2269,6 +2271,7 @@
       placeBook();
     });
   }
+  if (otpClose) otpClose.addEventListener("click", closeBook);
   if (otpVerify) otpVerify.addEventListener("click", verifyOtpAndPay);
   if (otpResend) {
     otpResend.addEventListener("click", function () {

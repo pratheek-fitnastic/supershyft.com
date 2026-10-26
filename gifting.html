@@ -38,7 +38,7 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261026c">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261026i">
   <link rel="preload" as="image" href="assets/images/gifting/gift-lid-closed-face.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-lid-inner-1405.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-tray-1405.png">
@@ -501,6 +501,9 @@
         <!-- OTP verify (Figma 864:12176) — after family-onboard -->
         <div class="g-book g-book--otp" id="gift-otp" role="dialog" aria-labelledby="gift-otp-title" aria-modal="true" hidden>
           <button type="button" class="g-book__back" id="gift-otp-back" aria-label="Back to booking">&larr; Back</button>
+          <button type="button" class="g-book__close" id="gift-otp-close" aria-label="Close">
+            <img src="assets/images/gifting/icon-close.svg" width="32" height="32" alt="">
+          </button>
           <h3 class="g-book__title" id="gift-otp-title">Book Appointment</h3>
           <div class="g-otp">
             <div class="g-otp__copy">
@@ -526,18 +529,20 @@
           </div>
         </div>
 
-        <!-- Payment success (Figma 864:13725) -->
+        <!-- Payment success (Figma 864:12922) -->
         <div class="g-book g-book--result" id="gift-pay-success" role="dialog" aria-labelledby="gift-pay-success-title" aria-modal="true" hidden>
           <button type="button" class="g-book__close" id="gift-pay-success-close" aria-label="Close">
             <img src="assets/images/gifting/icon-close.svg" width="32" height="32" alt="">
           </button>
-          <div class="g-pay-icon g-pay-icon--success" aria-hidden="true">
-            <span class="g-pay-icon__ring g-pay-icon__ring--outer"></span>
-            <span class="g-pay-icon__ring g-pay-icon__ring--mid"></span>
-            <span class="g-pay-icon__ring g-pay-icon__ring--inner"></span>
-            <span class="g-pay-icon__badge">
-              <img src="assets/images/gifting/icon-pay-check.svg" width="36" height="28" alt="">
-            </span>
+          <div class="g-pay-icon-wrap">
+            <div class="g-pay-icon g-pay-icon--success" aria-hidden="true">
+              <span class="g-pay-icon__ring g-pay-icon__ring--outer"></span>
+              <span class="g-pay-icon__ring g-pay-icon__ring--mid"></span>
+              <span class="g-pay-icon__ring g-pay-icon__ring--inner"></span>
+              <span class="g-pay-icon__badge">
+                <img src="assets/images/gifting/icon-pay-check.svg" width="35.8" height="27.3" alt="">
+              </span>
+            </div>
           </div>
           <div class="g-pay-copy">
             <h3 class="g-book__title" id="gift-pay-success-title">Payment Successful!</h3>
@@ -552,7 +557,7 @@
                 <span>Transaction ID</span>
                 <strong id="gift-pay-txn-id">—</strong>
               </div>
-              <div class="g-pay-details__row">
+              <div class="g-pay-details__row g-pay-details__row--amount">
                 <span>Amount</span>
                 <strong id="gift-pay-amount">—</strong>
               </div>
@@ -565,13 +570,15 @@
           <button type="button" class="g-book__close" id="gift-pay-failed-close" aria-label="Close">
             <img src="assets/images/gifting/icon-close.svg" width="32" height="32" alt="">
           </button>
-          <div class="g-pay-icon g-pay-icon--failed" aria-hidden="true">
-            <span class="g-pay-icon__ring g-pay-icon__ring--outer"></span>
-            <span class="g-pay-icon__ring g-pay-icon__ring--mid"></span>
-            <span class="g-pay-icon__ring g-pay-icon__ring--inner"></span>
-            <span class="g-pay-icon__badge">
-              <img src="assets/images/gifting/icon-pay-cross.svg" width="32" height="32" alt="">
-            </span>
+          <div class="g-pay-icon-wrap">
+            <div class="g-pay-icon g-pay-icon--failed" aria-hidden="true">
+              <span class="g-pay-icon__ring g-pay-icon__ring--outer"></span>
+              <span class="g-pay-icon__ring g-pay-icon__ring--mid"></span>
+              <span class="g-pay-icon__ring g-pay-icon__ring--inner"></span>
+              <span class="g-pay-icon__badge">
+                <img src="assets/images/gifting/icon-pay-cross.svg" width="32" height="32" alt="">
+              </span>
+            </div>
           </div>
           <div class="g-pay-copy">
             <h3 class="g-book__title" id="gift-pay-failed-title">Payment Failed!</h3>
@@ -639,7 +646,7 @@
   </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261026c" defer></script>
+  <script src="assets/js/gifting.js?v=20261026i" defer></script>
 </body>
 
 </html>

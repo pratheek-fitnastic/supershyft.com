@@ -1823,8 +1823,11 @@ html.g-overlay-open .g-tabs {
   letter-spacing: 0.32px;
   line-height: 32px;
   max-width: 100%;
+  min-width: 0;
   /* Design: every suggestion on one line */
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
   text-align: left;
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
@@ -1832,8 +1835,8 @@ html.g-overlay-open .g-tabs {
 
 /*
  * Side-by-side row: as in Figma (2nd pill is 452px in a 407px column), pills below the first run
- * under the dropdown column — its closed box only covers the first row. The first pill may only
- * use the 32px gap. gifting.js orders messages shortest first, like the design.
+ * under the dropdown column — its closed box only covers the first row. The first pill stays in
+ * the message column. gifting.js orders messages shortest first, like the design.
  */
 @media (min-width: 768px) {
   .gifting-page .g-form-sec .g-chip {
@@ -1841,7 +1844,7 @@ html.g-overlay-open .g-tabs {
   }
 
   .gifting-page .g-form-sec .g-chip:first-child {
-    max-width: calc(100% + 20px);
+    max-width: 100%;
   }
 }
 
@@ -2719,7 +2722,7 @@ html.g-overlay-open .g-tabs {
 /* ===== OTP panel (Figma 864:12176) ===== */
 .g-book--otp,
 .g-book--result {
-  z-index: 6;
+  z-index: 2010;
 }
 
 .g-book__close {
@@ -2864,11 +2867,24 @@ html.g-overlay-open .g-tabs {
   text-decoration: none;
 }
 
-/* ===== Payment result panels (Figma 864:13725 / 864:12994) ===== */
-.g-book--result {
-  gap: 40px;
-  padding-top: 64px;
-  padding-bottom: 64px;
+/* ===== Payment result panels (Figma 864:12922 / 864:12994) =====
+ * Share the Book / OTP glass sheet (width + pinned height). Inner pay
+ * layout (icon stack, copy, details) stays content-sized and centered. */
+.g-book.g-book--result {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.g-pay-icon-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  width: 358px;
+  max-width: 100%;
+  height: 160px;
+  padding-bottom: 48px;
 }
 
 .g-pay-icon {
@@ -2900,7 +2916,7 @@ html.g-overlay-open .g-tabs {
 }
 
 .g-pay-icon--success .g-pay-icon__ring {
-  background: #22c55e;
+  background: #90df9e;
 }
 
 .g-pay-icon--failed .g-pay-icon__ring {
@@ -2917,8 +2933,8 @@ html.g-overlay-open .g-tabs {
 }
 
 .g-pay-icon--success .g-pay-icon__badge {
-  background: #22c55e;
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+  background: #90df9e;
+  box-shadow: 0 0 20px rgba(163, 255, 120, 0.3);
 }
 
 .g-pay-icon--failed .g-pay-icon__badge {
@@ -2945,31 +2961,29 @@ html.g-overlay-open .g-tabs {
 
 .g-pay-details {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
   width: 100%;
-  max-width: 384px;
+  max-width: 385px;
   padding: 17px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .g-pay-details__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
-}
-
-/* Receipt download was removed for every viewport — hide if cached HTML still has it */
-#gift-pay-download,
-.g-pay-details__download {
-  display: none !important;
 }
 
 .gifting-page .g-pay-details__title {
   margin: 0;
-  font-family: Sora, sans-serif;
-  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
+  font-weight: 700;
   font-size: 16px;
   line-height: 20px;
   color: #fff;
@@ -2987,17 +3001,22 @@ html.g-overlay-open .g-tabs {
   justify-content: space-between;
   gap: 16px;
   font-family: "DM Sans", sans-serif;
+  font-variation-settings: "opsz" 14;
   font-size: 14px;
   line-height: 16px;
 }
 
 .g-pay-details__row span {
-  color: rgba(255, 255, 255, 0.55);
+  color: #9a9a9a;
 }
 
 .g-pay-details__row strong {
   font-weight: 600;
   color: #fff;
+}
+
+.g-pay-details__row--amount strong {
+  font-weight: 700;
 }
 
 .g-pay-actions {
@@ -3017,6 +3036,15 @@ html.g-overlay-open .g-tabs {
   font-weight: 400;
   font-size: 18px;
   line-height: normal;
+}
+
+.gifting-page .g-pay-actions__retry.g-book__continue {
+  padding: 12px 24px;
+  border: 1px solid #969696 !important;
+  border-radius: 36px;
+  background: linear-gradient(90deg, #296359 0%, #41ab99 100%);
+  box-shadow: 0 12px 10px rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 .gifting-page .g-pay-actions__change {
@@ -3086,15 +3114,12 @@ html.g-overlay-open .g-tabs {
 }
 
 @media (max-width: 767.98px) {
+  /* Book / OTP / pay overlays — Figma 862:14438 / 864:13393. */
   .g-book {
     left: 16px;
     right: 16px;
     width: auto;
     z-index: 2010;
-  }
-
-  /* Book + OTP overlays — Figma 862:14438 / 864:13393. Payment results stay on the older mobile scale. */
-  .g-book:not(.g-book--result) {
     padding: 25px;
     gap: 24px;
     border-radius: 32px;
@@ -3111,7 +3136,7 @@ html.g-overlay-open .g-tabs {
     font-size: 12px;
   }
 
-  .gifting-page .g-book:not(.g-book--result) .g-book__title {
+  .gifting-page .g-book .g-book__title {
     font-size: clamp(16px, 5vw, 20px);
     letter-spacing: 0.4px;
     padding-left: 48px;
@@ -3334,10 +3359,10 @@ html.g-overlay-open .g-tabs {
     opacity: 0.8;
   }
 
-  .g-book--result {
-    gap: 28px;
-    padding-top: 56px;
-    padding-bottom: 40px;
+  .g-pay-icon-wrap {
+    width: 100%;
+    height: 128px;
+    padding-bottom: 24px;
   }
 
   .gifting-page .g-book--result .g-book__title {
