@@ -38,7 +38,7 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261024j">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261026b">
   <link rel="preload" as="image" href="assets/images/gifting/gift-lid-closed-face.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-lid-inner-1405.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-tray-1405.png">
@@ -119,20 +119,20 @@
         <div class="g-box" id="gift-box">
           <div class="g-box__stage" id="gift-box-stage">
             <div class="g-box__lid-open" id="gift-lid-open" aria-hidden="true">
-              <img src="assets/images/gifting/gift-lid-inner-1405.png" width="1600" height="176" alt="">
+              <img src="assets/images/gifting/gift-lid-inner-1405.png" width="1600" height="176" alt="" loading="eager">
             </div>
             <div class="g-box__lid-closed" id="gift-lid-closed" aria-hidden="true">
-              <img src="assets/images/gifting/gift-lid-closed-face.png" width="1230" height="346" alt="">
+              <img src="assets/images/gifting/gift-lid-closed-face.png" width="1230" height="346" alt="" loading="eager">
             </div>
             <div class="g-box__tray">
-              <img src="assets/images/gifting/gift-tray-1405.png" width="1600" height="689" alt="SuperShyft gift box">
+              <img src="assets/images/gifting/gift-tray-1405.png" width="1600" height="689" alt="SuperShyft gift box" loading="eager">
             </div>
             <div class="g-box__well" id="gift-box-well">
               <article class="g-box__package" id="gift-package">
                 <div class="g-box__card-flip">
                   <div class="g-box__card-face g-box__card-face--front">
                     <div class="g-box__front-art">
-                      <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="838" height="475" alt="" decoding="async">
+                      <img class="g-box__scene" src="assets/images/gifting/gift-inner-scene.png" width="838" height="475" alt="" decoding="async" loading="eager">
                       <img class="g-box__filigree g-box__filigree--tl" src="assets/images/gifting/filigree-corner.svg" width="20" height="20" alt="" aria-hidden="true">
                       <img class="g-box__filigree g-box__filigree--tr" src="assets/images/gifting/filigree-tr.svg" width="20" height="20" alt="" aria-hidden="true">
                       <img class="g-box__filigree g-box__filigree--bl" src="assets/images/gifting/filigree-bl.svg" width="20" height="20" alt="" aria-hidden="true">
@@ -238,9 +238,9 @@
 
         <div class="g-steps__visual" aria-hidden="true">
           <div class="g-steps__mandala" id="steps-mandala-wrap">
-            <img class="g-steps__mandala-img" id="steps-mandala" src="assets/images/gifting/mandala-with-diya.png" width="1472" height="1642" alt="">
+            <img class="g-steps__mandala-img" id="steps-mandala" src="assets/images/gifting/mandala-with-diya.png" width="1472" height="1642" alt="" loading="eager">
           </div>
-          <img class="g-steps__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="">
+          <img class="g-steps__diya" src="assets/images/gifting/diya-lamp.png" width="1412" height="1114" alt="" loading="eager">
         </div>
 
         <div class="g-steps__content">
@@ -397,7 +397,7 @@
           </div>
           <div class="g-preview">
             <div class="g-preview__card is-diwali" id="gift-preview-card">
-              <img class="g-preview__env" id="preview-card-img" src="assets/images/gifting/envelope.png" width="453" height="322" alt="Gift card preview">
+              <img class="g-preview__env" id="preview-card-img" src="assets/images/gifting/envelope.png" width="453" height="322" alt="Gift card preview" loading="eager">
               <div class="g-preview__overlay" id="preview-overlay">
                 <div class="g-preview__body">
                   <div class="g-preview__top">
@@ -421,9 +421,11 @@
           </div>
         </form>
 
+        <div class="g-book-scrim" id="gift-book-scrim" hidden aria-hidden="true"></div>
+
         <!--
           Book Appointment (Figma 862:13205) — opens over the form after a valid "Gift It".
-          Frosted glass: 25% black + 250px backdrop blur of the form and envelope behind it.
+          Opaque scrim covers the page; the panel keeps a light glass tint.
         -->
         <form class="g-book" id="gift-book" aria-labelledby="gift-book-title" hidden novalidate>
           <button type="button" class="g-book__back" id="gift-book-back" aria-label="Back to gift details">&larr; Back</button>
@@ -637,7 +639,7 @@
   </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261024c" defer></script>
+  <script src="assets/js/gifting.js?v=20261026b" defer></script>
 </body>
 
 </html>

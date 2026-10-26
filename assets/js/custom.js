@@ -389,7 +389,7 @@
 	}
 
 	function optimizeImages() {
-		var criticalContainers = '.bs-header,.offcanvas-header,.bs-banner,.contact-section,.blog-hero,.bio-ai-tech-banner';
+		var criticalContainers = '.bs-header,.offcanvas-header,.bs-banner,.contact-section,.blog-hero,.bio-ai-tech-banner,.g-hero,.g-box,.g-pack,.g-preview,.g-steps__visual';
 
 		document.querySelectorAll('img').forEach(function (image, index) {
 			if (!image.hasAttribute('decoding')) {

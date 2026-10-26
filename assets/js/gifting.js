@@ -35,6 +35,7 @@
   var exploreBtn = document.getElementById("explore-gifts");
   var bookBtn = document.getElementById("book-the-gift");
   var stepsRoot = document.getElementById("gift-steps");
+  var personalizeSec = document.getElementById("gift-personalize");
   var stepsPin = document.getElementById("gift-steps-pin");
   var mandalaImg = document.getElementById("steps-mandala");
   var mandalaWrap = document.getElementById("steps-mandala-wrap");
@@ -104,9 +105,34 @@
   syncCtaSize();
   window.addEventListener("resize", syncCtaSize);
   window.addEventListener("load", syncCtaSize);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncCtaSize);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      syncCtaSize();
+      fitGiftBox();
+    });
+  }
 
   window.addEventListener("load", fitGiftBox);
+
+  function whenGiftImagesReady(cb) {
+    var imgs = document.querySelectorAll("#gift-box img, #gift-package img");
+    var pending = 0;
+    function done() {
+      pending -= 1;
+      if (pending <= 0) cb();
+    }
+    imgs.forEach(function (img) {
+      if (img.complete) return;
+      pending += 1;
+      img.addEventListener("load", done, { once: true });
+      img.addEventListener("error", done, { once: true });
+    });
+    if (pending === 0) cb();
+  }
+  whenGiftImagesReady(function () {
+    fitGiftBox();
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  });
 
   function scrollToEl(el, block) {
     if (!el) return;
@@ -195,8 +221,22 @@
         var opened = self.progress > 0.97;
         giftBox.classList.toggle("is-open", opened);
         if (!opened) giftBox.classList.remove("is-flipped", "is-flat");
+        if (opened && giftPackage && window.gsap) {
+          gsap.set(giftPackage, { y: 0, yPercent: 0 });
+        }
       }
     });
+    syncOpenCard();
+  }
+
+  function syncOpenCard() {
+    if (!giftBox || !giftPackage || !window.ScrollTrigger) return;
+    var st = ScrollTrigger.getById("gifting-box");
+    if (!st) return;
+    if (st.progress > 0.97) {
+      giftBox.classList.add("is-open");
+      if (window.gsap) gsap.set(giftPackage, { y: 0, yPercent: 0 });
+    }
   }
 
   function bindPackageFlip(id) {
@@ -271,11 +311,24 @@
     });
   }
 
-  /* Book the Gift → scroll to pinned steps (no auto-tour) */
+  /* Book the Gift → section 4 booking form (jump past box/steps pins) */
   if (bookBtn) {
     bookBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      scrollToEl(stepsRoot, "start");
+      if (!personalizeSec) return;
+      var header = document.getElementById("header");
+      var headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 80;
+      personalizeSec.style.scrollMarginTop = headerH + "px";
+      var y = personalizeSec.getBoundingClientRect().top + window.pageYOffset - headerH;
+      var stepsST = window.ScrollTrigger && ScrollTrigger.getById("gifting-steps");
+      if (stepsST && typeof stepsST.end === "number") {
+        y = Math.max(y, stepsST.end + 8);
+      }
+      window.scrollTo(0, Math.max(0, y));
+      window.requestAnimationFrame(function () {
+        var y2 = personalizeSec.getBoundingClientRect().top + window.pageYOffset - headerH;
+        window.scrollTo(0, Math.max(0, y2));
+      });
     });
   }
 
@@ -493,17 +546,24 @@
 
   window.addEventListener("load", function () {
     if (window.ScrollTrigger) ScrollTrigger.refresh();
+    syncOpenCard();
   });
 
   var resizeTimer;
+  var lastPinWidth = window.innerWidth;
   window.addEventListener("resize", function () {
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
-      if (window.ScrollTrigger) {
+      var w = window.innerWidth;
+      var widthChanged = Math.abs(w - lastPinWidth) > 2;
+      lastPinWidth = w;
+      if (!window.ScrollTrigger) return;
+      if (widthChanged) {
         initBoxLidScroll();
         initStepsScroll();
-        ScrollTrigger.refresh();
       }
+      ScrollTrigger.refresh();
+      syncOpenCard();
     }, 220);
   });
 
@@ -909,6 +969,7 @@
   var payRetry = document.getElementById("gift-pay-retry");
   var payChange = document.getElementById("gift-pay-change");
   var formInner = form ? form.parentElement : null;
+  var bookScrim = document.getElementById("gift-book-scrim");
   var scheduleGroup = book ? book.querySelector(".g-book__group--schedule") : null;
   var scheduleStatus = null;
   var otpDigitInputs = otpDigits
@@ -1637,7 +1698,22 @@
   }
 
   function isMobileOverlay() {
-    return window.matchMedia("(max-width: 767.98px)").matches;
+    return window.matchMedia("(max-width: 991.98px)").matches;
+  }
+
+  function viewportHeight() {
+    if (window.visualViewport && window.visualViewport.height) {
+      return window.visualViewport.height;
+    }
+    return window.innerHeight;
+  }
+
+  function syncBookScrim() {
+    if (!bookScrim) return;
+    var open = !!activeOverlay();
+    bookScrim.hidden = !open;
+    bookScrim.classList.toggle("is-visible", open);
+    bookScrim.setAttribute("aria-hidden", open ? "false" : "true");
   }
 
   /* Pin the visible glass panel in the current viewport so Gift It / OTP
@@ -1669,7 +1745,7 @@
 
     if (isMobileOverlay()) {
       panel.style.setProperty("--g-book-top", Math.round(minTopInView) + "px");
-      var mobileMaxH = Math.max(240, Math.round(window.innerHeight - minTopInView - gap));
+      var mobileMaxH = Math.max(240, Math.round(viewportHeight() - minTopInView - gap));
       panel.style.maxHeight = mobileMaxH + "px";
       panel.style.height = mobileMaxH + "px";
       restoreBookBodyScroll(body, savedScroll);
@@ -1683,7 +1759,7 @@
     if (top < 0) top = 0;
     panel.style.setProperty("--g-book-top", Math.round(top) + "px");
     var panelTopInView = innerRect.top + top;
-    var desktopMaxH = Math.max(240, Math.round(window.innerHeight - panelTopInView - gap));
+    var desktopMaxH = Math.max(240, Math.round(viewportHeight() - panelTopInView - gap));
     panel.style.maxHeight = desktopMaxH + "px";
     panel.style.height = desktopMaxH + "px";
     var extra =
@@ -1707,6 +1783,7 @@
     if (!panel) return;
     panel.hidden = false;
     lockPageScroll();
+    syncBookScrim();
     placeBook();
     void panel.offsetWidth;
     panel.classList.add("is-visible");
@@ -1765,6 +1842,7 @@
       }
     });
     unlockPageScroll();
+    syncBookScrim();
   }
 
   function openBook() {
@@ -2211,6 +2289,11 @@
 
   wireOtpDigits();
   window.addEventListener("resize", placeBook);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", function () {
+      if (activeOverlay()) placeBook();
+    });
+  }
 
   if (book) {
     book.addEventListener("keydown", function (e) {
