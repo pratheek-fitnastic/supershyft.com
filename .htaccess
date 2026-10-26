@@ -1,7 +1,6 @@
-# ── Old blog → new blog (301, permanent) ──────────────────────────────
-# The legacy /blogs.html static page was replaced by the dynamic blog at /blog/.
-Redirect 301 /blogs.html /blog/
-
-# Optional: keep the bare /blog path working without a trailing slash.
+# ── Old local blog URLs → live blog (301, permanent) ─────────────────
+# Blogs now live at https://blog.supershyft.com/ (not /blog/ on this host).
 RewriteEngine On
-RewriteRule ^blog$ /blog/ [R=301,L]
+RewriteRule ^blogs\.html$ https://blog.supershyft.com/ [R=301,L]
+RewriteRule ^blog/?$ https://blog.supershyft.com/ [R=301,L]
+RewriteRule ^blog/ https://blog.supershyft.com/ [R=301,L]
