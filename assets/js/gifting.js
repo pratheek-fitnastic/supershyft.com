@@ -2212,8 +2212,9 @@
             openPayFailed();
             resolve();
           });
+          /* Hide OTP before checkout so it cannot flash when Razorpay closes. */
+          revealFormDuringConfirm();
           checkout.open();
-          /* OTP stays visible under Razorpay so the page is never an empty overlay. */
         } catch (err) {
           console.error("[gifting] Razorpay open failed", err);
           if (settleOnce()) {
