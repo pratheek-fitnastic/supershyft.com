@@ -12,6 +12,8 @@
 }
 
 .gifting-page {
+  --g-sub-size: clamp(16px, 1.39vw, 22px);
+  --g-sub-lh: 1.4;
   background: var(--g-black);
   color: var(--g-white);
   overflow-x: clip;
@@ -289,8 +291,8 @@ html.g-overlay-open .g-tabs {
 .g-hero__sub {
   font-family: Sora, sans-serif;
   font-weight: 400;
-  font-size: clamp(14px, min(1.528cqw, 2.423cqh), 22px);
-  line-height: clamp(24px, 3.965cqh, 36px);
+  font-size: var(--g-sub-size);
+  line-height: var(--g-sub-lh);
   color: #fcfcfc;
   margin: 0;
   width: 100%;
@@ -379,9 +381,10 @@ html.g-overlay-open .g-tabs {
 }
 
 .g-pack__intro {
-  width: 100%;
-  max-width: 1100px;
+  width: fit-content;
+  max-width: 100%;
   margin: 0 auto;
+  text-align: center;
 }
 
 .g-pack__title {
@@ -392,6 +395,8 @@ html.g-overlay-open .g-tabs {
   color: #fff;
   margin: 0;
   line-height: 1.25;
+  width: max-content;
+  max-width: 100%;
 }
 
 @media (min-width: 992px) {
@@ -413,11 +418,15 @@ html.g-overlay-open .g-tabs {
 .g-pack__sub {
   font-family: Sora, sans-serif;
   font-weight: 400;
-  font-size: clamp(18px, 1.39vw, 24px);
-  line-height: 30px;
+  font-size: var(--g-sub-size);
+  line-height: var(--g-sub-lh);
   color: rgba(252, 252, 252, 0.95);
-  margin: 15px auto 0;
-  max-width: 900px;
+  margin: 15px 0 0;
+  width: 0;
+  min-width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 /*
@@ -1028,9 +1037,7 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-pack__sub {
-    max-width: none;
-    font-size: calc(29px * var(--g-pack-s, 1));
-    line-height: calc(32px * var(--g-pack-s, 1));
+    /* Width tracks the heading. Size matches .g-hero__sub via --g-sub-size. */
     /* Figma mb-[-26px]: subtitle tucks up under the title */
     margin-top: calc(-26px * var(--g-pack-s, 1));
     /* Lid sits in this gap (~176/1600 of the box). Extra air keeps the title off it. */
@@ -2875,6 +2882,25 @@ html.g-overlay-open .g-tabs {
   overflow-y: auto;
 }
 
+.g-book--confirming {
+  justify-content: center;
+}
+
+.g-pay-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(223, 183, 108, 0.25);
+  border-top-color: #dfb76c;
+  border-radius: 50%;
+  animation: g-pay-spin 0.8s linear infinite;
+}
+
+@keyframes g-pay-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .g-pay-icon-wrap {
   display: flex;
   flex-direction: column;
@@ -3366,7 +3392,9 @@ html.g-overlay-open .g-tabs {
   }
 
   .gifting-page .g-book--result .g-book__title {
-    font-size: 24px;
+    font-size: clamp(18px, 5.2vw, 22px);
+    letter-spacing: 0;
+    white-space: nowrap;
   }
 
   .g-pay-actions__retry {
@@ -3670,6 +3698,11 @@ html.g-overlay-open .g-tabs {
 
 /* ===== Mobile — Figma 856:11021 / hero 856:11030 ===== */
 @media (max-width: 767.98px) {
+  .gifting-page {
+    --g-sub-size: 16px;
+    --g-sub-lh: 1.4;
+  }
+
   .g-hero {
     aspect-ratio: auto;
     height: auto;
@@ -3711,8 +3744,6 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-hero__sub {
-    font-size: 14px;
-    line-height: 18px;
     max-width: 386px;
   }
 
@@ -3726,7 +3757,7 @@ html.g-overlay-open .g-tabs {
     font-size: 16px;
   }
 
-  /* Mobile design 856:11047: heading near the top, box centred, button at the bottom of one screen */
+  /* Mobile design 856:11047: heading near the top, box above the CTA, button at the bottom of one screen */
   .g-pack {
     min-height: 100vh;
     min-height: 100svh;
@@ -3742,13 +3773,15 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-box {
+    /* Sit the tray above the CTA so the seated card hangs into the gap under
+       the subtitle instead of covering the heading. */
     margin-top: auto;
-    margin-bottom: auto;
+    margin-bottom: 0;
     max-width: calc(100% * var(--g-pack-s, 1));
   }
 
   .g-pack__cta {
-    margin-top: 16px;
+    margin-top: 32px;
   }
 
   .g-pack__sub {
@@ -3763,7 +3796,9 @@ html.g-overlay-open .g-tabs {
   .g-box__package {
     left: 4%;
     width: 92%;
-    aspect-ratio: 320 / 430;
+    aspect-ratio: 322 / 415;
+    min-height: 320px;
+    height: auto;
   }
 
   .g-box__front-art,
@@ -3813,18 +3848,20 @@ html.g-overlay-open .g-tabs {
   }
 
   /* Mobile design: two lines — "A Gift of Health," / "Wrapped in Love." */
+  .g-pack__intro {
+    max-width: min(320px, 100%);
+  }
+
   .g-pack__title {
     font-size: clamp(28px, 9vw, 36px);
     line-height: 1.3;
-    max-width: 320px;
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;
   }
 
   .g-pack__sub {
-    font-size: 16px;
-    line-height: 1.4;
-    padding: 0 8px;
+    padding: 0;
     margin-top: 14px;
   }
 
@@ -4886,33 +4923,28 @@ html.g-overlay-open .g-tabs {
 
 @media (max-width: 767.98px) {
   /*
-   * Figma 980:11220 — cream panel is a normal column (lotus → features → Explore).
-   * Do not lock height with aspect-ratio + absolute insets: that is why Explore
-   * sat on the last feature on Samsung. The gold card grows with the panel.
+   * Figma 980:11220 — gold card stays in the velvet well (322 × 415).
+   * Cream panel is inset; Explore is the last flex row. Do not grow
+   * the card over the tray or the pack subtitle.
    */
   .g-box__package {
-    aspect-ratio: auto;
+    aspect-ratio: 322 / 415;
+    min-height: 320px;
     height: auto;
   }
 
   .g-box .g-box__card-flip {
-    height: auto;
+    height: 100%;
   }
 
-  .g-box .g-box__card-face--front {
-    position: relative;
-    inset: auto;
-    height: auto;
-  }
-
+  .g-box .g-box__card-face--front,
   .g-box .g-box__card-face--back {
     position: absolute;
     inset: 0;
+    height: auto;
   }
 
-  /* Seated mobile card hangs ~0.53 of box width above the tray */
   .g-box {
-    margin-top: calc(66% * var(--g-pack-s, 1));
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
@@ -4924,11 +4956,10 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-box .g-box__card-face--front .g-box__front-art {
-    position: relative;
-    left: auto;
-    top: auto;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
     transform: none;
     zoom: 1;
   }
@@ -4955,23 +4986,23 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-box .g-box__card-face--front .g-box__package-panel {
-    position: relative;
-    left: auto;
-    top: auto;
-    right: auto;
-    bottom: auto;
+    position: absolute;
+    left: 7.3%;
+    right: 7.3%;
+    top: 6.1%;
+    bottom: 6.1%;
     width: auto;
     height: auto;
     min-height: 0;
-    margin: 7% 7.1% 6%;
+    margin: 0;
     transform: none;
-    padding: clamp(14px, 6.5%, 21px) clamp(14px, 7.8%, 25px) clamp(12px, 5.5%, 20px);
+    padding: clamp(10px, 5.5%, 16px) clamp(10px, 6.5%, 18px) 16px;
     align-items: center;
-    justify-content: flex-start;
+    /* Figma 980:11220 — pin Explore to the bottom of the cream panel */
+    justify-content: space-between;
     overflow: visible;
     container-type: inline-size;
     border: 1px solid #eddcc0;
-    border-bottom: 0;
     border-radius: 12px;
     filter: drop-shadow(0 -4px 25px rgba(255, 255, 128, 0.25));
     text-align: center;
@@ -4998,15 +5029,15 @@ html.g-overlay-open .g-tabs {
   .g-box .g-box__card-face--front .g-box__lotus {
     display: block;
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
-    margin-top: 4px;
+    width: 20px;
+    height: 20px;
+    margin-top: 0;
   }
 
   .g-box .g-box__card-face--front .g-box__badge {
     align-self: center;
     flex-shrink: 0;
-    margin: 6px 0 7px;
+    margin: 4px 0 5px;
     padding: 2px 12px;
     border: 0;
     background: #1f2824;
@@ -5021,7 +5052,7 @@ html.g-overlay-open .g-tabs {
     width: 100%;
     flex-shrink: 0;
     gap: 0;
-    padding: 0 0 6px;
+    padding: 0 0 2px;
     align-items: center;
   }
 
@@ -5038,7 +5069,7 @@ html.g-overlay-open .g-tabs {
     flex-direction: column;
     align-items: center;
     gap: 0;
-    padding-top: 6px;
+    padding-top: 2px;
   }
 
   .g-box .g-box__card-face--front .g-box__price {
@@ -5061,25 +5092,26 @@ html.g-overlay-open .g-tabs {
     flex: 0 0 auto;
     min-height: 0;
     overflow: visible;
-    gap: clamp(8px, 4cqw, 14px);
-    margin: 2.25px 0;
-    padding: clamp(10px, 4cqw, 13px) 8px;
+    gap: 4px;
+    margin: 0;
+    padding: 4px 4px 2px;
     text-align: left;
   }
 
   .g-box .g-box__card-face--front .g-box__features li {
-    flex-shrink: 0;
-    font-size: clamp(11px, 4.8cqw, 13px);
+    flex-shrink: 1;
+    font-size: clamp(10px, 4.4cqw, 12px);
     line-height: 1.25;
     white-space: normal;
   }
 
-  /* Figma 980:11220 — Explore is the last row of the cream panel, never over the list */
+  /* Figma 980:11220 — full-width Explore as the last row of the cream panel */
   .g-box .g-box__card-face--front .g-box__explore-wrap {
     width: 100%;
     flex: 0 0 auto;
-    margin-top: 8px;
-    padding: 6px 0 4px;
+    flex-shrink: 0;
+    margin-top: auto;
+    padding: 8px 0 2px;
     position: relative;
     z-index: 2;
   }
@@ -5088,8 +5120,11 @@ html.g-overlay-open .g-tabs {
     position: relative;
     top: 0;
     z-index: 2;
-    font-size: clamp(11px, 4.4cqw, 12px);
+    width: 100%;
+    font-size: 12px;
     line-height: 16px;
+    letter-spacing: 0.6px;
+    padding: 11px 17px;
   }
 }
 
@@ -5199,7 +5234,7 @@ html.g-overlay-open .g-tabs {
   .g-box.is-open .g-box__well,
   .g-box.is-flipped .g-box__well {
     overflow: visible;
-    clip-path: inset(-1000px -100px 0 -100px);
+    clip-path: inset(-1000px -100px -20px -100px);
   }
 
   /* If ScrollTrigger never applies its inline y, the seated card must still show. */

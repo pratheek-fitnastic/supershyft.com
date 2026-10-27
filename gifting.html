@@ -38,7 +38,7 @@
     gtag('js', new Date());
     gtag('config', 'G-NGCC7R99GH');
   </script>
-  <link rel="stylesheet" href="assets/css/gifting.css?v=20261026m">
+  <link rel="stylesheet" href="assets/css/gifting.css?v=20261027o">
   <link rel="preload" as="image" href="assets/images/gifting/gift-lid-closed-face.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-lid-inner-1405.png">
   <link rel="preload" as="image" href="assets/images/gifting/gift-tray-1405.png">
@@ -529,6 +529,17 @@
           </div>
         </div>
 
+        <!-- Payment confirming — after Razorpay, before success/fail -->
+        <div class="g-book g-book--result g-book--confirming" id="gift-pay-confirming" role="dialog" aria-labelledby="gift-pay-confirming-title" aria-modal="true" hidden>
+          <div class="g-pay-icon-wrap">
+            <div class="g-pay-spinner" aria-hidden="true"></div>
+          </div>
+          <div class="g-pay-copy">
+            <h3 class="g-book__title" id="gift-pay-confirming-title">Confirming payment…</h3>
+            <p class="g-pay-copy__sub">Please wait while we confirm your transaction.</p>
+          </div>
+        </div>
+
         <!-- Payment success (Figma 864:12922) -->
         <div class="g-book g-book--result" id="gift-pay-success" role="dialog" aria-labelledby="gift-pay-success-title" aria-modal="true" hidden>
           <button type="button" class="g-book__close" id="gift-pay-success-close" aria-label="Close">
@@ -646,7 +657,7 @@
   </script>
   <script src="assets/js/vendor.js" defer></script>
   <script src="assets/js/custom.js" defer></script>
-  <script src="assets/js/gifting.js?v=20261026j" defer></script>
+  <script src="assets/js/gifting.js?v=20261027i" defer></script>
 </body>
 
 </html>

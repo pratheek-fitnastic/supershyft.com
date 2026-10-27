@@ -77,6 +77,7 @@
     if (isMobilePack() && mobileScaleLocked && !force && Math.abs(w - lastFitWidth) <= 2) {
       return;
     }
+    fitPackSubtitle();
     var inner = giftPack.querySelector(".g-pack__inner");
     var avail = inner ? inner.clientWidth : giftPack.clientWidth;
     var s = Math.min(1, avail / 1344);
@@ -120,6 +121,30 @@
         });
       }
     }
+  }
+
+  function fitPackSubtitle() {
+    var title = giftPack && giftPack.querySelector(".g-pack__title");
+    var sub = giftPack && giftPack.querySelector(".g-pack__sub");
+    if (!title || !sub) return;
+    sub.style.fontSize = "";
+    var probe = 20;
+    sub.style.whiteSpace = "nowrap";
+    sub.style.fontSize = probe + "px";
+    var titleW = title.getBoundingClientRect().width;
+    var range = document.createRange();
+    range.selectNodeContents(sub);
+    var textW = range.getBoundingClientRect().width;
+    if (titleW < 8 || textW < 8) {
+      sub.style.fontSize = "";
+      return;
+    }
+    var size = probe * (titleW / textW);
+    if (size > 22) size = 22;
+    if (size < 7) size = 7;
+    var px = size.toFixed(2) + "px";
+    sub.style.fontSize = px;
+    if (document.body) document.body.style.setProperty("--g-sub-size", px);
   }
 
   function lockMobileScale() {
@@ -1006,6 +1031,7 @@
   var otpVerify = document.getElementById("gift-otp-verify");
   var paySuccess = document.getElementById("gift-pay-success");
   var payFailed = document.getElementById("gift-pay-failed");
+  var payConfirming = document.getElementById("gift-pay-confirming");
   var paySuccessClose = document.getElementById("gift-pay-success-close");
   var payFailedClose = document.getElementById("gift-pay-failed-close");
   var payTxnId = document.getElementById("gift-pay-txn-id");
@@ -1717,6 +1743,7 @@
   function activeOverlay() {
     if (paySuccess && !paySuccess.hidden) return paySuccess;
     if (payFailed && !payFailed.hidden) return payFailed;
+    if (payConfirming && !payConfirming.hidden) return payConfirming;
     if (otpPanel && !otpPanel.hidden) return otpPanel;
     if (book && !book.hidden) return book;
     return null;
@@ -1746,10 +1773,43 @@
   }
 
   function viewportHeight() {
-    if (window.visualViewport && window.visualViewport.height) {
-      return window.visualViewport.height;
+    return window.innerHeight || document.documentElement.clientHeight || 0;
+  }
+
+  function blurBookTextField() {
+    var el = document.activeElement;
+    if (!el || !el.tagName) return;
+    var tag = el.tagName.toLowerCase();
+    if (tag !== "input" && tag !== "textarea" && tag !== "select") return;
+    var type = String(el.type || "").toLowerCase();
+    if (
+      type === "text" ||
+      type === "email" ||
+      type === "tel" ||
+      type === "number" ||
+      type === "search" ||
+      tag === "textarea" ||
+      tag === "select"
+    ) {
+      el.blur();
     }
-    return window.innerHeight;
+  }
+
+  function scrollFocusedBookField() {
+    var panel = activeOverlay();
+    if (!panel) return;
+    var body = panel.querySelector(".g-book__body");
+    var el = document.activeElement;
+    if (!body || !el || !panel.contains(el) || el === document.body) return;
+    var bodyRect = body.getBoundingClientRect();
+    var elRect = el.getBoundingClientRect();
+    var vv = window.visualViewport;
+    var visibleBottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
+    if (elRect.bottom > visibleBottom - 16) {
+      body.scrollTop += elRect.bottom - visibleBottom + 28;
+    } else if (elRect.top < bodyRect.top + 8) {
+      body.scrollTop -= bodyRect.top + 8 - elRect.top;
+    }
   }
 
   function syncBookScrim() {
@@ -1880,7 +1940,7 @@
     form.removeAttribute("aria-hidden");
     form.inert = false;
     if (formInner) formInner.style.paddingBottom = "";
-    [book, otpPanel, paySuccess, payFailed].forEach(function (p) {
+    [book, otpPanel, paySuccess, payFailed, payConfirming].forEach(function (p) {
       if (p) {
         p.style.height = "";
         p.style.maxHeight = "";
@@ -1891,10 +1951,11 @@
   }
 
   function openBook() {
-    if (!book) return;
+    if (!book || confirmPaymentPending) return;
     hidePanel(otpPanel);
     hidePanel(paySuccess);
     hidePanel(payFailed);
+    hidePanel(payConfirming);
     resetBookingApiState();
     lockFormUnderOverlay();
     showPanel(book);
@@ -1912,6 +1973,7 @@
     hidePanel(otpPanel);
     hidePanel(paySuccess);
     hidePanel(payFailed);
+    hidePanel(payConfirming);
     resetBookingApiState();
     unlockForm();
     var submit = form ? form.querySelector("[type='submit']") : null;
@@ -1922,6 +1984,7 @@
     hidePanel(book);
     hidePanel(paySuccess);
     hidePanel(payFailed);
+    hidePanel(payConfirming);
     lockFormUnderOverlay();
     if (otpHint) {
       otpHint.textContent =
@@ -1937,10 +2000,24 @@
     if (otpDigitInputs[0]) otpDigitInputs[0].focus({ preventScroll: true });
   }
 
+  var confirmPaymentPending = false;
+
+  function revealFormDuringConfirm() {
+    confirmPaymentPending = true;
+    hidePanel(book);
+    hidePanel(otpPanel);
+    hidePanel(paySuccess);
+    hidePanel(payFailed);
+    hidePanel(payConfirming);
+    unlockForm();
+  }
+
   function openPaySuccess(paymentId, amountRupees) {
+    confirmPaymentPending = false;
     hidePanel(book);
     hidePanel(otpPanel);
     hidePanel(payFailed);
+    hidePanel(payConfirming);
     lockFormUnderOverlay();
     if (payTxnId) payTxnId.textContent = paymentId || "—";
     if (payAmount) {
@@ -1954,9 +2031,11 @@
   }
 
   function openPayFailed() {
+    confirmPaymentPending = false;
     hidePanel(book);
     hidePanel(otpPanel);
     hidePanel(paySuccess);
+    hidePanel(payConfirming);
     lockFormUnderOverlay();
     showPanel(payFailed);
   }
@@ -2110,6 +2189,7 @@
           theme: { color: "#296359" },
           handler: function (response) {
             if (!settleOnce()) return;
+            revealFormDuringConfirm();
             confirmFamilyPayment(response)
               .then(resolve)
               .catch(function () {
@@ -2133,6 +2213,7 @@
             resolve();
           });
           checkout.open();
+          /* OTP stays visible under Razorpay so the page is never an empty overlay. */
         } catch (err) {
           console.error("[gifting] Razorpay open failed", err);
           if (settleOnce()) {
@@ -2221,7 +2302,6 @@
           otpVerify.disabled = false;
           otpVerify.textContent = "Verify OTP";
         }
-        hidePanel(otpPanel);
         var hasOrder = !!(data.key_id && data.razorpay_order_id);
         if (!hasOrder) {
           if (onboardSession.payment_required === false) {
@@ -2291,6 +2371,7 @@
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      if (confirmPaymentPending) return;
       var emailsOk = validateEmailField(recipientEmail, true) && validateEmailField(yourEmail, true);
       if (!emailsOk || !form.checkValidity()) {
         form.reportValidity();
@@ -2337,8 +2418,15 @@
   window.addEventListener("resize", placeBook);
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", function () {
-      if (activeOverlay()) placeBook();
+      if (activeOverlay()) scrollFocusedBookField();
     });
+  }
+
+  if (bookDates) {
+    bookDates.addEventListener("pointerdown", blurBookTextField);
+  }
+  if (bookSlots) {
+    bookSlots.addEventListener("pointerdown", blurBookTextField);
   }
 
   if (book) {
@@ -2376,11 +2464,13 @@
       var t = e.target;
       if (!t) return;
       if (t.name === "book-date") {
+        blurBookTextField();
         fetchAvailableSlots();
         syncBookContinue();
         return;
       }
       if (t.name === "book-gender") {
+        blurBookTextField();
         if (getSelectedDate() && geoState && geoState.serviceable) {
           fetchAvailableSlots();
         }
@@ -2388,6 +2478,7 @@
         return;
       }
       if (t.name === "book-slot") {
+        blurBookTextField();
         lastSlotPayload = {
           stm_id: t.getAttribute("data-stm-id") || t.value,
           slot_time: t.getAttribute("data-slot-time") || "",
