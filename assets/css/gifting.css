@@ -1039,7 +1039,7 @@ html.g-overlay-open .g-tabs {
   .g-pack__sub {
     /* Width tracks the heading. Size matches .g-hero__sub via --g-sub-size. */
     /* Figma mb-[-26px]: subtitle tucks up under the title */
-    margin-top: calc(-26px * var(--g-pack-s, 1));
+    margin-top: 1px;
     /* Lid sits in this gap (~176/1600 of the box). Extra air keeps the title off it. */
     margin-bottom: calc(168px * var(--g-pack-s, 1));
   }
@@ -5277,5 +5277,35 @@ html.g-overlay-open .g-tabs {
     transform: none;
     backface-visibility: visible;
     -webkit-backface-visibility: visible;
+  }
+}
+
+/* Mobile: hero and gift-pack subtitles at 12px */
+@media (max-width: 767.98px) {
+  .g-hero__sub,
+  .g-pack__sub {
+    font-size: 12px;
+  }
+}
+
+/* Section 2 subtitle: one line on desktop, two lines on mobile */
+.g-br-mobile {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .g-br-mobile {
+    display: inline;
+  }
+
+  .g-pack__sub {
+    white-space: normal;
+  }
+}
+
+/* OTP modal: arrow only on mobile */
+@media (max-width: 767.98px) {
+  .g-book__back-text {
+    display: none;
   }
 }

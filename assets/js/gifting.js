@@ -128,6 +128,11 @@
     var sub = giftPack && giftPack.querySelector(".g-pack__sub");
     if (!title || !sub) return;
     sub.style.fontSize = "";
+    /* Mobile uses the fixed 12px size from CSS */
+    if (window.matchMedia("(max-width: 767.98px)").matches) {
+      sub.style.whiteSpace = "";
+      return;
+    }
     var probe = 20;
     sub.style.whiteSpace = "nowrap";
     sub.style.fontSize = probe + "px";
@@ -2012,6 +2017,17 @@
     unlockForm();
   }
 
+  /* Loader while confirm-payment runs (can take 10-15s) */
+  function openPayConfirming() {
+    confirmPaymentPending = true;
+    hidePanel(book);
+    hidePanel(otpPanel);
+    hidePanel(paySuccess);
+    hidePanel(payFailed);
+    lockFormUnderOverlay();
+    showPanel(payConfirming);
+  }
+
   function openPaySuccess(paymentId, amountRupees) {
     confirmPaymentPending = false;
     hidePanel(book);
@@ -2189,7 +2205,7 @@
           theme: { color: "#296359" },
           handler: function (response) {
             if (!settleOnce()) return;
-            revealFormDuringConfirm();
+            openPayConfirming();
             confirmFamilyPayment(response)
               .then(resolve)
               .catch(function () {
