@@ -2346,17 +2346,22 @@ html.g-overlay-open .g-tabs {
   top: 32px;
   border: 0;
   background: none;
-  padding: 6px 4px;
-  color: rgba(255, 255, 255, 0.6);
-  font-family: Sora, sans-serif;
-  font-size: 14px;
+  padding: 0;
+  line-height: 0;
   cursor: pointer;
-  transition: color 0.2s ease;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.g-book__back img {
+  display: block;
+  width: 32px;
+  height: 32px;
 }
 
 .g-book__back:hover,
 .g-book__back:focus-visible {
-  color: #fff;
+  opacity: 1;
 }
 
 .gifting-page .g-book__title {
@@ -3156,10 +3161,8 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-book__back {
-    left: 16px;
-    top: 16px;
-    padding: 4px 2px;
-    font-size: 12px;
+    left: 18px;
+    top: 18px;
   }
 
   .gifting-page .g-book .g-book__title {
@@ -3185,14 +3188,18 @@ html.g-overlay-open .g-tabs {
     gap: 24px;
     width: 100%;
     max-width: 363px;
+    min-width: 0;
   }
 
   .g-book.is-visible .g-book__body {
     flex: 1 1 auto;
     min-height: 0;
+    min-width: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
     overflow-anchor: none;
+    touch-action: pan-y;
     scrollbar-width: none;
   }
 
@@ -3245,15 +3252,29 @@ html.g-overlay-open .g-tabs {
     color: #fff;
   }
 
+  .g-book__group,
+  .g-book__field,
+  .g-book__schedule {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .g-book__schedule {
     gap: 12px;
   }
 
   .g-book__dates {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 79px;
     gap: 12px;
+    flex-wrap: nowrap;
     overflow-x: auto;
+    overflow-y: hidden;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
 
@@ -5303,9 +5324,3 @@ html.g-overlay-open .g-tabs {
   }
 }
 
-/* OTP modal: arrow only on mobile */
-@media (max-width: 767.98px) {
-  .g-book__back-text {
-    display: none;
-  }
-}

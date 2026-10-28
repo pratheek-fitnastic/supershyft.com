@@ -1127,11 +1127,6 @@
     }
   }
 
-  function apiLabel(path) {
-    var parts = String(path || "").split("/");
-    return parts[parts.length - 1] || path || "api";
-  }
-
   function clearDatesAndSlots() {
     if (bookDates) {
       bookDates.innerHTML = "";
@@ -1168,7 +1163,10 @@
     if (!members || !members.length) return ids;
     for (var i = 0; i < members.length; i++) {
       var id = members[i] && members[i].engagement_id;
-      if (id != null && id !== "") ids.push(id);
+      if (id != null && id !== "") {
+        var n = Number(id);
+        ids.push(isNaN(n) ? id : n);
+      }
     }
     return ids;
   }
@@ -1222,10 +1220,14 @@
 
   function apiPost(path, body, signal, token) {
     var url = API_BASE + path;
-    var label = apiLabel(path);
     var headers = { "Content-Type": "application/json", Accept: "application/json" };
     if (token) headers.Authorization = "Bearer " + token;
-    console.info("[gifting] POST " + url, body);
+    console.log(
+      "%cGIFTING API → POST",
+      "background:#296359;color:#fff;padding:2px 6px;border-radius:4px",
+      url,
+      body
+    );
     return fetch(url, {
       method: "POST",
       headers: headers,
@@ -1240,21 +1242,42 @@
           })
           .then(function (json) {
             if (!res.ok) {
-              console.error("[gifting] ← " + label + " " + res.status, json || res.statusText);
+              console.error(
+                "%cGIFTING API ← " + res.status,
+                "background:#8b2e2e;color:#fff;padding:2px 6px;border-radius:4px",
+                url,
+                json || res.statusText
+              );
               var err = new Error(
                 apiErrorMessage(json, "Request failed (" + res.status + ")")
               );
               err.status = res.status;
               err.payload = json;
+              err.url = url;
               throw err;
             }
-            console.info("[gifting] ← " + label + " " + res.status, json);
+            console.log(
+              "%cGIFTING API ← " + res.status,
+              "background:#296359;color:#fff;padding:2px 6px;border-radius:4px",
+              url,
+              json
+            );
             return json;
           });
       })
       .catch(function (err) {
-        if (err && err.name !== "AbortError" && err.status == null) {
-          console.error("[gifting] ✕ " + label + " " + url, err);
+        if (err && err.name === "AbortError") throw err;
+        if (err && err.status == null) {
+          console.error(
+            "%cGIFTING API ✕",
+            "background:#8b2e2e;color:#fff;padding:2px 6px;border-radius:4px",
+            url,
+            err
+          );
+          var wrapped = new Error("Failed to reach " + url);
+          wrapped.url = url;
+          wrapped.cause = err;
+          throw wrapped;
         }
         throw err;
       });
@@ -2093,7 +2116,7 @@
           booker_message: fieldValue("gift-message"),
         },
       ],
-      discount_code: getDiscountCode() || null,
+      discount_code: null,
     };
   }
 
@@ -2275,6 +2298,28 @@
     );
   }
 
+  function isDiscountOrderError(err) {
+    var msg = (err && err.message) || "";
+    return /not valid for this order|discount|coupon/i.test(msg);
+  }
+
+  function buildVerifyPayBody(otp, discountCode) {
+    var ids = (onboardSession.engagement_ids || []).map(function (id) {
+      var n = Number(id);
+      return isNaN(n) ? id : n;
+    });
+    var body = {
+      phone: onboardSession.bookerPhone,
+      otp: otp,
+      engagement_ids: ids,
+      discount_code: discountCode || null,
+    };
+    if (onboardSession.otp_session_id != null) {
+      body.otp_session_id = onboardSession.otp_session_id;
+    }
+    return body;
+  }
+
   function verifyOtpAndPay() {
     var otp = getOtpValue();
     if (otp.length !== 6) {
@@ -2292,59 +2337,72 @@
     }
     setOtpError("");
 
-    var verifyBody = {
-      phone: onboardSession.bookerPhone,
-      otp: otp,
-      engagement_ids: onboardSession.engagement_ids.slice(),
-      discount_code: getDiscountCode() || null,
-    };
+    var discount = getDiscountCode() || null;
+    var retriedWithoutDiscount = false;
 
-    apiPost("/users/public/family-onboard/verify-pay", verifyBody)
-      .then(function (raw) {
-        var data = unwrapApiData(raw);
-        var tokens = (data && data.tokens) || (raw && raw.tokens) || {};
-        onboardSession.access_token = tokens.access_token || null;
-        if (data.booking_ids && data.booking_ids.length) {
-          onboardSession.booking_ids = data.booking_ids;
+    function resetVerifyButton() {
+      if (otpVerify) {
+        otpVerify.disabled = false;
+        otpVerify.textContent = "Verify OTP";
+      }
+    }
+
+    function onVerifySuccess(raw) {
+      var data = unwrapApiData(raw);
+      var tokens = (data && data.tokens) || (raw && raw.tokens) || {};
+      onboardSession.access_token = tokens.access_token || null;
+      if (data.booking_ids && data.booking_ids.length) {
+        onboardSession.booking_ids = data.booking_ids;
+      }
+      onboardSession.razorpay = {
+        key_id: data.key_id,
+        razorpay_order_id: data.razorpay_order_id,
+        amount_paise: data.amount_paise,
+        currency: data.currency || "INR",
+      };
+      onboardSession.amount_rupees =
+        data.amount_rupees != null ? data.amount_rupees : null;
+      resetVerifyButton();
+      var hasOrder = !!(data.key_id && data.razorpay_order_id);
+      if (!hasOrder) {
+        if (onboardSession.payment_required === false) {
+          openPaySuccess(
+            data.booking_id ||
+              (data.booking_ids && data.booking_ids[0]) ||
+              "",
+            onboardSession.amount_rupees
+          );
+          return;
         }
-        onboardSession.razorpay = {
-          key_id: data.key_id,
-          razorpay_order_id: data.razorpay_order_id,
-          amount_paise: data.amount_paise,
-          currency: data.currency || "INR",
-        };
-        onboardSession.amount_rupees =
-          data.amount_rupees != null ? data.amount_rupees : null;
-        if (otpVerify) {
-          otpVerify.disabled = false;
-          otpVerify.textContent = "Verify OTP";
-        }
-        var hasOrder = !!(data.key_id && data.razorpay_order_id);
-        if (!hasOrder) {
-          if (onboardSession.payment_required === false) {
-            openPaySuccess(
-              data.booking_id ||
-                (data.booking_ids && data.booking_ids[0]) ||
-                "",
-              onboardSession.amount_rupees
-            );
-            return;
-          }
-          throw new Error("Could not start payment. Please try again.");
-        }
-        return openRazorpayCheckout();
-      })
-      .catch(function (err) {
-        if (err && err.name === "AbortError") return;
-        if (otpVerify) {
-          otpVerify.disabled = false;
-          otpVerify.textContent = "Verify OTP";
-        }
-        setOtpError(
-          (err && err.message) || "OTP verification failed. Please try again."
-        );
-        placeBook();
-      });
+        throw new Error("Could not start payment. Please try again.");
+      }
+      return openRazorpayCheckout();
+    }
+
+    function onVerifyFail(err) {
+      if (err && err.name === "AbortError") return;
+      if (!retriedWithoutDiscount && discount && isDiscountOrderError(err)) {
+        retriedWithoutDiscount = true;
+        return apiPost(
+          "/users/public/family-onboard/verify-pay",
+          buildVerifyPayBody(otp, null)
+        )
+          .then(onVerifySuccess)
+          .catch(onVerifyFail);
+      }
+      resetVerifyButton();
+      setOtpError(
+        (err && err.message) || "OTP verification failed. Please try again."
+      );
+      placeBook();
+    }
+
+    return apiPost(
+      "/users/public/family-onboard/verify-pay",
+      buildVerifyPayBody(otp, discount)
+    )
+      .then(onVerifySuccess)
+      .catch(onVerifyFail);
   }
 
   function wireOtpDigits() {

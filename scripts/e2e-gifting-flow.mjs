@@ -355,7 +355,7 @@ async function runSuccessPath(browser) {
     [m?.booker_message === "Morning slot gift", "booker_message"],
     [!!m?.blood_collection_date, "blood_collection_date"],
     [!!m?.blood_collection_time_slot_id, "blood_collection_time_slot_id"],
-    [body.discount_code === "SUPERDIWALI", "discount_code SUPERDIWALI"],
+    [body.discount_code == null, "discount_code null on onboard"],
   ];
   const failedChecks = checks.filter((c) => !c[0]).map((c) => c[1]);
   if (failedChecks.length) {
@@ -407,6 +407,7 @@ async function runSuccessPath(browser) {
     verifyIds.length === 1 &&
     Number(verifyIds[0]) === 501 &&
     captured.verifyBody?.discount_code === "SUPERDIWALI" &&
+    captured.verifyBody?.otp_session_id === 1001 &&
     captured.verifyBody?.family_onboard_id == null
   ) {
     pass("verify-pay payload (Diwali SUPERDIWALI + engagement_ids)");
@@ -546,15 +547,16 @@ async function runOccasionDiscountPath(browser, occasion, expectedCode) {
   const ids = captured.verifyBody?.engagement_ids;
   const label = expectedCode || "null";
   if (
-    captured.onboardBody?.discount_code === expectedCode &&
+    captured.onboardBody?.discount_code == null &&
     Array.isArray(ids) &&
     Number(ids[0]) === 501 &&
+    captured.verifyBody?.otp_session_id === 1001 &&
     (expectedCode ? code === expectedCode : code == null)
   ) {
-    pass(`Tab ${occasion} onboard+verify discount_code`, String(code));
+    pass(`Tab ${occasion} verify-pay discount_code`, String(code));
   } else {
     fail(
-      `Tab ${occasion} onboard+verify discount_code (expected ${label})`,
+      `Tab ${occasion} verify-pay discount_code (expected ${label})`,
       JSON.stringify({ onboard: captured.onboardBody?.discount_code, verify: captured.verifyBody })
     );
   }
