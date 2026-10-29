@@ -2687,9 +2687,76 @@ html.g-overlay-open .g-tabs {
 }
 
 .g-book__group--schedule.is-loading .g-book__dates,
-.g-book__group--schedule.is-loading .g-book__slots {
-  opacity: 0.45;
+.g-book__group--schedule.is-loading-slots .g-book__slots {
   pointer-events: none;
+}
+
+@keyframes g-book-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes g-book-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.g-book__date--skeleton,
+.g-book__slot--skeleton {
+  pointer-events: none;
+}
+
+.g-book__date--skeleton span,
+.g-book__slot--skeleton span {
+  border-color: rgba(255, 255, 255, 0.06);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: g-book-shimmer 1.2s ease-in-out infinite;
+}
+
+.g-book__dates.is-revealing .g-book__date,
+.g-book__slots.is-revealing .g-book__slot {
+  animation: g-book-fade-in 0.4s ease both;
+}
+
+.g-book__dates.is-revealing .g-book__date:nth-child(1),
+.g-book__slots.is-revealing .g-book__slot:nth-child(1) {
+  animation-delay: 0ms;
+}
+.g-book__dates.is-revealing .g-book__date:nth-child(2),
+.g-book__slots.is-revealing .g-book__slot:nth-child(2) {
+  animation-delay: 40ms;
+}
+.g-book__dates.is-revealing .g-book__date:nth-child(3),
+.g-book__slots.is-revealing .g-book__slot:nth-child(3) {
+  animation-delay: 80ms;
+}
+.g-book__dates.is-revealing .g-book__date:nth-child(4),
+.g-book__slots.is-revealing .g-book__slot:nth-child(4) {
+  animation-delay: 120ms;
+}
+.g-book__dates.is-revealing .g-book__date:nth-child(5),
+.g-book__slots.is-revealing .g-book__slot:nth-child(5) {
+  animation-delay: 160ms;
+}
+.g-book__dates.is-revealing .g-book__date:nth-child(n + 6),
+.g-book__slots.is-revealing .g-book__slot:nth-child(n + 6) {
+  animation-delay: 200ms;
 }
 
 .g-book__actions {
@@ -3157,7 +3224,8 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-book.g-book--otp {
-    gap: 84px;
+    gap: 32px;
+    align-items: center;
   }
 
   .g-book__back {
@@ -3195,11 +3263,12 @@ html.g-overlay-open .g-tabs {
     flex: 1 1 auto;
     min-height: 0;
     min-width: 0;
-    overflow-x: hidden;
+    overflow-x: clip;
     overflow-y: auto;
     overscroll-behavior: contain;
     overflow-anchor: none;
-    touch-action: pan-y;
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
 
@@ -3209,6 +3278,8 @@ html.g-overlay-open .g-tabs {
 
   .g-book__details {
     gap: 2px;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   .g-book__col {
@@ -3264,6 +3335,7 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-book__dates {
+    display: flex;
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -3272,8 +3344,9 @@ html.g-overlay-open .g-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     overscroll-behavior-x: contain;
+    overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -3298,11 +3371,19 @@ html.g-overlay-open .g-tabs {
   }
 
   .g-book__slots {
+    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
+    overflow-x: clip;
+    touch-action: manipulation;
+  }
+
+  .g-book__slot {
+    min-width: 0;
   }
 
   .g-book__slot span {
+    min-width: 0;
     height: 39px;
     font-family: "DM Sans", sans-serif;
     font-variation-settings: "opsz" 14;
@@ -3315,9 +3396,17 @@ html.g-overlay-open .g-tabs {
     max-width: 363px;
   }
 
+  .g-book.g-book--otp > .g-otp,
+  .g-book.g-book--otp > .g-otp__resend-row,
   .g-book.g-book--otp > .g-book__actions {
+    align-self: center;
+    width: 100%;
     max-width: 300px;
-    margin-bottom: -68px;
+    margin-inline: auto;
+  }
+
+  .g-book.g-book--otp > .g-book__actions {
+    margin-bottom: 0;
   }
 
   .g-book__close {
@@ -3439,6 +3528,13 @@ html.g-overlay-open .g-tabs {
 @media (prefers-reduced-motion: reduce) {
   .g-book {
     transition: none;
+  }
+
+  .g-book__date--skeleton span,
+  .g-book__slot--skeleton span,
+  .g-book__dates.is-revealing .g-book__date,
+  .g-book__slots.is-revealing .g-book__slot {
+    animation: none;
   }
 }
 

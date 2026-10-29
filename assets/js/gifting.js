@@ -1105,8 +1105,68 @@
     el.hidden = !msg;
   }
 
-  function setScheduleLoading(loading) {
-    if (scheduleGroup) scheduleGroup.classList.toggle("is-loading", !!loading);
+  function setScheduleLoading(loading, which) {
+    if (!scheduleGroup) return;
+    if (!loading) {
+      scheduleGroup.classList.remove("is-loading", "is-loading-slots");
+      return;
+    }
+    if (which === "slots") {
+      scheduleGroup.classList.add("is-loading-slots");
+      scheduleGroup.classList.remove("is-loading");
+    } else {
+      scheduleGroup.classList.add("is-loading");
+      scheduleGroup.classList.remove("is-loading-slots");
+    }
+  }
+
+  function markChipsRevealing(container) {
+    if (!container) return;
+    container.classList.remove("is-revealing");
+    if (reducedMotion) return;
+    void container.offsetWidth;
+    container.classList.add("is-revealing");
+  }
+
+  function renderDateSkeletons() {
+    if (!bookDates) return;
+    bookDates.innerHTML = "";
+    bookDates.removeAttribute("data-api");
+    bookDates.classList.remove("is-revealing");
+    for (var i = 0; i < 5; i++) {
+      var el = document.createElement("div");
+      el.className = "g-book__date g-book__date--skeleton";
+      el.setAttribute("aria-hidden", "true");
+      el.innerHTML = "<span></span>";
+      bookDates.appendChild(el);
+    }
+  }
+
+  function renderSlotSkeletons() {
+    if (!bookSlots) return;
+    bookSlots.innerHTML = "";
+    bookSlots.removeAttribute("data-api");
+    bookSlots.classList.remove("is-revealing");
+    lastSlotPayload = null;
+    for (var i = 0; i < 8; i++) {
+      var el = document.createElement("div");
+      el.className = "g-book__slot g-book__slot--skeleton";
+      el.setAttribute("aria-hidden", "true");
+      el.innerHTML = "<span></span>";
+      bookSlots.appendChild(el);
+    }
+  }
+
+  function showDateLoadingState() {
+    renderDateSkeletons();
+    if (bookSlots) {
+      bookSlots.innerHTML = "";
+      bookSlots.removeAttribute("data-api");
+      bookSlots.classList.remove("is-revealing");
+    }
+    lastSlotPayload = null;
+    setScheduleStatus("Checking the Availability");
+    setScheduleLoading(true, "dates");
   }
 
   function abortServiceability() {
@@ -1131,10 +1191,12 @@
     if (bookDates) {
       bookDates.innerHTML = "";
       bookDates.removeAttribute("data-api");
+      bookDates.classList.remove("is-revealing");
     }
     if (bookSlots) {
       bookSlots.innerHTML = "";
       bookSlots.removeAttribute("data-api");
+      bookSlots.classList.remove("is-revealing");
     }
     lastSlotPayload = null;
   }
@@ -1205,6 +1267,8 @@
     setContinueLoading(false);
     resetOnboardSession();
     lastAutofilledCity = "";
+    scheduleRevealWait = false;
+    if (book) book.removeEventListener("focusout", scheduleRevealOnFocusOut);
   }
 
   function apiErrorMessage(json, fallback) {
@@ -1326,6 +1390,7 @@
       el.className = "g-book__date";
       bookDates.appendChild(el);
     }
+    markChipsRevealing(bookDates);
   }
 
   function formatClock(time) {
@@ -1349,6 +1414,7 @@
     bookSlots.setAttribute("data-api", API_BASE + "/diagnostics/public/available-slots");
     lastSlotPayload = null;
     if (!slots || !slots.length) {
+      bookSlots.classList.remove("is-revealing");
       setScheduleStatus("No slots available for this date.");
       syncBookContinue();
       return;
@@ -1367,6 +1433,7 @@
       }
       bookSlots.appendChild(el);
     });
+    markChipsRevealing(bookSlots);
     syncBookContinue();
   }
 
@@ -1479,12 +1546,9 @@
     var pincode = bookPincode.value.trim();
 
     geoState = null;
-    clearDatesAndSlots();
     setBookError("");
-    setScheduleStatus("Checking availability…");
-    setScheduleLoading(true);
+    showDateLoadingState();
     placeBook();
-    revealBookSchedule();
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     serviceabilityAbort = controller;
@@ -1512,7 +1576,6 @@
           setScheduleStatus("");
           setBookError("This area is not serviceable.");
           placeBook();
-          revealBookSchedule();
           syncBookContinue();
           return;
         }
@@ -1529,7 +1592,7 @@
         setScheduleStatus("");
         renderBookDates();
         placeBook();
-        revealBookSchedule();
+        maybeRevealScheduleSoftly();
         syncBookContinue();
       })
       .catch(function (err) {
@@ -1542,7 +1605,6 @@
         setScheduleStatus("");
         setBookError("Unable to check serviceability. Please try again.");
         placeBook();
-        revealBookSchedule();
         syncBookContinue();
       });
   }
@@ -1559,14 +1621,18 @@
       setScheduleStatus("");
       setScheduleLoading(false);
       /* Keep validation errors from Continue; clear only availability-style copy */
-      if (bookError && /serviceable|availability|Unable to check/i.test(bookError.textContent || "")) {
+      if (bookError && /serviceable|availability|pincode|Unable to check/i.test(bookError.textContent || "")) {
         setBookError("");
       }
       syncBookContinue();
       return;
     }
+    abortServiceability();
+    abortSlots();
+    serviceabilityGen += 1;
+    slotsGen += 1;
+    showDateLoadingState();
     placeBook();
-    revealBookSchedule();
     serviceabilityTimer = setTimeout(function () {
       serviceabilityTimer = null;
       checkServiceability();
@@ -1583,8 +1649,10 @@
       if (bookSlots) {
         bookSlots.innerHTML = "";
         bookSlots.removeAttribute("data-api");
+        bookSlots.classList.remove("is-revealing");
       }
       lastSlotPayload = null;
+      setScheduleLoading(false);
       setScheduleStatus("");
       setBookError("Please select the recipient's gender.");
       placeBook();
@@ -1595,12 +1663,9 @@
     abortSlots();
     var gen = (slotsGen += 1);
     setBookError("");
-    setScheduleStatus("");
-    if (bookSlots) {
-      bookSlots.innerHTML = "";
-      bookSlots.removeAttribute("data-api");
-    }
-    lastSlotPayload = null;
+    setScheduleStatus("Loading slots…");
+    setScheduleLoading(true, "slots");
+    renderSlotSkeletons();
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     slotsAbort = controller;
@@ -1622,6 +1687,7 @@
       .then(function (payload) {
         if (gen !== slotsGen) return;
         slotsAbort = null;
+        setScheduleLoading(false);
         var data = unwrapApiData(payload);
         renderBookSlotsFromApi(data.slots || []);
         placeBook();
@@ -1632,9 +1698,11 @@
         if (gen !== slotsGen) return;
         if (err && err.name === "AbortError") return;
         slotsAbort = null;
+        setScheduleLoading(false);
         if (bookSlots) {
           bookSlots.innerHTML = "";
           bookSlots.removeAttribute("data-api");
+          bookSlots.classList.remove("is-revealing");
         }
         lastSlotPayload = null;
         setScheduleStatus("");
@@ -1853,6 +1921,7 @@
    * form top is already on screen. Mobile uses position:fixed, so top is
    * viewport-relative. */
   var holdBookBodyScroll = false;
+  var scheduleRevealWait = false;
 
   function restoreBookBodyScroll(body, savedScroll) {
     if (!body || holdBookBodyScroll) return;
@@ -1953,6 +2022,42 @@
         holdBookBodyScroll = false;
       });
     });
+  }
+
+  function scheduleRowNeedsReveal() {
+    if (!bookDates) return false;
+    var body = book && book.querySelector(".g-book__body");
+    var row = bookDates;
+    if (!body || !row || !row.querySelector("input[name='book-date']")) return false;
+    var bodyRect = body.getBoundingClientRect();
+    var rowRect = row.getBoundingClientRect();
+    return rowRect.bottom > bodyRect.bottom - 8 || rowRect.top < bodyRect.top + 8;
+  }
+
+  function addressFieldFocused() {
+    var el = document.activeElement;
+    if (!el || !book || !book.contains(el)) return false;
+    return el.id === "book-pincode" || el.id === "book-address" || el.id === "book-city";
+  }
+
+  function scheduleRevealOnFocusOut() {
+    setTimeout(function () {
+      if (addressFieldFocused()) return;
+      if (book) book.removeEventListener("focusout", scheduleRevealOnFocusOut);
+      scheduleRevealWait = false;
+      if (scheduleRowNeedsReveal()) revealBookSchedule();
+    }, 0);
+  }
+
+  function maybeRevealScheduleSoftly() {
+    if (!scheduleRowNeedsReveal()) return;
+    if (addressFieldFocused()) {
+      if (scheduleRevealWait) return;
+      scheduleRevealWait = true;
+      book.addEventListener("focusout", scheduleRevealOnFocusOut);
+      return;
+    }
+    revealBookSchedule();
   }
 
   function lockFormUnderOverlay() {
