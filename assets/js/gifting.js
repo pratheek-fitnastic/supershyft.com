@@ -1547,8 +1547,10 @@
 
     geoState = null;
     setBookError("");
-    showDateLoadingState();
-    placeBook();
+    withStableBookLayout(function () {
+      showDateLoadingState();
+      placeBook();
+    });
 
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     serviceabilityAbort = controller;
@@ -1572,10 +1574,12 @@
         var result = pickProviderResult(data);
         if (!result || !result.serviceable) {
           geoState = null;
-          clearDatesAndSlots();
-          setScheduleStatus("");
-          setBookError("This area is not serviceable.");
-          placeBook();
+          withStableBookLayout(function () {
+            clearDatesAndSlots();
+            setScheduleStatus("");
+            setBookError("This area is not serviceable.");
+            placeBook();
+          });
           syncBookContinue();
           return;
         }
@@ -1588,10 +1592,12 @@
           pincode: pincode,
           serviceable: true,
         };
-        setBookError("");
-        setScheduleStatus("");
-        renderBookDates();
-        placeBook();
+        withStableBookLayout(function () {
+          setBookError("");
+          setScheduleStatus("");
+          renderBookDates();
+          placeBook();
+        });
         maybeRevealScheduleSoftly();
         syncBookContinue();
       })
@@ -1601,10 +1607,12 @@
         setScheduleLoading(false);
         serviceabilityAbort = null;
         geoState = null;
-        clearDatesAndSlots();
-        setScheduleStatus("");
-        setBookError("Unable to check serviceability. Please try again.");
-        placeBook();
+        withStableBookLayout(function () {
+          clearDatesAndSlots();
+          setScheduleStatus("");
+          setBookError("Unable to check serviceability. Please try again.");
+          placeBook();
+        });
         syncBookContinue();
       });
   }
@@ -1617,13 +1625,15 @@
       serviceabilityGen += 1;
       slotsGen += 1;
       geoState = null;
-      clearDatesAndSlots();
-      setScheduleStatus("");
-      setScheduleLoading(false);
-      /* Keep validation errors from Continue; clear only availability-style copy */
-      if (bookError && /serviceable|availability|pincode|Unable to check/i.test(bookError.textContent || "")) {
-        setBookError("");
-      }
+      withStableBookLayout(function () {
+        clearDatesAndSlots();
+        setScheduleStatus("");
+        setScheduleLoading(false);
+        /* Keep validation errors from Continue; clear only availability-style copy */
+        if (bookError && /serviceable|availability|pincode|Unable to check/i.test(bookError.textContent || "")) {
+          setBookError("");
+        }
+      });
       syncBookContinue();
       return;
     }
@@ -1631,8 +1641,10 @@
     abortSlots();
     serviceabilityGen += 1;
     slotsGen += 1;
-    showDateLoadingState();
-    placeBook();
+    withStableBookLayout(function () {
+      showDateLoadingState();
+      placeBook();
+    });
     serviceabilityTimer = setTimeout(function () {
       serviceabilityTimer = null;
       checkServiceability();
@@ -1847,6 +1859,7 @@
 
   var overlayScrollY = 0;
   var overlayLocked = false;
+  var placeBookAfterKeyboardTimer = null;
 
   function lockPageScroll() {
     if (overlayLocked) return;
@@ -1859,6 +1872,10 @@
   function unlockPageScroll() {
     if (!overlayLocked) return;
     overlayLocked = false;
+    if (placeBookAfterKeyboardTimer) {
+      clearTimeout(placeBookAfterKeyboardTimer);
+      placeBookAfterKeyboardTimer = null;
+    }
     document.documentElement.classList.remove("g-overlay-open");
     document.body.style.top = "";
     window.scrollTo(0, overlayScrollY);
@@ -1932,26 +1949,116 @@
     });
   }
 
+  function overlayTextFieldFocused() {
+    var panel = activeOverlay();
+    var el = document.activeElement;
+    if (!el || !el.tagName || !panel || !panel.contains(el)) return false;
+    var tag = el.tagName.toLowerCase();
+    if (tag !== "input" && tag !== "textarea" && tag !== "select") return false;
+    var type = String(el.type || "").toLowerCase();
+    if (type === "radio" || type === "checkbox" || type === "button" || type === "submit" || type === "hidden") {
+      return false;
+    }
+    return true;
+  }
+
+  function visualViewportPanned() {
+    var vv = window.visualViewport;
+    return !!(vv && vv.offsetTop > 1);
+  }
+
+  function keyboardLikelyOpen() {
+    return overlayTextFieldFocused() || visualViewportPanned();
+  }
+
+  function freezeOverlayViewport() {
+    if (!overlayLocked) return;
+    document.body.style.top = -overlayScrollY + "px";
+    /* window.scrollTo while iOS keyboard is open desyncs visualViewport from
+     * hit-testing — that is the pincode jump / untouchable sheet. */
+    if (isMobileOverlay() && keyboardLikelyOpen()) return;
+    window.scrollTo(0, overlayScrollY);
+  }
+
+  function withStableBookLayout(fn) {
+    var panel = activeOverlay();
+    var body = panel && panel.querySelector(".g-book__body");
+    var savedScroll = body ? body.scrollTop : 0;
+    var hold = shouldHoldBookPlacement();
+    fn();
+    restoreBookBodyScroll(body, savedScroll);
+    if (!hold) freezeOverlayViewport();
+    requestAnimationFrame(function () {
+      restoreBookBodyScroll(body, savedScroll);
+      if (!shouldHoldBookPlacement()) freezeOverlayViewport();
+    });
+  }
+
+  /* Keep the already-sized mobile sheet still while the keyboard is up.
+   * Re-pinning (height="") + keyboard visual-viewport pan is the pincode jump. */
+  function shouldHoldBookPlacement() {
+    if (!isMobileOverlay()) return false;
+    var panel = activeOverlay();
+    if (!panel || !panel.style.height) return false;
+    return overlayTextFieldFocused() || visualViewportPanned();
+  }
+
+  function placeBookWhenKeyboardSettled() {
+    if (placeBookAfterKeyboardTimer) {
+      clearTimeout(placeBookAfterKeyboardTimer);
+      placeBookAfterKeyboardTimer = null;
+    }
+    var attempts = 0;
+    function tick() {
+      placeBookAfterKeyboardTimer = null;
+      if (!activeOverlay()) return;
+      if (overlayTextFieldFocused()) return;
+      if (visualViewportPanned() && attempts < 12) {
+        attempts += 1;
+        placeBookAfterKeyboardTimer = setTimeout(tick, 50);
+        return;
+      }
+      placeBook();
+      if (scheduleRevealWait && !overlayTextFieldFocused()) {
+        if (book) book.removeEventListener("focusout", scheduleRevealOnFocusOut);
+        scheduleRevealWait = false;
+        if (scheduleRowNeedsReveal()) revealBookSchedule();
+      }
+    }
+    placeBookAfterKeyboardTimer = setTimeout(tick, 300);
+  }
+
   function placeBook() {
     var panel = activeOverlay();
     if (!panel || !form || !formInner) return;
+    if (shouldHoldBookPlacement()) return;
     var body = panel.querySelector(".g-book__body");
     var savedScroll = body ? body.scrollTop : 0;
-    panel.style.height = "";
-    panel.style.maxHeight = "";
     var header = document.querySelector(".bs-header");
     var headerH = header ? header.getBoundingClientRect().height : 80;
     var gap = 16;
     var minTopInView = headerH + gap;
 
     if (isMobileOverlay()) {
-      panel.style.setProperty("--g-book-top", Math.round(minTopInView) + "px");
-      var mobileMaxH = Math.max(240, Math.round(viewportHeight() - minTopInView - gap));
-      panel.style.maxHeight = mobileMaxH + "px";
-      panel.style.height = mobileMaxH + "px";
+      var nextTop = Math.round(minTopInView) + "px";
+      var nextH = Math.max(240, Math.round(viewportHeight() - minTopInView - gap)) + "px";
+      if (
+        panel.style.getPropertyValue("--g-book-top") === nextTop &&
+        panel.style.height === nextH &&
+        panel.style.maxHeight === nextH
+      ) {
+        restoreBookBodyScroll(body, savedScroll);
+        return;
+      }
+      panel.style.setProperty("--g-book-top", nextTop);
+      panel.style.maxHeight = nextH;
+      panel.style.height = nextH;
       restoreBookBodyScroll(body, savedScroll);
       return;
     }
+
+    panel.style.height = "";
+    panel.style.maxHeight = "";
 
     var innerRect = formInner.getBoundingClientRect();
     var figTop = form.offsetTop - 15;
@@ -2041,12 +2148,7 @@
   }
 
   function scheduleRevealOnFocusOut() {
-    setTimeout(function () {
-      if (addressFieldFocused()) return;
-      if (book) book.removeEventListener("focusout", scheduleRevealOnFocusOut);
-      scheduleRevealWait = false;
-      if (scheduleRowNeedsReveal()) revealBookSchedule();
-    }, 0);
+    placeBookWhenKeyboardSettled();
   }
 
   function maybeRevealScheduleSoftly() {
@@ -2595,7 +2697,10 @@
   });
 
   wireOtpDigits();
-  window.addEventListener("resize", placeBook);
+  window.addEventListener("resize", function () {
+    if (shouldHoldBookPlacement()) return;
+    placeBook();
+  });
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", function () {
       if (activeOverlay()) scrollFocusedBookField();
@@ -2610,6 +2715,11 @@
   }
 
   if (book) {
+    book.addEventListener("focusout", function () {
+      if (!isMobileOverlay()) return;
+      placeBookWhenKeyboardSettled();
+    });
+
     book.addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeBook();
     });

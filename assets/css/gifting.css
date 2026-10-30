@@ -54,7 +54,9 @@ html.g-overlay-open .bs-footer {
   pointer-events: none;
 }
 
-/* Solid header so gift-form copy cannot show through the transparent nav. */
+/* Solid header so gift-form copy cannot show through the transparent nav.
+ * pointer-events:none so a jumped visual-viewport cannot steal taps from
+ * the sheet's Back/Close (header sits at z-index 2005, sheet at 2010). */
 html.g-overlay-open body.gifting-page .bs-header,
 html.g-overlay-open body.gifting-page .bs-header.sticked {
   background: #000;
@@ -62,6 +64,7 @@ html.g-overlay-open body.gifting-page .bs-header.sticked {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   transition: none;
+  pointer-events: none;
 }
 
 /* Gift form / preview sit in the locked scroll position and must not bleed. */
@@ -3197,7 +3200,6 @@ html.g-overlay-open .g-tabs {
     left: 16px;
     right: 16px;
     top: var(--g-book-top, 0px);
-    bottom: 16px;
     width: auto;
     z-index: 2010;
     padding-bottom: max(16px, env(safe-area-inset-bottom));
